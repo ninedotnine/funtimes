@@ -2,6 +2,7 @@
 # definitions for predicaments go here
 
 title = {
+        'inputtype' : 'normal',
         'text' : """\
 ####### #     # #     # ####### ### #     # #######  #####
 #       #     # ##    #    #     #  ##   ## #       #     #
@@ -12,6 +13,7 @@ title = {
 #        #####  #     #    #    ### #     # #######  #####
                    (hope you have fun!)
 
+commands: save load stats help quit
         """,
         'choices' : [
             "Start a new game.",
@@ -24,6 +26,7 @@ title = {
 }
 
 helpme = {
+        'inputtype' : 'normal',
         'text' : """\
 Most actions are performed by typing A, B, C, or D, then hitting the enter
 or return key on your keyboard. Some portions of the game may require different

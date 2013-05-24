@@ -36,7 +36,7 @@ def load(filename="save.sav"):
         print("error loading data :C")
     input()
 
-def stats():
+def stats(profile, items):
     clear()
     print("CHARACTER STATS:")
     print("you are a %s name %s %s." % (profile['man'], profile['bran'],
@@ -64,7 +64,7 @@ def stats():
             print(item)
     input()
 
-def help():
+def helpme():
     clear()
     print('Most actions are performed by typing A, B, C, or D, then hitting \
 the enter or return key on your keyboard. Some portions of the game may \
@@ -78,9 +78,10 @@ if __name__ == '__main__':
     from profiledata import *
     profile = savedata[0]
     items = savedata[1]
+    queststatus = savedata[2]
     save(savedata)
     data = load()
     #print(data)
     input()
     help()
-    stats()
+    stats(profile, items)
