@@ -9,17 +9,23 @@ from funtoolkit import *
 # from profiledata import profile, items, queststatus
 
 # allows user to make a choice, returns their choice or false if they didn't
+# should return a string
 def play(predicament):
     global profile, items, queststatus
     clear()
+    print(predicament)
     for line in predicament['text']:
         print(line)
     if 'inputtype' not in predicament:
         print("error: predicament %s has no inputtype" % predicament)
         raise SystemExit
     elif predicament['inputtype'] == 'none':
-        if commonOptions(anykey()):
+        ch = anykey()
+        if commonOptions(ch):
             return predicament['this']
+        # maybe backspace to go back?
+        elif ch == 'b':
+            return predicament['prev']
         return predicament['next']
     elif predicament['inputtype'] == 'input':
         profile[predicament['result']] = input().strip()
@@ -42,11 +48,20 @@ def play(predicament):
                 return predicament['choices'][letters.index(choice)]
 
 if __name__ == '__main__':
-    currentPredicament = predicaments['title']
+    #currentPredicament = predicaments['title']
+    currentPredicament = 'title'
+    # start with prevPredicament assigned to title as well because "what else"
+    prevPredicament = predicaments[currentPredicament]['this']
     while True:
-        nextPredicament = play(currentPredicament)
-        try:
-            currentPredicament = predicaments[nextPredicament]
-        except KeyError:
-            print("oops! predicament '%s' doesn't exist yet :C" % choice)
+        predicaments[currentPredicament]['prev'] = prevPredicament 
+        nextPredicament = play(predicaments[currentPredicament])
+        prevPredicament = predicaments[currentPredicament]['this']
+        currentPredicament = nextPredicament
+        if currentPredicament not in predicaments:
+            print("oops! predicament '%s' doesn't exist yet :C" % nextPredicament)
             raise SystemExit
+        #try:
+            #currentPredicament = predicaments[nextPredicament]
+        #except KeyError:
+            #print("oops! predicament '%s' doesn't exist yet :C" % nextPredicament)
+            #raise SystemExit
