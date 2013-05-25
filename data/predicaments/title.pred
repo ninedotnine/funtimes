@@ -1,0 +1,88 @@
+new predicament = title
+
+    inputtype = none
+    text = FUNTIMES! 
+    text = ####### #     # #     # ####### ### #     # #######  #####
+    text = #       #     # ##    #    #     #  ##   ## #       #     #
+    text = #       #     # # #   #    #     #  # # # # #       #
+    text = #####   #     # #  #  #    #     #  #  #  # #####    #####
+    text = #       #     # #   # #    #     #  #     # #             # 
+    text = #       #     # #    ##    #     #  #     # #       #     #
+    text = #        #####  #     #    #    ### #     # #######  #####
+    text = (hope you have fun!)
+    text = commands: save load stats help quit
+    text = any key to start!
+    next = createCharacter
+end of predicament title
+
+new predicament = createCharacter
+    inputtype = none
+
+    text = Your best friend sits across from you at Pizza Pizza, picking
+    text = at his teeth idly. He glances up at the spotty clerk behind the
+    text = counter.
+
+    next = createCharacter2
+end of predicament createCharacter
+
+new predicament = createCharacter2
+    inputtype = none
+
+    text = "Alright," he says. "You gonna go order, or should I?"
+    text = This is the third time he's asked you this.
+    text = Making sure to roll your eyes as visibly as possible, you stand
+    text = up from your table and walk up to the counter.
+
+    next = createCharacter3
+end of predicament createCharacter2
+
+new predicament = createCharacter3
+    inputtype = input
+    result = bran
+
+    text = "Medium pepperoni." The spotty clerk takes your money.
+    text = "Name?"
+    text = "What do you need that for?"
+    text = "We don't do numbers anymore," he says dully. "I'll call you up to
+    text = the counter when your pizza is ready." 
+    text = What is your name?
+
+    next = createCharacter4
+end of predicament createCharacter3
+
+new predicament = createCharacter4
+    inputtype = input
+    result = rainey
+    
+    text = %bran%.
+    text = The spotty clerk just rolls his eyes.
+    text = "LAST name?"
+    text = What is your LAST name?
+
+    next = createCharacter5
+end of predicament createCharacter4
+
+new predicament = createCharacter5
+    inputtype = none
+
+    text = %rainey%.
+    text = "Thank you," he says. He turns over his shoulder and yells to someone
+    text = in the back, "%bran% %rainey% is in dire need of a pepperoni!
+    text = Thick and juicy if possible! Thank you."
+    text = He turns back and winks at you.
+
+    next = createCharacter6
+end of predicament createCharacter5
+
+new predicament = createCharacter6
+    inputtype = normal
+
+    text = The spotty clerk's sudden advance turns your stomach. Before heading
+    text = back to your table, you make a detour to the washrooms.
+
+    option = Go into the women's room.
+    option = Go into the men's room.
+
+    choice = womans
+    choice = mans
+end of predicament createCharacter6
