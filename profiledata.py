@@ -1,22 +1,6 @@
 # profiledata.py
 # keeps track of the save profile
 
-# these are important enough to be outside of the dict
-# or are they?
-# problem is: they're harder to pickle
-#bran = "bran"
-#rainey = "rainey"
-#man = "boy"
-#ryan = "ryan"
-#katie = "katie"
-#weet = 0
-#posts = 0
-#money = 0
-#love = 0
-#flash = 0
-#sexy = 0
-#energy = 15
-
 profile = {
 
         'bran' : "bran",
@@ -43,7 +27,6 @@ profile = {
 }
 
 items = {
-    # items
         'a pack of ketchup' : True,
         'food' : False,
         'bolognasalad' : False,
