@@ -33,9 +33,6 @@ if os.name != 'nt':
             raise KeyboardInterrupt
         if char == 'q':
             raise SystemExit
-        elif char == 's':
-            save(pause=False)
-            return anykey()
         return char
 
 # define the method to clear the output, system-dependently
@@ -46,7 +43,6 @@ else:
     def clear():
         call('clear',shell=True)
 
-#def save(savedata, filename="save.sav"):
 def save(filename="save.sav", pause=True):
     clear()
     savedata = (profile, items, queststatus)
@@ -57,20 +53,20 @@ def save(filename="save.sav", pause=True):
     except IOError:
         print("error saving data :(")
     if pause:
-        input()
+        anykey()
 
 def load(filename="save.sav"):
     clear()
     try:
         with open(filename, 'rb') as savefile:
             savedata = pickle.load(savefile)
-            print("data loaded successfully.")
-            return savedata
+        print("data loaded successfully.")
+        anykey()
+        return savedata
     except IOError:
         print("error loading data :C")
-    input()
+    anykey()
 
-#def stats(profile, items, pause=True):
 def stats(pause=True): 
     clear()
     print("CHARACTER STATS:")
@@ -98,17 +94,33 @@ def stats(pause=True):
         if items[item] == True:
             print(item)
     if pause:
-        input()
+        anykey()
 
 def pause():
     stats(pause=False)
     print("hit 's' to save, 'l' to load, 'q' to quits")
-    anykey()
-    #ch = anykey()
-    #if ch == 's':
-        #save()
-    #elif ch == 'l':
-        #data = load()
+    ch = anykey()
+    if ch == 'p':
+        return
+    elif commonOptions(ch):
+        return
+    elif ch == 'l':
+        global profile, items, queststatus
+        profile, items, queststatus = load()
+
+def commonOptions(ch):
+    if ch == 'p':
+        pause()
+        return True
+    elif ch == 's':
+        save()
+        return True
+    elif ch == 'h':
+        helpme()
+        return True
+    elif ch == 'q':
+        raise SystemExit
+    return False
 
 def helpme():
     clear()

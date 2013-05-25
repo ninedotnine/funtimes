@@ -18,8 +18,7 @@ def play(predicament):
         print("error: predicament %s has no inputtype" % predicament)
         raise SystemExit
     elif predicament['inputtype'] == 'none':
-        if anykey() == 'p':
-            pause()
+        if commonOptions(anykey()):
             return predicament['this']
         return predicament['next']
     elif predicament['inputtype'] == 'input':
@@ -33,38 +32,21 @@ def play(predicament):
         print("options", len(predicament['options']))
         for option in predicament['options']:
             print(next(letteriter), '-', option)
-        #choice = input("What do you want to do?\n").strip()
-        print("\nWhat do you want to do?\n")
-        #if 'inputtype' in predicament:
-            #if predicament['inputtype'] == 'input':
-                #return choice
-        choice = anykey()
+        choice = anykey("\nWhat do you want to do?\n")
         while True:
-            if choice == 'h':
-                helpme()
-                return False
-            elif choice == 's':
-                save()
-                return False
-            elif choice == 'q':
-                print("oeuoaeuah")
-                raise SystemExit(0)
-            #elif choice not in predicament['choices']:
+            if commonOptions(choice):
+                return predicament['this']
             elif choice not in letters:
-                print("invalid option")
-                choice = anykey()
+                choice = anykey("invalid option")
             else:
-                #return predicament[choice]
                 return predicament['choices'][letters.index(choice)]
 
 if __name__ == '__main__':
     currentPredicament = predicaments['title']
     while True:
-        choice = False
-        while not choice:
-            choice = play(currentPredicament)
+        nextPredicament = play(currentPredicament)
         try:
-            currentPredicament = predicaments[choice]
+            currentPredicament = predicaments[nextPredicament]
         except KeyError:
-            print("oops! predicament %s doesn't exist yet :C" % choice)
+            print("oops! predicament '%s' doesn't exist yet :C" % choice)
             raise SystemExit
