@@ -32,6 +32,7 @@ def play(predicament):
     elif predicament['inputtype'] == 'input':
         profile[predicament['result']] = input().strip()
         while profile[predicament['result']] == '':
+            # output the last line of text until a valid input is provided
             profile[predicament['result']] = input(predicament['text'][-1] + '\n').strip()
         return predicament['next']
     elif predicament['inputtype'] == 'normal':
