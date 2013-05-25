@@ -1,11 +1,42 @@
 #!/usr/bin/python3
 # funtoolkit.py
 # this is where common methods are declared.
-# clear, load, save, help, stats, etc. 
+# pause, clear, load, save, help, stats, etc. 
 
 import os
 import pickle
 from subprocess import call
+from profiledata import profile, items, queststatus
+
+# define method to press any key. currently only works on unix
+if os.name != 'nt':
+    import sys, termios, tty
+    # allows user to press any key to continue. thanks, Matthew Adams:
+    # http://stackoverflow.com/questions/11876618/python-press-any-key-to-exit
+    def anykey(message=''):
+        # store stdin's file descriptor
+        stdinFileDesc = sys.stdin.fileno() 
+        # save stdin's tty attributes so I can reset it later
+        oldStdinTtyAttr = termios.tcgetattr(stdinFileDesc) 
+        if message:
+            print(message)
+        try:
+            # set the input mode of stdin so that it gets added to 
+            # char by char rather than line by line
+            tty.setraw(stdinFileDesc)
+            # read 1 byte from stdin (indicating that a key has been pressed)
+            char = sys.stdin.read(1)
+        finally:
+            # reset 
+            termios.tcsetattr(stdinFileDesc, termios.TCSADRAIN, oldStdinTtyAttr)
+        if char == '\x03':
+            raise KeyboardInterrupt
+        if char == 'q':
+            raise SystemExit
+        elif char == 's':
+            save(pause=False)
+            return anykey()
+        return char
 
 # define the method to clear the output, system-dependently
 if os.name == 'nt':
@@ -15,15 +46,18 @@ else:
     def clear():
         call('clear',shell=True)
 
-def save(savedata, filename="save.sav"):
+#def save(savedata, filename="save.sav"):
+def save(filename="save.sav", pause=True):
     clear()
+    savedata = (profile, items, queststatus)
     try: 
         with open(filename, 'wb') as savefile: 
             pickle.dump(savedata, savefile)
         print("your data is saved!")
     except IOError:
         print("error saving data :(")
-    input()
+    if pause:
+        input()
 
 def load(filename="save.sav"):
     clear()
@@ -36,7 +70,8 @@ def load(filename="save.sav"):
         print("error loading data :C")
     input()
 
-def stats(profile, items):
+#def stats(profile, items, pause=True):
+def stats(pause=True): 
     clear()
     print("CHARACTER STATS:")
     print("you are a %s name %s %s." % (profile['man'], profile['bran'],
@@ -62,7 +97,18 @@ def stats(profile, items):
     for item in items:
         if items[item] == True:
             print(item)
-    input()
+    if pause:
+        input()
+
+def pause():
+    stats(pause=False)
+    print("hit 's' to save, 'l' to load, 'q' to quits")
+    anykey()
+    #ch = anykey()
+    #if ch == 's':
+        #save()
+    #elif ch == 'l':
+        #data = load()
 
 def helpme():
     clear()
@@ -72,16 +118,16 @@ require different commands, as dictated by the instructions that appear \
 in-game. At any point, you can type "stats" to view your character stats and \
 inventory, or type "save" to save the game, or type "help" to see... this.')
     print("YOU MUST SAVE THE GAME IF YOU WANT TO KEEP YOUR PROGRESS.")
-    input()
+    anykey()
 
 if __name__ == '__main__':
-    from profiledata import *
     profile = savedata[0]
     items = savedata[1]
     queststatus = savedata[2]
-    save(savedata)
+    #save(savedata)
     data = load()
     #print(data)
-    input()
-    help()
+    while anykey("press any key to continue...") != 'q':
+        pass
+    helpme()
     stats(profile, items)
