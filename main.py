@@ -13,9 +13,9 @@ from funtoolkit import *
 def play(predicament):
     global profile, items, queststatus
     clear()
-    print(predicament)
+    #print(predicament)
     for line in predicament['text']:
-        print(line)
+        print(replaceVariables(line))
     if 'inputtype' not in predicament:
         print("error: predicament %s has no inputtype" % predicament)
         raise SystemExit
@@ -35,10 +35,11 @@ def play(predicament):
     elif predicament['inputtype'] == 'normal':
         letters = preferredButtons[:len(predicament['options'])]
         letteriter = iter(letters)
-        print("options", len(predicament['options']))
+        #print("options", len(predicament['options']))
+        print()
         for option in predicament['options']:
             print(next(letteriter), '-', option)
-        choice = anykey("\nWhat do you want to do?\n")
+        choice = anykey("\nWhat do you want to do?")
         while True:
             if commonOptions(choice):
                 return predicament['this']
@@ -46,6 +47,17 @@ def play(predicament):
                 choice = anykey("invalid option")
             else:
                 return predicament['choices'][letters.index(choice)]
+
+# method what replaces variables' plaintext representations with the actual variable
+def replaceVariables(text):
+    # we only use dictionaries round these parts
+    variables = {
+        '%bran%' : profile['bran'],
+        '%rainey%' : profile['rainey'],
+    }
+    for i, j in variables.items():
+        text = text.replace(i, j)
+    return text
 
 if __name__ == '__main__':
     #currentPredicament = predicaments['title']
