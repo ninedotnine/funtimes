@@ -9,6 +9,7 @@ from funtoolkit import *
 # from profiledata import profile, items, queststatus
 
 # allows user to make a choice, returns their choice or false if they didn't
+# the predicament parameter is one of the dictionaries stored in predicaments 
 # should return a string
 def play(predicament):
     global profile, items, queststatus
@@ -25,7 +26,8 @@ def play(predicament):
             return predicament['this']
         # hit backspace or ^H to go back
         elif ch == '\x08' or ch == '\x7F':
-            return predicament['prev']
+            #return predicament['prev']
+            return '\x7F'
         return predicament['next']
     elif predicament['inputtype'] == 'input':
         profile[predicament['result']] = input().strip()
@@ -34,11 +36,11 @@ def play(predicament):
         return predicament['next']
     elif predicament['inputtype'] == 'normal':
         letters = preferredButtons[:len(predicament['options'])]
-        letteriter = iter(letters)
+        iterletters = iter(letters)
         #print("options", len(predicament['options']))
         print()
         for option in predicament['options']:
-            print(next(letteriter), '-', option)
+            print(next(iterletters), '-', option)
         choice = anykey("\nWhat do you want to do?")
         while True:
             if commonOptions(choice):
@@ -48,32 +50,28 @@ def play(predicament):
             else:
                 return predicament['choices'][letters.index(choice)]
 
-# method what replaces variables' plaintext representations with the actual variable
-def replaceVariables(text):
-    # we only use dictionaries round these parts
-    variables = {
-        '%bran%' : profile['bran'],
-        '%rainey%' : profile['rainey'],
-    }
-    for i, j in variables.items():
-        text = text.replace(i, j)
-    return text
 
 if __name__ == '__main__':
-    #currentPredicament = predicaments['title']
     currentPredicament = 'title'
-    # start with prevPredicament assigned to title as well because "what else"
-    prevPredicament = predicaments[currentPredicament]['this']
+    # prevPredicaments is a list. after each new predicament, append it.
+    prevPredicaments = ['title']
     while True:
-        predicaments[currentPredicament]['prev'] = prevPredicament 
-        nextPredicament = play(predicaments[currentPredicament])
-        prevPredicament = predicaments[currentPredicament]['this']
-        currentPredicament = nextPredicament
-        if currentPredicament not in predicaments:
-            print("oops! predicament '%s' doesn't exist yet :C" % nextPredicament)
+        try:
+            nextPredicament = play(predicaments[currentPredicament])
+        except KeyError:
+            print("oops! predicament '%s' doesn't exist yet :C" 
+                  % nextPredicament)
             raise SystemExit
-        #try:
-            #currentPredicament = predicaments[nextPredicament]
-        #except KeyError:
+        if nextPredicament == '\x7F':
+            # go back to last predicament
+            try: 
+                currentPredicament = prevPredicaments.pop()
+            except IndexError:
+                anykey("no history available.")
+            continue
+        elif nextPredicament != currentPredicament:
+            prevPredicaments.append(currentPredicament)
+            currentPredicament = nextPredicament
+        #if currentPredicament not in predicaments:
             #print("oops! predicament '%s' doesn't exist yet :C" % nextPredicament)
             #raise SystemExit

@@ -134,6 +134,17 @@ inventory, or type "save" to save the game, or type "help" to see... this.')
     print("YOU MUST SAVE THE GAME IF YOU WANT TO KEEP YOUR PROGRESS.")
     anykey()
 
+# method what replaces variables' plaintext representations with the actual variable
+def replaceVariables(text):
+    # we only use dictionaries round these parts
+    variables = {
+        '%bran%' : profile['bran'],
+        '%rainey%' : profile['rainey'],
+    }
+    for key, value in variables.items():
+        text = text.replace(key, value)
+    return text
+
 if __name__ == '__main__':
     profile = savedata[0]
     items = savedata[1]
