@@ -11,10 +11,12 @@ preferredButtons = 'abcdef'
 
 predicaments = {}
 
-datadir = 'data/predicaments'
+datadir = os.getcwd() + '/data/predicaments'
 
 if not os.path.isdir(datadir):
-    os.makedirs(datadir)
+    #os.makedirs(datadir)
+    print("error: no data directory")
+    raise SystemExit
 
 for filename in os.listdir(datadir):
     basename, ext = os.path.splitext(filename)
