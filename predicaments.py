@@ -2,7 +2,6 @@
 # generates the dictionary that holds all the available predicaments
 
 import os
-import json
  
 # this is temporary. find a better way to do it.
 # allow the user to set in-game, if possible...
