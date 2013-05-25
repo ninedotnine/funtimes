@@ -100,7 +100,8 @@ def pause():
     stats(pause=False)
     print("hit 's' to save, 'l' to load, 'q' to quits")
     ch = anykey()
-    if ch == 'p':
+    # hit 'p' or escape to unpause
+    if ch == 'p' or ch == '\x1B':
         return
     elif commonOptions(ch):
         return
@@ -109,7 +110,8 @@ def pause():
         profile, items, queststatus = load()
 
 def commonOptions(ch):
-    if ch == 'p':
+    # hit 'p' or escape to pause
+    if ch == 'p' or ch == '\x1B':
         pause()
         return True
     elif ch == 's':

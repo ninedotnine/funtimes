@@ -23,8 +23,8 @@ def play(predicament):
         ch = anykey()
         if commonOptions(ch):
             return predicament['this']
-        # maybe backspace to go back?
-        elif ch == 'b':
+        # hit backspace or ^H to go back
+        elif ch == '\x08' or ch == '\x7F':
             return predicament['prev']
         return predicament['next']
     elif predicament['inputtype'] == 'input':
