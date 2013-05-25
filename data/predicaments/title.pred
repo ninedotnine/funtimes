@@ -1,7 +1,6 @@
 new predicament = title
 
     inputtype = none
-    text = FUNTIMES! 
     text = ####### #     # #     # ####### ### #     # #######  #####
     text = #       #     # ##    #    #     #  ##   ## #       #     #
     text = #       #     # # #   #    #     #  # # # # #       #
@@ -9,9 +8,11 @@ new predicament = title
     text = #       #     # #   # #    #     #  #     # #             # 
     text = #       #     # #    ##    #     #  #     # #       #     #
     text = #        #####  #     #    #    ### #     # #######  #####
-    text = (hope you have fun!)
-    text = commands: save load stats help quit
-    text = any key to start!
+    text = ~~~~~~~~~~~~~~~~~~~(hope you have fun!)
+    text = 
+    text = Press h for controls and help.
+    text = 
+    text = Press any other key to create a new character!
     next = createCharacter
 end of predicament title
 

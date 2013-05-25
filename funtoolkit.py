@@ -70,35 +70,38 @@ def load(filename="save.sav"):
 def stats(pause=True): 
     clear()
     print("CHARACTER STATS:")
-    print("you are a %s name %s %s." % (profile['man'], profile['bran'],
+    print("You are a %s named %s %s." % (profile['man'], profile['bran'],
                                         profile['rainey']))
-    print("you currently have %d weet point(s)." % profile['weet'])
-    print("you have $%d in your pocket" % profile['money'])
-    print("you have %d energy point(s) left." % profile['energy'])
+    print("You currently have %d weet point(s)." % profile['weet'])
+    print("You have $%d in your pocket." % profile['money'])
+    print("You have %d energy point(s) left." % profile['energy'])
     if profile['strongth'] > 14:
-        print("you are quite strong.")
+        print("You are quite strong.")
     if profile['charisma'] > 14:
-        print("you have a lot of charisma.")
+        print("You have a lot of charisma.")
     if profile['dexterity'] > 14:
-        print("you are highly dextrous.")
+        print("You are highly dextrous.")
     if profile['intellect'] > 14:
-        print("you are very intelligent.")
+        print("You are very intelligent.")
     if profile['love'] == 2:
-        print("you have a crush on %s" % katie)
+        print("You have a crush on %s" % katie)
     elif profile['love'] == 3:
-        print("you're dating %s" % katie)
+        print("You're dating %s" % katie)
     elif profile['love'] == 4:
-        print("you're in love with %s" % katie)
-    print("ITEMS ON HAND:")
+        print("You're in love with %s" % katie)
+    print("\nITEMS ON HAND:")
     for item in items:
         if items[item] == True:
             print(item)
+    # if player has >20 items, tell them they have deep pockets
+    if sum(items.values()) > 20: # true=1 so the sum of items' values=#ofItems
+        print("absurdly deep pockets")
     if pause:
         anykey()
 
 def pause():
     stats(pause=False)
-    print("hit 's' to save, 'l' to load, 'q' to quits")
+    print("\nMash 's' to save, 'l' to load, 'q' to quaff potion--er, I mean quit")
     ch = anykey()
     # hit 'p' or escape to unpause
     if ch == 'p' or ch == '\x1B':
@@ -126,18 +129,19 @@ def commonOptions(ch):
 
 def helpme():
     clear()
-    print('Most actions are performed by typing A, B, C, or D, then hitting \
-the enter or return key on your keyboard. Some portions of the game may \
-require different commands, as dictated by the instructions that appear \
-in-game. At any point, you can type "stats" to view your character stats and \
-inventory, or type "save" to save the game, or type "help" to see... this.')
-    print("YOU MUST SAVE THE GAME IF YOU WANT TO KEEP YOUR PROGRESS.")
+    print('''Most actions in the game are performed by pressing A, B, C, or D
+to perform actions that are described on screen. In some cases, the game may
+ask for text input, after which you must press enter. At any time, you can
+'pause' with ESC to see your inventory, stats, etc. or use backspace to undo
+an action. Use S and L to save and load your progress, and Q to quit.
+Use of this game while intoxicated may be illegal in some jurisdictions.''')
     anykey()
 
 # method what replaces variables' plaintext representations with the actual variable
 def replaceVariables(text):
     # we only use dictionaries round these parts
     variables = {
+        '~' : ' ',
         '%bran%' : profile['bran'],
         '%rainey%' : profile['rainey'],
     }
