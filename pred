@@ -1,0 +1,55 @@
+Some people might think that writing a predicament for Funtimes would be quite the predicament, but that's not entirely true! It's only mostly true.
+
+Some basic things to remember before you jump in:
+1. Each "screen" of text in Funtimes is 1 predicament. The screen is cleared before each one.
+2. All predicaments must be in /data/predicaments (relative to main.py) and have the .pred extension.
+3. A .pred file can contain any number of predicaments, not just one. Use this for organization.
+4. You can't use = anywhere, ever. It's used for our syntax and we're too lazy to make an escape character.
+5. Lines starting with # are comments -- Funtimes will ignore them.
+
+Got it? Okay.
+
+There are five absolutely essential parts of a predicament. If you don't have these, the game won't be able to figure out what's going on and will crash on start-up. These parts are:
+
+1. A title
+Each predicament must start by telling the game its title. This title must be unique. To set a title, use:
+    new predicament = uniqueTitleGoesHere
+
+2. The type of input required
+We want the player to do something after reading the text of the predicament. Tell Funtimes what you want from the player.
+    inputtype = none <-- if you just want the player to press any key to continue to the next predicament
+    inputtype = normal <-- if you want the player to choose from multiple options (usually a, b, c, d)
+    inputtype = input <-- if you want the player to type something, like their name
+In the case of 'input', you must also tell Funtimes where to store the stuff that the player typed:
+    result = whatThePlayerTyped
+
+
+3. Text
+Every predicament needs at least one line of text.
+    text = Insert your text here.
+    text = Here's a second line of text.
+You can write however many lines of text you want, but each new line needs to start with "text ="
+Leading and trailing whitespace is stripped out by Funtimes, so you can format stuff however you want and have it display the same within the game. If you want Funtimes to preserve your whitespace, use ~. Every ~ in your text field will be replaced by a space.
+If you want Funtimes to print whatThePlayerTyped from above, put %whatThePlayerTyped% -- it'll be replaced too.
+If you want a blank line, just put "text =" and then continue to the next line. An empty text field will turn into a blank line.
+
+4. The next predicament
+Nothing in Funtimes can be a dead end, so every predicament needs to point to at least one other predicament. For inputtypes of 'none' and 'input', there will only be one destination, defined with:
+    next = titleOfTheNextPredicament
+The player will go to titleOfTheNextPredicament after they hit any key (for 'none') or enter text and press enter (for 'input').
+For 'normal' predicaments (those with multiple choice options), you need to tell Funtimes what the options are, and where they go:
+    option = Drink too much grape juice.
+    option = Build a better skirt.
+    choice = tooMuchGrape
+    choice = beKimPossible
+In this case, the first option will be 'a - Drink too much grape juice.' and pressing 'a' will bring the player to tooMuchGrape (another predicament, this time in a more literal sense). Bear in mind that while you can put as many options into the pred file as you want, Funtimes will actually ignore anything after the first six.
+
+5. The ending
+Every predicament needs to end with the following line:
+    end of predicament
+
+Those are the basics.
+
+To set a variable to later be used, use the following:
+    set nameOfVariable = value
+This will create nameOfVariable (if it doesn't already exist) and set it to "value". You can later use this value in your predicaments by typing %nameOfVariable% into a text field.
