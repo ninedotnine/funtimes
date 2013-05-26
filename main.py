@@ -19,7 +19,9 @@ def play(predicament):
         for statement in predicament['set']:
             variable, value = statement.split('=')
             if variable not in profile.keys():
-                print("error: invalid SET statement in predicament %s\nrefers to nonexistent variable '%s'" % (predicament['this'], variable))
+                print("error: probable invalid SET statement in predicament",
+                       predicament['this'])
+                print("refers to nonexistent variable '%s'" % variable)
                 print("this is a fatal error. aborting")
                 raise SystemExit
             profile[variable] = value

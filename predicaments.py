@@ -2,6 +2,7 @@
 # generates the dictionary that holds all the available predicaments
 
 import os
+from predicamentclass import Predicament
  
 # this is temporary. find a better way to do it.
 # allow the user to set in-game, if possible...
@@ -24,15 +25,21 @@ for filename in os.listdir(datadir):
         print("WARNING: skipping %s/%s%s..." % (datadir, basename, ext))
         continue
     with open(datadir + '/' + filename, 'r') as fp:
-        busy = False # keep track of whether we're currently reading a predicament
+        busy = False # whether we're currently reading a predicament
         tempdict = {} # create temp dict to store data while we parse it
         for line in fp:
             line = line.strip()
-            if line == '' or line[:1] == '#': # skip blank lines and lines starting with #
+            # skip blank lines and lines starting with '#'
+            if line == '' or line[:1] == '#': 
                 continue 
             elif line.find("end of predicament") == 0:
-                # at "end of predicament", copy tempdict to a sensible name and clear everything
-                predicaments[tempdict['this']] = dict(tempdict)
+                if not busy:
+                    print("error: unexpected end of predicament")
+                    raise SystemExit
+                # at "end of predicament", copy tempdict to a 
+                # sensible name and clear everything
+                #predicaments[tempdict['this']] = dict(tempdict)
+                predicaments[tempdict['this']] = Predicament(tempdict)
                 tempdict.clear()
                 busy = False
                 continue
@@ -55,7 +62,7 @@ for filename in os.listdir(datadir):
                 if not 'text' in tempdict:
                     tempdict['text'] = []
                 # add each line of text onto the prev line of text
-                tempdict[key].append(value.strip())
+                tempdict['text'].append(value.strip())
             elif key == 'option':
                 if not 'options' in tempdict:
                     tempdict['options'] = []
@@ -71,13 +78,17 @@ for filename in os.listdir(datadir):
                     tempdict['set'] = []
                 # everything between 'set' and '=' is the parameter
                 key, parameter = key.split() # parameter cannot have spaces in it
-                tempdict['set'].append(parameter.strip() + "=" + value.strip())
+                #tempdict['set'].append(parameter.strip() + "=" + value.strip())
+                # making this a list of tuples, should be easier to handle later
+                tempdict['set'].append((parameter.strip(), value.strip()))
             else:
                 tempdict[key] = value.strip()
-
 
 if __name__ == '__main__':
     #print("content of", datadir, ": ", os.listdir(datadir))
     print()
-    print("predicaments is")
+    print("number of predicaments:", Predicament.numPredicaments)
+    print("predicaments is:")
     print(predicaments)
+    for key in predicaments:
+        print(predicaments[key])

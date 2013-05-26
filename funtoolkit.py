@@ -139,22 +139,34 @@ Use of this game while intoxicated may be illegal in some jurisdictions.''')
 
 # method what replaces variables' plaintext representations with the actual variable
 def replaceVariables(text):
+    if '%' not in text or '%' not in text[text.index('%')+1:]:
+        # '%' doesn't appear or doesn't appear again after appearing
+        return text
+    start = text.index('%')
+    end = text[start+1:].index('%') + start + 1
+    if text[start+1:end] not in profile:
+        print("can't find %s in profile" % text[start+1:end])
+        raise SystemExit
+    return replaceVariables(text[:start] + str(profile[text[start+1:end]]) 
+                            + text[end+1:])
     # we only use dictionaries round these parts
-    variables = {
-        '~' : ' ',
-        '%bran%' : profile['bran'],
-        '%rainey%' : profile['rainey'],
-    }
-    for key, value in variables.items():
-        text = text.replace(key, value)
-    return text
+    #variables = {
+        #'~' : ' ',
+        #'%bran%' : profile['bran'],
+        #'%rainey%' : profile['rainey'],
+    #}
+    #for key, value in variables.items():
+        #text = text.replace(key, value)
+    #return text
 
 if __name__ == '__main__':
+    savedata = load()
     profile = savedata[0]
     items = savedata[1]
     queststatus = savedata[2]
+    print(replaceVariables("name is: %bran%."))
     #save(savedata)
-    data = load()
+    #data = load()
     #print(data)
     while anykey("press any key to continue...") != 'q':
         pass
