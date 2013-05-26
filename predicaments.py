@@ -28,7 +28,7 @@ for filename in os.listdir(datadir):
         tempdict = {} # create temp dict to store data while we parse it
         for line in fp:
             line = line.strip()
-            if line == '': # skip blank lines
+            if line == '' or line[:1] == '#': # skip blank lines and lines starting with #
                 continue 
             elif line.find("end of predicament") == 0:
                 # at "end of predicament", copy tempdict to a sensible name and clear everything

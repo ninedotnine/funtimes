@@ -1,3 +1,5 @@
+# title screen and character creation
+
 new predicament = title
 
     inputtype = none
@@ -13,6 +15,7 @@ new predicament = title
     text = Press h for controls and help.
     text = 
     text = Press any other key to create a new character!
+
     next = createCharacter
 end of predicament title
 
@@ -67,7 +70,6 @@ end of predicament createCharacter4
 
 new predicament = createCharacter5
     inputtype = none
-
     text = "%rainey%."
     text = "Thank you," he says. He turns over his shoulder and yells to someone
     text = in the back, "%bran% %rainey% is in dire need of a pepperoni!
