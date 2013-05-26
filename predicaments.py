@@ -66,6 +66,12 @@ for filename in os.listdir(datadir):
                     tempdict['choices'] = []
                 if len(tempdict['choices']) < 6:
                     tempdict['choices'].append(value.strip())
+            elif key[:3] == 'set':
+                if not 'set' in tempdict:
+                    tempdict['set'] = []
+                # everything between 'set' and '=' is the parameter
+                key, parameter = key.split() # parameter cannot have spaces in it
+                tempdict['set'].append(parameter.strip() + "=" + value.strip())
             else:
                 tempdict[key] = value.strip()
 

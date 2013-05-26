@@ -14,7 +14,15 @@ from funtoolkit import *
 def play(predicament):
     global profile, items, queststatus
     clear()
-    #print(predicament)
+    #if there are SET statements in predicament, do those before printing text
+    if 'set' in predicament:
+        for statement in predicament['set']:
+            variable, value = statement.split('=')
+            if variable not in profile.keys():
+                print("error: invalid SET statement in predicament %s\nrefers to nonexistent variable '%s'" % (predicament['this'], variable))
+                print("this is a fatal error. aborting")
+                raise SystemExit
+            profile[variable] = value
     for line in predicament['text']:
         print(replaceVariables(line))
     if 'inputtype' not in predicament:

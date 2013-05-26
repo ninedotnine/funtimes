@@ -84,11 +84,11 @@ def stats(pause=True):
     if profile['intellect'] > 14:
         print("You are very intelligent.")
     if profile['love'] == 2:
-        print("You have a crush on %s" % katie)
+        print("You have a crush on %s" % profile['katie'])
     elif profile['love'] == 3:
-        print("You're dating %s" % katie)
+        print("You're dating %s" % profile['katie'])
     elif profile['love'] == 4:
-        print("You're in love with %s" % katie)
+        print("You're in love with %s" % profile['katie'])
     print("\nITEMS ON HAND:")
     for item in items:
         if items[item] == True:
