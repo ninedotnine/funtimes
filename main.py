@@ -14,55 +14,54 @@ from funtoolkit import *
 def play(predicament):
     global profile, items, queststatus
     clear()
-    currentPredicament = Predicament(predicament)
-    predicament = currentPredicament.__dict__
+    predicament = Predicament(predicament)
     #if there are SET statements in predicament, do those before printing text
-    if predicament['setvars']:
-        for statement in predicament['setvars']:
+    if predicament.setvars:
+        for statement in predicament.setvars:
             # make tuple readable
             variable, value = statement[0], statement[1]
             if variable not in profile.keys():
                 print("error: probable invalid SET statement in predicament",
-                       predicament['this'])
+                       predicament.name)
                 print("refers to nonexistent variable '%s'" % variable)
                 print("this is a fatal error. aborting")
                 raise SystemExit
             profile[variable] = value
-    for line in predicament['text']:
+    for line in predicament.text:
         print(replaceVariables(line))
-    if 'inputtype' not in predicament:
-        print("error: predicament %s has no inputtype" % predicament)
+    if not predicament.inputtype:
+        print("error: predicament %s has no inputtype" % predicament.name)
         raise SystemExit
-    elif predicament['inputtype'] == 'none':
+    elif predicament.inputtype == 'none':
         ch = anykey()
         if commonOptions(ch):
-            return currentPredicament.name
+            return predicament.name
         # hit backspace or ^H to go back
         elif ch == '\x08' or ch == '\x7F':
             #return predicament['prev']
             return '\x7F'
-        return predicament['next']
-    elif predicament['inputtype'] == 'input':
-        profile[predicament['result']] = input().strip()
-        while profile[predicament['result']] == '':
+        return predicament.next
+    elif predicament.inputtype == 'input':
+        profile[predicament.result] = input().strip()
+        while profile[predicament.result] == '':
             # output the last line of text until a valid input is provided
-            profile[predicament['result']] = input(predicament['text'][-1] + '\n').strip()
-        return predicament['next']
-    elif predicament['inputtype'] == 'normal':
-        letters = preferredButtons[:len(predicament['options'])]
+            profile[predicament.result] = input(predicament.text[-1] + '\n').strip()
+        return predicament.next
+    elif predicament.inputtype == 'normal':
+        letters = preferredButtons[:len(predicament.options)]
         iterletters = iter(letters)
         #print("options", len(predicament['options']))
         print()
-        for option in predicament['options']:
+        for option in predicament.options:
             print(next(iterletters), '-', option)
         choice = anykey("\nWhat do you want to do?")
         while True:
             if commonOptions(choice):
-                return predicament['this']
+                return predicament.name
             elif choice not in letters:
                 choice = anykey("invalid option")
             else:
-                return predicament['choices'][letters.index(choice)]
+                return predicament.choices[letters.index(choice)]
 
 
 if __name__ == '__main__':
