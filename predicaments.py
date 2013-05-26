@@ -2,7 +2,6 @@
 # generates the dictionary that holds all the available predicaments
 
 import os
-from predicamentclass import Predicament
  
 # this is temporary. find a better way to do it.
 # allow the user to set in-game, if possible...
@@ -26,63 +25,114 @@ for filename in os.listdir(datadir):
         continue
     with open(datadir + '/' + filename, 'r') as fp:
         busy = False # whether we're currently reading a predicament
-        tempdict = {} # create temp dict to store data while we parse it
         for line in fp:
             line = line.strip()
             # skip blank lines and lines starting with '#'
             if line == '' or line[:1] == '#': 
-                continue 
+                continue
             elif line.find("end of predicament") == 0:
-                if not busy:
-                    print("error: unexpected end of predicament")
-                    raise SystemExit
-                # at "end of predicament", copy tempdict to a 
-                # sensible name and clear everything
-                #predicaments[tempdict['this']] = dict(tempdict)
-                predicaments[tempdict['this']] = Predicament(tempdict)
-                tempdict.clear()
-                busy = False
                 continue
             key, value = line.split('=')
             key = key.strip()
             if key == 'new predicament':
-                # make sure we finished parsing the previous predicament
-                if busy:
-                    print("error reading predicaments.")
-                    print("the problem is likely caused by " + tempdict['this'])
+                # create entry in predicaments dictionary
+                # 'title of predicament' : 'which pred file it is in'
+                name = value.strip()
+                predicaments[name] = filename
+
+class Predicament:
+    """this is a class for holding a predicament!"""
+
+    # class variable, accessible anywhere, shared by instances of Predicament
+    numPredicaments = 0
+
+    def __init__(self, name):
+        Predicament.numPredicaments += 1
+        self.name = name
+        self.text = None
+        self.setvars = None
+        self.options = None
+        self.choices = None
+        self.next = None
+        self.inputtype = None
+        self.result = None
+
+        filename = predicaments[name]
+        fp = open(datadir + '/' + filename, 'r')
+        busy = False #whether we are currently reading the predicament
+        for line in fp:
+            if busy == False:
+                # iterate through lines looking for start of predicament
+                line = line.strip()
+                # skip blank lines and lines starting with '#'
+                if line == '' or line[:1] == '#': 
+                    continue
+                elif line.find("end of predicament") == 0:
+                    continue
+                key, value = line.split('=')
+                key = key.strip()
+                if key == 'new predicament':
+                    currentPredicament = value.strip();
+                    # if it's the right predicament, start parsing
+                    if currentPredicament == name:
+                        busy = True
+                        continue
+            if busy == True:
+                line = line.strip()
+                # skip blank lines and lines starting with '#'
+                if line == '' or line[:1] == '#': 
+                    continue 
+                elif line.find("end of predicament") == 0:
+                    busy = False
+                    return
+                key, value = line.split('=')
+                key = key.strip()
+                if key == 'new predicament':
+                    # we're in a new predicament without closing the last one.
+                    # the pred file must be invalid.
+                    print("error reading %s." % filename)
+                    print(currentPredicament + " was not ended correctly.")
                     print("this is a fatal error. aborting")
                     raise SystemExit
-                busy = True
-                if tempdict:
-                    # the tempdict should be empty at this point
-                    tempdict.clear()
-                tempdict['this'] = value.strip()
-            elif key == 'text':
-                # if there is no text yet, tell it that text will be a list
-                if not 'text' in tempdict:
-                    tempdict['text'] = []
-                # add each line of text onto the prev line of text
-                tempdict['text'].append(value.strip())
-            elif key == 'option':
-                if not 'options' in tempdict:
-                    tempdict['options'] = []
-                if len(tempdict['options']) < 6: # we only allow abcdef - 6 options
-                    tempdict['options'].append(value.strip())
-            elif key == 'choice':
-                if not 'choices' in tempdict:
-                    tempdict['choices'] = []
-                if len(tempdict['choices']) < 6:
-                    tempdict['choices'].append(value.strip())
-            elif key[:3] == 'set':
-                if not 'set' in tempdict:
-                    tempdict['set'] = []
-                # everything between 'set' and '=' is the parameter
-                key, parameter = key.split() # parameter cannot have spaces in it
-                #tempdict['set'].append(parameter.strip() + "=" + value.strip())
-                # making this a list of tuples, should be easier to handle later
-                tempdict['set'].append((parameter.strip(), value.strip()))
-            else:
-                tempdict[key] = value.strip()
+                elif key == 'text':
+                    if not self.text:
+                        self.text = []
+                    # add each line of text onto the prev line of text
+                    self.text.append(value.strip())
+                elif key == 'option':
+                    if not self.options:
+                        self.options = []
+                    # we only allow abcdef - 6 options
+                    if len(self.options) < 6:
+                        self.options.append(value.strip())
+                elif key == 'choice':
+                    if not self.choices:
+                        self.choices = []
+                    # we only allow abcdef - 6 choices
+                    if len(self.choices) < 6:
+                        self.choices.append(value.strip())
+                elif key[:3] == 'set':
+                    if not self.setvars:
+                        self.setvars = []
+                    # everything between 'set' and '=' is the parameter
+                    key, parameter = key.split() # parameter cannot have spaces in it
+                    # stored as a list of tuples (variable, value)
+                    self.setvars.append((parameter.strip(), value.strip()))
+                elif key == 'next':
+                    self.next = value.strip()
+                elif key == 'inputtype':
+                    self.inputtype = value.strip()
+                elif key == 'result':
+                    self.result = value.strip()
+                else:
+                    print("%s is not a valid pred directive" % key)
+                    raise SystemExit
+        fp.close()
+        return
+
+    #def __str__(self):
+    #    return 'Predicament: %s: %s' % (self.name, self.text)
+
 
 if __name__ == '__main__':
     #print("content of", datadir, ": ", os.listdir(datadir))

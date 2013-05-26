@@ -2,7 +2,7 @@
 # main.py
 # THIS DOES EVERYTHING!
 
-from predicaments import predicaments, preferredButtons
+from predicaments import predicaments, preferredButtons, Predicament
 from funtoolkit import *
 
 # moved this to funtoolkit
@@ -14,10 +14,13 @@ from funtoolkit import *
 def play(predicament):
     global profile, items, queststatus
     clear()
+    currentPredicament = Predicament(predicament)
+    predicament = currentPredicament.__dict__
     #if there are SET statements in predicament, do those before printing text
-    if 'set' in predicament:
-        for statement in predicament['set']:
-            variable, value = statement.split('=')
+    if predicament['setvars']:
+        for statement in predicament['setvars']:
+            # make tuple readable
+            variable, value = statement[0], statement[1]
             if variable not in profile.keys():
                 print("error: probable invalid SET statement in predicament",
                        predicament['this'])
@@ -33,7 +36,7 @@ def play(predicament):
     elif predicament['inputtype'] == 'none':
         ch = anykey()
         if commonOptions(ch):
-            return predicament['this']
+            return currentPredicament.name
         # hit backspace or ^H to go back
         elif ch == '\x08' or ch == '\x7F':
             #return predicament['prev']
@@ -68,7 +71,7 @@ if __name__ == '__main__':
     prevPredicaments = ['title']
     while True:
         try:
-            nextPredicament = play(predicaments[currentPredicament])
+            nextPredicament = play(currentPredicament)
         except KeyError:
             print("oops! predicament '%s' doesn't exist yet :C" 
                   % nextPredicament)
