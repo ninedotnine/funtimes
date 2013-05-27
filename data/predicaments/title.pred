@@ -1,8 +1,10 @@
 # title screen and character creation
 
 new predicament = title
-
     inputtype = none
+    disable = fancytext
+    disable = prompt
+
     text = ####### #     # #     # ####### ### #     # #######  #####
     text = #       #     # ##    #    #     #  ##   ## #       #     #
     text = #       #     # # #   #    #     #  # # # # #       #
@@ -33,7 +35,9 @@ new predicament = createCharacter2
     inputtype = none
 
     text = "Alright," he says. "You gonna go order, or should I?"
+    text = 
     text = This is the third time he's asked you this.
+    text = 
     text = Making sure to roll your eyes as visibly as possible, you stand
     text = up from your table and walk to the counter.
 
@@ -44,12 +48,15 @@ new predicament = createCharacter3
     inputtype = input
     result = firstname
 
-    text = "Medium pepperoni." The spotty clerk takes your money.
-    text = "Name?"
+    text = "Medium pepperoni."
+    text = 
+    text = The spotty clerk takes your money. "Name?" he asks.
+    text = 
     text = "What do you need that for?"
+    text = 
     text = "We don't do numbers anymore," he says dully. "I'll call you up to
-    text = the counter when your pizza is ready." 
-    text = What is your name?
+    text = the counter when your pizza is ready."
+    prompt = What is your name?
 
     next = createCharacter4
 end of predicament createCharacter3
@@ -59,9 +66,10 @@ new predicament = createCharacter4
     result = lastname
     
     text = "%firstname%."
+    text = 
     text = The spotty clerk just rolls his eyes.
     text = "LAST name?"
-    text = What is your LAST name?
+    prompt = What is your LAST name?
 
     next = createCharacter5
 end of predicament createCharacter4
@@ -69,9 +77,11 @@ end of predicament createCharacter4
 new predicament = createCharacter5
     inputtype = none
     text = "%lastname%."
+    text = 
     text = "Thank you," he says. He turns over his shoulder and yells to someone
     text = in the back, "%firstname% %lastname% is in dire need of a pepperoni!
     text = Thick and juicy if possible! Thank you."
+    text = 
     text = He turns back and winks at you.
 
     next = createCharacter6
@@ -107,6 +117,7 @@ new predicament = womans2
 
     text = "Ugh," you mutter, wiping your mouth with some toilet paper. "What a way
     text = to start the game!"
+    text = 
     text = On your way out of the bathroom, you see a janitor come out of the first stall.
     text = A single tear runs down her cheek when she sees the mess you made.
 
@@ -119,6 +130,7 @@ new predicament = mans
 
     text = You stumble into the washroom, trying to hold in the puke. The only
     text = stall is occupied, so you throw up in the nearest urinal instead.
+    text = 
     text = "Ugh," you mutter, wiping your mouth with some paper towel. "What a
     text = way to start the game!"
 
@@ -159,8 +171,8 @@ end of predicament firstMeetingGirl
 new predicament = firstMeetingGirl2
     inputtype = none
 
-    text = "Hey," she says awkwardly.
-    text = You return the greeting.
+    text = "Hey," she says awkwardly. You return the greeting.
+    text = 
     text = "%girlname% wanted me to come talk to you," she says. You look over to where she
     text = keeps glancing to look at who you assume to be %girlname%. She's actually pretty
     text = cute.
@@ -187,6 +199,7 @@ new predicament = setFriendsName
     text = "What his name?" she asks, trying to sound casual.
     text = 
     text = What IS his name?
+    prompt = Your poor memory says that it is...
 
     next = endOfCreateCharacter
 end of predicament setFriendsName
@@ -195,9 +208,12 @@ new predicament = endOfCreateCharacter
     inputtype = none
 
     text = "%friendname%," you answer. %girlname%'s friend nods.
+    text = 
     text = Before the conversation can get any more awkward, the spotty clerk calls
     text = your name. The girl in front of you starts to walk back to her table.
+    text = 
     text = "See you later," she says.
+    text = 
     text = Somehow, you feel like there was more to that than knowing the name of your
     text = best friend. But a missed opportunity is better than no opportunity, right?
 

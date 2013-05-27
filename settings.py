@@ -7,3 +7,6 @@ preferredButtons = 'abcdef'
 #preferredButtons = 'aoeujk'
 
 historycache = 10
+defaultNonePrompt = '-->'
+defaultNormalPrompt = 'What do you want to do?'
+defaultInputPrompt = 'Please type something.'

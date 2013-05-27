@@ -5,12 +5,14 @@
 
 import os
 import pickle
+import time
+import sys
 from subprocess import call
 from profiledata import profile, items, queststatus
 
 # define method to press any key. currently only works on unix
 if os.name != 'nt':
-    import sys, termios, tty
+    import termios, tty
     # allows user to press any key to continue. thanks, Matthew Adams:
     # http://stackoverflow.com/questions/11876618/python-press-any-key-to-exit
     def anykey(message=''):
@@ -162,12 +164,23 @@ def replaceVariables(text):
         #text = text.replace(key, value)
     #return text
 
+def fancyPrint(text):
+    # prints lines character-by-character to be fancy
+    text = replaceVariables(text)
+    for character in text:
+        sys.stdout.write(character)
+        sys.stdout.flush()
+        time.sleep(0.004)
+    if text == '':
+        time.sleep(0.5)
+    print() # put a newline at the end
+
 if __name__ == '__main__':
     savedata = load()
     profile = savedata[0]
     items = savedata[1]
     queststatus = savedata[2]
-    print(replaceVariables("name is: %bran%."))
+    print(replaceVariables("name is: %firstname%."))
     #save(savedata)
     #data = load()
     #print(data)

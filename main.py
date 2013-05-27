@@ -4,8 +4,8 @@
 
 from predicaments import predicaments, Predicament
 from funtoolkit import *
+from settings import *
 from collections import deque
-from settings import preferredButtons, historycache
 
 # moved this to funtoolkit
 # from profiledata import profile, items, queststatus
@@ -35,12 +35,32 @@ def play(predicament):
                 raise SystemExit
             #profile[variable] = value
     for line in predicament.text:
-        print(replaceVariables(line))
+        #print(replaceVariables(line))
+        if predicament.disable and "fancytext" in predicament.disable:
+            print(replaceVariables(line))
+        elif not predicament.disable or "fancytext" not in predicament.disable:
+            fancyPrint(line)
     if not predicament.inputtype:
         print("error: predicament %s has no inputtype" % predicament.name)
         raise SystemExit
-    elif predicament.inputtype == 'none':
-        ch = anykey()
+    else: 
+        # decide what the prompt will be
+        if predicament.prompt:
+            # if there is a custom prompt, just use it
+            prompt = "\n[" + predicament.prompt + "]"
+        elif predicament.disable and "prompt" in predicament.disable:
+            # otherwise, disable the prompt if it's disabled
+            prompt = ""
+        elif not predicament.disable or "prompt" not in predicament.disable:
+            # or, just use the default prompt depending on inputtype
+            if predicament.inputtype == 'none':
+                prompt = "\n[" + defaultNonePrompt + "]"
+            elif predicament.inputtype == 'normal':
+                prompt = "\n[" + defaultNormalPrompt + "]"
+            elif predicament.inputtype == 'input':
+                prompt = "\n[" + defaultInputPrompt + "]"
+    if predicament.inputtype == 'none':
+        ch = anykey(prompt)
         if commonOptions(ch):
             return predicament.name
         # hit backspace or ^H to go back
@@ -48,11 +68,12 @@ def play(predicament):
             return '\x7F'
         return predicament.goto
     elif predicament.inputtype == 'input':
+        print(prompt)
         try:
             profile[predicament.result] = input().strip()
             while profile[predicament.result] == '':
                 # output the last line of text until a valid input is provided
-                profile[predicament.result] = input(predicament.text[-1] + '\n').strip()
+                profile[predicament.result] = input(prompt + "\n").strip()
         except KeyboardInterrupt:
             quit()
         return predicament.goto
@@ -62,8 +83,9 @@ def play(predicament):
         #print("options", len(predicament['options']))
         print()
         for option in predicament.options:
-            print(next(iterletters), '-', option)
-        choice = anykey("\nWhat do you want to do?")
+            string = next(iterletters) + ' - ' + option
+            fancyPrint(string)
+        choice = anykey(prompt)
         while True:
             if commonOptions(choice):
                 return predicament.name

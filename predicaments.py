@@ -27,11 +27,13 @@ class BadPredicamentError(Exception):
         elif code == 5:
             print("should be busy...", "was the file %s too short?" % args[0])
         elif code == 6:
-            print("at", args[0])
+            print("in", args[0])
         elif code == 7:
             print("didn't find an end of predicament for:", args[0])
         elif code == 8:
             print("no data directory")
+        elif code == 9:
+            print("%s has inputtype %s, which is insane." %(args[0],args[1]))
         print("this is a fatal error. aborting")
         raise SystemExit
 
@@ -49,11 +51,13 @@ by checking the predicaments dictionary."""
         self.name = name
         self.text = None
         self.setvars = None
+        self.disable = None
         self.options = None
         # goto is a list if inputtype = 'normal', a string otherwise 
         self.goto = None
         self.inputtype = None
         self.result = None
+        self.prompt = None
 
         try:
             filename, lineNo = predicaments[self.name]
@@ -116,6 +120,10 @@ by checking the predicaments dictionary."""
                     # we only allow abcdef - 6 choices
                     if len(self.goto) < 6:
                         self.goto.append(value.strip())
+                elif key == 'disable':
+                    if not self.disable:
+                        self.disable = []
+                    self.disable.append(value.strip())
                 elif key[:3] == 'set':
                     if not self.setvars:
                         self.setvars = []
@@ -127,9 +135,14 @@ by checking the predicaments dictionary."""
                 elif key == 'next':
                     self.goto = value.strip()
                 elif key == 'inputtype':
+                    if value.strip() != 'none' and value.strip() != 'normal' and value.strip() != 'input':
+                        print("WHOA! %s is not a chill inputtype!" % value)
+                        raise BadPredicamentError(6, self.name)
                     self.inputtype = value.strip()
                 elif key == 'result':
                     self.result = value.strip()
+                elif key == 'prompt':
+                    self.prompt = value.strip()
                 else:
                     print("%s is not a valid pred directive" % key)
                     raise BadPredicamentError(6, self.name)
