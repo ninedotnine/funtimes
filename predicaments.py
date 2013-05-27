@@ -18,27 +18,24 @@ if not os.path.isdir(datadir):
     print("error: no data directory")
     raise SystemExit
 
+# populate predicaments dictionary with locations of all known predicaments
 for filename in os.listdir(datadir):
     basename, ext = os.path.splitext(filename)
     if ext != '.pred':
         print("WARNING: skipping %s/%s%s..." % (datadir, basename, ext))
         continue
+    busy = False # whether we're currently reading a predicament
+    lineNo = 0
     with open(datadir + '/' + filename, 'r') as fp:
-        busy = False # whether we're currently reading a predicament
         for line in fp:
+            lineNo += 1
             line = line.strip()
-            # skip blank lines and lines starting with '#'
-            if line == '' or line[:1] == '#': 
-                continue
-            elif line.find("end of predicament") == 0:
-                continue
-            key, value = line.split('=')
-            key = key.strip()
-            if key == 'new predicament':
+            if line.find("new predicament") == 0:
+                name = line.split('=')[1]
                 # create entry in predicaments dictionary
-                # 'title of predicament' : 'which pred file it is in'
-                name = value.strip()
-                predicaments[name] = filename
+                # 'title of predicament' : ('which .pred file it is in',lineNo)
+                name = name.strip()
+                predicaments[name] = (filename, lineNo)
 
 class Predicament:
     """this is a class for holding a predicament!"""
@@ -57,39 +54,37 @@ class Predicament:
         self.inputtype = None
         self.result = None
 
-        filename = predicaments[name]
+        filename, lineNo = predicaments[name]
         fp = open(datadir + '/' + filename, 'r')
-        busy = False #whether we are currently reading the predicament
+        busy = False #whether we are currently reading a predicament
         for line in fp:
-            if busy == False:
-                # iterate through lines looking for start of predicament
-                line = line.strip()
-                # skip blank lines and lines starting with '#'
-                if line == '' or line[:1] == '#': 
+            # count down to the correct line
+            if lineNo > 1:
+                lineNo -= 1
+                continue
+            line = line.strip()
+            # skip blank lines and lines starting with '#'
+            if line == '' or line[:1] == '#': 
+                continue
+            if not busy:
+                #if line.find('new predicament') == 0:
+                value = line.split('=')[1].strip()
+                #key = key.strip()
+                currentPredicament = value.strip()
+                # if it's the right predicament, start parsing
+                if currentPredicament == name:
+                    busy = True
                     continue
-                elif line.find("end of predicament") == 0:
-                    continue
-                key, value = line.split('=')
-                key = key.strip()
-                if key == 'new predicament':
-                    currentPredicament = value.strip();
-                    # if it's the right predicament, start parsing
-                    if currentPredicament == name:
-                        busy = True
-                        continue
-            if busy == True:
-                line = line.strip()
-                # skip blank lines and lines starting with '#'
-                if line == '' or line[:1] == '#': 
-                    continue 
-                elif line.find("end of predicament") == 0:
+            # if busy == True:
+            else:
+                if line.find("end of predicament") == 0:
                     busy = False
                     return
                 key, value = line.split('=')
                 key = key.strip()
                 if key == 'new predicament':
                     # we're in a new predicament without closing the last one.
-                    # the pred file must be invalid.
+                    # the .pred file must be invalid.
                     print("error reading %s." % filename)
                     print(currentPredicament + " was not ended correctly.")
                     print("this is a fatal error. aborting")
@@ -136,9 +131,9 @@ class Predicament:
 
 if __name__ == '__main__':
     #print("content of", datadir, ": ", os.listdir(datadir))
-    print()
-    print("number of predicaments:", Predicament.numPredicaments)
+    #print()
+    #print("number of predicaments:", Predicament.numPredicaments)
+    print("number of predicaments:", len(predicaments))
     print("predicaments is:")
-    print(predicaments)
     for key in predicaments:
-        print(predicaments[key])
+        print(key + ":", predicaments[key])

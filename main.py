@@ -9,24 +9,29 @@ from funtoolkit import *
 # from profiledata import profile, items, queststatus
 
 # allows user to make a choice, returns their choice or false if they didn't
+# i think i took out all the possible false returns...
 # the predicament parameter is one of the dictionaries stored in predicaments 
+# the predicament parameter is a Predicament 
 # should return a string
 def play(predicament):
     global profile, items, queststatus
     clear()
-    predicament = Predicament(predicament)
+    #predicament = Predicament(predicament)
     #if there are SET statements in predicament, do those before printing text
     if predicament.setvars:
         for statement in predicament.setvars:
             # make tuple readable
             variable, value = statement[0], statement[1]
-            if variable not in profile.keys():
+            try:
+                profile[variable] = value
+            #if variable not in profile.keys():
+            except KeyError:
                 print("error: probable invalid SET statement in predicament",
                        predicament.name)
                 print("refers to nonexistent variable '%s'" % variable)
                 print("this is a fatal error. aborting")
                 raise SystemExit
-            profile[variable] = value
+            #profile[variable] = value
     for line in predicament.text:
         print(replaceVariables(line))
     if not predicament.inputtype:
@@ -65,24 +70,25 @@ def play(predicament):
 
 
 if __name__ == '__main__':
-    currentPredicament = 'title'
+    currentPredicament = Predicament('title')
     # prevPredicaments is a list. after each new predicament, append it.
     prevPredicaments = ['title']
     while True:
-        try:
-            nextPredicament = play(currentPredicament)
-        except KeyError:
-            print("oops! predicament '%s' doesn't exist yet :C" 
-                  % nextPredicament)
-            raise SystemExit
+        nextPredicament = play(currentPredicament)
+        #try:
+        #except KeyError:
+            #print("oops! predicament '%s' doesn't exist yet :C" 
+                  #% nextPredicament)
+            #raise SystemExit
         if nextPredicament == '\x7F':
             # go back to last predicament
             try: 
-                currentPredicament = prevPredicaments.pop()
+                currentPredicament = Predicament(prevPredicaments.pop())
             except IndexError:
                 anykey("no history available.")
             continue
-        elif nextPredicament != currentPredicament:
+        nextPredicament = Predicament(nextPredicament)
+        if nextPredicament.name != currentPredicament.name:
             prevPredicaments.append(currentPredicament)
             currentPredicament = nextPredicament
         #if currentPredicament not in predicaments:
