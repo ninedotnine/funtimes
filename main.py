@@ -2,8 +2,10 @@
 # main.py
 # THIS DOES EVERYTHING!
 
-from predicaments import predicaments, preferredButtons, Predicament
+from predicaments import predicaments, Predicament
 from funtoolkit import *
+from collections import deque
+from settings import preferredButtons, historycache
 
 # moved this to funtoolkit
 # from profiledata import profile, items, queststatus
@@ -43,15 +45,17 @@ def play(predicament):
             return predicament.name
         # hit backspace or ^H to go back
         elif ch == '\x08' or ch == '\x7F':
-            #return predicament['prev']
             return '\x7F'
-        return predicament.next
+        return predicament.goto
     elif predicament.inputtype == 'input':
-        profile[predicament.result] = input().strip()
-        while profile[predicament.result] == '':
-            # output the last line of text until a valid input is provided
-            profile[predicament.result] = input(predicament.text[-1] + '\n').strip()
-        return predicament.next
+        try:
+            profile[predicament.result] = input().strip()
+            while profile[predicament.result] == '':
+                # output the last line of text until a valid input is provided
+                profile[predicament.result] = input(predicament.text[-1] + '\n').strip()
+        except KeyboardInterrupt:
+            quit()
+        return predicament.goto
     elif predicament.inputtype == 'normal':
         letters = preferredButtons[:len(predicament.options)]
         iterletters = iter(letters)
@@ -63,28 +67,27 @@ def play(predicament):
         while True:
             if commonOptions(choice):
                 return predicament.name
+            elif choice == '\x08' or choice == '\x7F':
+                return '\x7F'
             elif choice not in letters:
                 choice = anykey("invalid option")
             else:
-                return predicament.choices[letters.index(choice)]
+                return predicament.goto[letters.index(choice)]
 
 
 if __name__ == '__main__':
     currentPredicament = Predicament('title')
-    # prevPredicaments is a list. after each new predicament, append it.
-    prevPredicaments = ['title']
+    # prevPredicaments is a queue. after each new predicament, append it.
+    # it holds past Predicaments. it does not hold strings
+    prevPredicaments = deque(maxlen=historycache)
     while True:
         nextPredicament = play(currentPredicament)
-        #try:
-        #except KeyError:
-            #print("oops! predicament '%s' doesn't exist yet :C" 
-                  #% nextPredicament)
-            #raise SystemExit
         if nextPredicament == '\x7F':
             # go back to last predicament
             try: 
-                currentPredicament = Predicament(prevPredicaments.pop())
+                currentPredicament = prevPredicaments.pop()
             except IndexError:
+                clear()
                 anykey("no history available.")
             continue
         nextPredicament = Predicament(nextPredicament)

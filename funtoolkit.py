@@ -29,10 +29,9 @@ if os.name != 'nt':
         finally:
             # reset 
             termios.tcsetattr(stdinFileDesc, termios.TCSADRAIN, oldStdinTtyAttr)
-        if char == '\x03':
-            raise KeyboardInterrupt
-        if char == 'q':
-            raise SystemExit
+        if char == '\x03' or char == 'q':
+            #raise KeyboardInterrupt
+            quit()
         return char
 
 # define the method to clear the output, system-dependently
@@ -66,6 +65,10 @@ def load(filename="save.sav"):
     except IOError:
         print("error loading data :C")
     anykey()
+
+def quit(message="\nSee you!"):
+    print(message)
+    raise SystemExit
 
 def stats(pause=True): 
     clear()
