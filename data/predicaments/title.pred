@@ -89,3 +89,127 @@ new predicament = createCharacter6
     choice = womans
     choice = mans
 end of predicament createCharacter6
+
+new predicament = womans
+    inputtype = none
+    set gender = girl
+
+    text = You stumble into the washroom, trying to hold in the puke. The first
+    text = stall is occupied, so you run into the second one. Unfortunately, this
+    text = slight delay causes you to miss the toilet entirely and throw up all over
+    text = the already-filthy tiled floor.
+
+    next = womans2
+end of predicament womans
+
+new predicament = womans2
+    inputtype = none
+
+    text = "Ugh," you mutter, wiping your mouth with some toilet paper. "What a way
+    text = to start the game!"
+    text = On your way out of the bathroom, you see a janitor come out of the first stall.
+    text = A single tear runs down her cheek when she sees the mess you made.
+
+    next = leavingWashroom
+end of predicament womans2
+
+new predicament = mans
+    inputtype = none
+    set gender = boy
+
+    text = You stumble into the washroom, trying to hold in the puke. The only
+    text = stall is occupied, so you throw up in the nearest urinal instead.
+    text = "Ugh," you mutter, wiping your mouth with some paper towel. "What a
+    text = way to start the game!"
+
+    next = mans2
+end of predicament mans
+
+new predicament = mans2
+    inputtype = none
+
+    text = Before you can wash your hands, the stall opens. Out comes the imposing
+    text = figure of a Pizza Pizza janitor! He takes one look at the urinal you
+    text = desecrated. A single tear runs down his cheek as you hastily make your
+    text = way towards the exit.
+
+    next = leavingWashroom
+end of predicament mans2
+
+new predicament = leavingWashroom
+    inputtype = none
+
+    text = You're feeling a bit better now, soothed by the hideous fluorescent lighting
+    text = of Pizza Pizza, and the fact that you can breathe out of your nose again.
+    text = You're about to go back to your table when a girl walks up to you.
+
+    next = firstMeetingGirl
+end of predicament leavingWashroom
+
+new predicament = firstMeetingGirl
+    inputtype = none
+
+    text = She looks endlessly embarrassed, biting her lip between every other word and
+    text = glancing back at a table on the other side of the room before she clears her
+    text = throat in your general direction.
+
+    next = firstMeetingGirl2
+end of predicament firstMeetingGirl
+
+new predicament = firstMeetingGirl2
+    inputtype = none
+
+    text = "Hey," she says awkwardly.
+    text = You return the greeting.
+    text = "%girlname% wanted me to come talk to you," she says. You look over to where she
+    text = keeps glancing to look at who you assume to be %girlname%. She's actually pretty
+    text = cute.
+    #if gender=girl {text = When did you become a lesbian?}
+
+    next = firstMeetingGirl3
+end of predicament firstMeetingGirl2
+
+new predicament = firstMeetingGirl3
+    inputtype = none
+
+    text = %girlname%'s friend bites her lip. "Is that your friend?"
+    text = You stop looking at %girlname% to look back at your friend, to whom the girl is
+    text = pointing. He picks his nose idly.
+    text = "Yeah, I guess," you say.
+
+    next = setFriendsName
+end of predicament firstMeetingGirl3
+
+new predicament = setFriendsName
+    inputtype = input
+    result = friendname
+
+    text = "What his name?" she asks, trying to sound casual.
+    text = 
+    text = What IS his name?
+
+    next = endOfCreateCharacter
+end of predicament setFriendsName
+
+new predicament = endOfCreateCharacter
+    inputtype = none
+
+    text = "%friendname%," you answer. %girlname%'s friend nods.
+    text = Before the conversation can get any more awkward, the spotty clerk calls
+    text = your name. The girl in front of you starts to walk back to her table.
+    text = "See you later," she says.
+    text = Somehow, you feel like there was more to that than knowing the name of your
+    text = best friend. But a missed opportunity is better than no opportunity, right?
+
+    next = endOfCreateCharacter2
+end of predicament endOfCreateCharacter
+
+new predicament = endOfCreateCharacter2
+    inputtype = none
+
+    text = The rest of the day goes by as normal. You and %friendname% split up and you
+    text = head back home for an early night. It's a good thing, too, because tomorrow
+    text = will be the longest day ever...
+
+    next = bedroom
+end of predicament endOfCreateCharacter2
