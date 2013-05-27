@@ -21,8 +21,6 @@ end of predicament title
 
 new predicament = createCharacter
     inputtype = none
-    set bran = Tom
-    set rainey = Smith
 
     text = Your best friend sits across from you at Pizza Pizza, picking
     text = at his teeth idly. He glances up at the spotty clerk behind the
@@ -37,14 +35,14 @@ new predicament = createCharacter2
     text = "Alright," he says. "You gonna go order, or should I?"
     text = This is the third time he's asked you this.
     text = Making sure to roll your eyes as visibly as possible, you stand
-    text = up from your table and walk up to the counter.
+    text = up from your table and walk to the counter.
 
     next = createCharacter3
 end of predicament createCharacter2
 
 new predicament = createCharacter3
     inputtype = input
-    result = bran
+    result = firstname
 
     text = "Medium pepperoni." The spotty clerk takes your money.
     text = "Name?"
@@ -58,9 +56,9 @@ end of predicament createCharacter3
 
 new predicament = createCharacter4
     inputtype = input
-    result = rainey
+    result = lastname
     
-    text = "%bran%."
+    text = "%firstname%."
     text = The spotty clerk just rolls his eyes.
     text = "LAST name?"
     text = What is your LAST name?
@@ -70,9 +68,9 @@ end of predicament createCharacter4
 
 new predicament = createCharacter5
     inputtype = none
-    text = "%rainey%."
+    text = "%lastname%."
     text = "Thank you," he says. He turns over his shoulder and yells to someone
-    text = in the back, "%bran% %rainey% is in dire need of a pepperoni!
+    text = in the back, "%firstname% %lastname% is in dire need of a pepperoni!
     text = Thick and juicy if possible! Thank you."
     text = He turns back and winks at you.
 

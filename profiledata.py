@@ -3,11 +3,11 @@
 
 profile = {
 
-        'bran' : "bran",
-        'rainey': "rainey",
-        'man' : "boy",
-        'ryan' : "ryan",
-        'katie' : "katie",
+        'firstname' : "Default",
+        'lastname': "Namington",
+        'gender' : "boy",
+        'friendname' : "Ryan",
+        'girlname' : "Katie",
         'weet' : 0,
         'posts' : 0,
         'money' : 0,

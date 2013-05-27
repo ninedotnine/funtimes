@@ -70,8 +70,8 @@ def load(filename="save.sav"):
 def stats(pause=True): 
     clear()
     print("CHARACTER STATS:")
-    print("You are a %s named %s %s." % (profile['man'], profile['bran'],
-                                        profile['rainey']))
+    print("You are a %s named %s %s." % (profile['gender'], profile['firstname'],
+                                        profile['lastname']))
     print("You currently have %d weet point(s)." % profile['weet'])
     print("You have $%d in your pocket." % profile['money'])
     print("You have %d energy point(s) left." % profile['energy'])
@@ -84,11 +84,11 @@ def stats(pause=True):
     if profile['intellect'] > 14:
         print("You are very intelligent.")
     if profile['love'] == 2:
-        print("You have a crush on %s" % profile['katie'])
+        print("You have a crush on %s" % profile['girlname'])
     elif profile['love'] == 3:
-        print("You're dating %s" % profile['katie'])
+        print("You're dating %s" % profile['girlname'])
     elif profile['love'] == 4:
-        print("You're in love with %s" % profile['katie'])
+        print("You're in love with %s" % profile['girlname'])
     print("\nITEMS ON HAND:")
     for item in items:
         if items[item] == True:
