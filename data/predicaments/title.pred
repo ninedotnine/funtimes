@@ -24,6 +24,16 @@ end of predicament title
 new predicament = createCharacter
     inputtype = none
 
+    if firstname = Dfault
+        or not
+    if lastname = Namington
+        then 
+        text = your name is terrible.
+        if girlname = Katie
+            then
+            text = gerl is katie
+        end if
+    end if 
     text = Your best friend sits across from you at Pizza Pizza, picking
     text = at his teeth idly. He glances up at the spotty clerk behind the
     text = counter.
