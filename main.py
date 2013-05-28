@@ -33,32 +33,32 @@ def play(predicament):
                 print("refers to nonexistent variable '%s'" % variable)
                 print("this is a fatal error. aborting")
                 raise SystemExit
-            #profile[variable] = value
     for line in predicament.text:
-        #print(replaceVariables(line))
-        if predicament.disable and "fancytext" in predicament.disable:
+        if "fancytext" in predicament.disable:
             print(replaceVariables(line))
-        elif not predicament.disable or "fancytext" not in predicament.disable:
+        else:
             fancyPrint(line)
-    if not predicament.inputtype:
-        print("error: predicament %s has no inputtype" % predicament.name)
-        raise SystemExit
-    else: 
-        # decide what the prompt will be
-        if predicament.prompt:
-            # if there is a custom prompt, just use it
-            prompt = "\n[" + predicament.prompt + "]"
-        elif predicament.disable and "prompt" in predicament.disable:
-            # otherwise, disable the prompt if it's disabled
-            prompt = ""
-        elif not predicament.disable or "prompt" not in predicament.disable:
-            # or, just use the default prompt depending on inputtype
-            if predicament.inputtype == 'none':
-                prompt = "\n[" + defaultNonePrompt + "]"
-            elif predicament.inputtype == 'normal':
-                prompt = "\n[" + defaultNormalPrompt + "]"
-            elif predicament.inputtype == 'input':
-                prompt = "\n[" + defaultInputPrompt + "]"
+    # decide what the prompt will be
+    if predicament.prompt:
+        # if there is a custom prompt, just use it
+        prompt = "\n[" + predicament.prompt + "]"
+    elif predicament.disable and "prompt" in predicament.disable:
+        # otherwise, disable the prompt if it's disabled
+        prompt = ""
+    elif not predicament.disable or "prompt" not in predicament.disable:
+        # or, just use the default prompt depending on inputtype
+        if predicament.inputtype == 'none':
+            prompt = "\n[" + defaultNonePrompt + "]"
+        elif predicament.inputtype == 'normal':
+            prompt = "\n[" + defaultNormalPrompt + "]"
+        elif predicament.inputtype == 'input':
+            prompt = "\n[" + defaultInputPrompt + "]"
+    # once we're done fancyprinting, we don't want to redraw the predicament if
+    # we return to it while it's in memory (unpausing, using backspace, etc)
+    if "fancytext" not in predicament.disable \
+    and "normal" not in predicament.inputtype:
+        # normal predicaments still have some fancyprinting to do
+        predicament.disable.append("fancytext")
     if predicament.inputtype == 'none':
         ch = anykey(prompt)
         if commonOptions(ch):
@@ -66,12 +66,16 @@ def play(predicament):
         # hit backspace or ^H to go back
         elif ch == '\x08' or ch == '\x7F':
             return '\x7F'
-        # hit ^R to redraw the text
+        # hit ^R to forcibly redraw the text
         elif ch == '\x12':
+            predicament.disable.remove("fancytext")
             return predicament.name
         return predicament.goto
     elif predicament.inputtype == 'input':
         print(prompt)
+        # because invalid input would be a newline, we don't want the newline
+        # again after the first one. this'll keep it looking consistent.
+        prompt = prompt[1:]
         try:
             profile[predicament.result] = input().strip()
             while profile[predicament.result] == '':
@@ -87,19 +91,25 @@ def play(predicament):
         print()
         for option in predicament.options:
             string = next(iterletters) + ' - ' + option
-            fancyPrint(string)
+            if 'fancytext' in predicament.disable:
+                print(string)
+            else:
+                # *now* normal predicaments are done fancyprinting
+                predicament.disable.append("fancytext")
+                fancyPrint(string)
         choice = anykey(prompt)
         while True:
-            if commonOptions(choice):
+            if commonOptions(choice):            
                 return predicament.name
             # hit backspace or ^H to go back
             elif choice == '\x08' or choice == '\x7F':
                 return '\x7F'
-            # hit ^R to redraw the text
+            # hit ^R to forcibly redraw the text
             elif choice == '\x12':
+                predicament.disable.remove("fancytext")
                 return predicament.name
             elif choice not in letters:
-                choice = anykey("invalid option")
+                choice = anykey(prompt)
             else:
                 return predicament.goto[letters.index(choice)]
 
@@ -113,7 +123,7 @@ if __name__ == '__main__':
         nextPredicament = play(currentPredicament)
         if nextPredicament == '\x7F':
             # go back to last predicament
-            try: 
+            try:
                 currentPredicament = prevPredicaments.pop()
             except IndexError:
                 clear()

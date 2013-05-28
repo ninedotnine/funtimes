@@ -24,22 +24,13 @@ end of predicament title
 new predicament = createCharacter
     inputtype = none
 
-    if firstname = Dfault
-        or not
-    if lastname = Namington
-        then 
-        text = your name is terrible.
-        if girlname = Katie
-            then
-            text = gerl is katie
-        end if
-    end if 
     text = Your best friend sits across from you at Pizza Pizza, picking
     text = at his teeth idly. He glances up at the spotty clerk behind the
     text = counter.
 
     next = createCharacter2
 end of predicament createCharacter
+
 
 new predicament = createCharacter2
     inputtype = none
@@ -186,7 +177,11 @@ new predicament = firstMeetingGirl2
     text = "%girlname% wanted me to come talk to you," she says. You look over to where she
     text = keeps glancing to look at who you assume to be %girlname%. She's actually pretty
     text = cute.
-    #if gender=girl {text = When did you become a lesbian?}
+    if gender = girl
+        then
+        text = 
+        text = When did you become a lesbian?
+    end if
 
     next = firstMeetingGirl3
 end of predicament firstMeetingGirl2
@@ -195,8 +190,10 @@ new predicament = firstMeetingGirl3
     inputtype = none
 
     text = %girlname%'s friend bites her lip. "Is that your friend?"
+    text = 
     text = You stop looking at %girlname% to look back at your friend, to whom the girl is
     text = pointing. He picks his nose idly.
+    text = 
     text = "Yeah, I guess," you say.
 
     next = setFriendsName

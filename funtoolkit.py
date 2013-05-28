@@ -125,9 +125,11 @@ def commonOptions(ch):
         return True
     elif ch == 's':
         save()
+        lastPressedKey = 's'
         return True
     elif ch == 'h':
         helpme()
+        lastPressedKey = 'h'
         return True
     elif ch == 'q':
         raise SystemExit
@@ -157,15 +159,20 @@ def replaceVariables(text):
                             + text[end+1:])
 
 def fancyPrint(text):
-    # prints lines character-by-character to be fancy
-    text = replaceVariables(text)
-    for character in text:
-        sys.stdout.write(character)
-        sys.stdout.flush()
-        time.sleep(fancyPrintSpeed)
-    if text == '':
-        time.sleep(fancyPrintLineDelay)
-    print() # put a newline at the end
+    # watch for ^C so it can quit prettily if needed
+    try:
+        # prints lines character-by-character to be fancy
+        text = replaceVariables(text)
+        for character in text:
+            sys.stdout.write(character)
+            sys.stdout.flush()
+            time.sleep(fancyPrintSpeed)
+        if text == '':
+            time.sleep(fancyPrintLineDelay)
+        print() # put a newline at the end
+    except KeyboardInterrupt:
+        print()
+        quit()
 
 if __name__ == '__main__':
     savedata = load()

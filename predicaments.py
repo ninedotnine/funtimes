@@ -10,25 +10,27 @@ predicaments = {}
 datadir = os.getcwd() + '/data/predicaments'
 if not os.path.isdir(datadir):
     raise BadPredicamentError(8)
-    #print("error: no data directory")
-    #raise SystemExit
 
 class BadPredicamentError(Exception):
     def __init__(self, code=0, *args):
-        print("error code:", code)
+        print("\nerror code:", code)
         if code == 1:
             print("what the hell? i can't find predicament", args[0],
                   "\ndid you modify it while the game was running?")
         elif code == 2:
             print("wrong predicament found:", args[0])
         elif code == 3:
-            print("oops! predicament '%s' doesn't exist yet :C" % args[0])
+            print("what?? predicament", args[0], "doesn't exist,",
+                  "\nor didn't exist when the game was started! >:(")
         elif code == 4:
-            print("reading %s. %s was not ended correctly." %(args[0], args[1]))
+            print("in %s, %s was not ended correctly." %(args[0], args[1]))
         elif code == 5:
-            print("should be busy...", "was the file %s too short?" % args[0])
+            print("reached the end of", args[0], "before finding", args[1],
+                  "\ndid you modify it while the game was running?")
         elif code == 6:
-            print("in", args[0])
+            print("in %s, %s has" %(args[0],args[1]),
+                  "an inputtype of '%s'." %args[2],
+                  "\ni don't know what the hell that means.")
         elif code == 7:
             print("didn't find an end of predicament for:", args[0])
         elif code == 8:
@@ -36,12 +38,29 @@ class BadPredicamentError(Exception):
         elif code == 9:
             print("%s has inputtype %s, which is insane." %(args[0],args[1]))
         elif code == 10:
-            print("'%s' not in profile" % args[0])
+            print("if refers to '%s', which is not in profile." %args[0])
         elif code == 11:
-            print("unexpected line after", args[0])
+            print("in %s, %s has %s after if." %(args[0], args[1], args[2]),
+                  "\nyou forgot to use a keyword, used an invalid keyword,",
+                  "\nor didn't include a condition after 'or' or 'and'.")
+            if '=' in args[2]:
+                print("keywords other than 'then' must precede an if.")
+                print("only use 'then' after the final if condition.")
         elif code == 12:
-            print("unexpected end if in predicament", args[0])
-        print("this is a fatal error. aborting")
+            print("in %s, there is an unexpected 'end if'" %args[0],
+                  "in predicament", args[1])
+        elif code == 13:
+            print("reached end of predicament", args[0], "before 'end if'.",
+                  "\nconditionals must remain within originating predicament.")
+        elif code == 14:
+            print("in %s, %s has a '%s' directive." %(args[0],args[1],args[2]),
+                  "\ni don't know what the hell that means.")
+        elif code == 15:
+            print(args[0], "could not be found while searching for", args[1],
+                  "\ndid you rename or delete it while the game was running?")
+        elif code == 16:
+            print("in %s, %s has no inputtype." %(args[0],args[1]))
+        print("i can't work under these conditions. i quit.\n")
         raise SystemExit
 
 class Predicament:
@@ -58,7 +77,11 @@ by checking the predicaments dictionary."""
         self.name = name
         self.text = None
         self.setvars = None
-        self.disable = None
+        # 99% of objects will have a disable at some point, because we append
+        # 'fancytext' at the end of initial execution. this stops it from
+        # being redrawn when the user unpauses, backspaces, etc. therefore
+        # disable might as well be an existing list all the time
+        self.disable = []
         self.options = None
         # goto is a list if inputtype = 'normal', a string otherwise 
         self.goto = None
@@ -68,9 +91,13 @@ by checking the predicaments dictionary."""
 
         try:
             filename, lineNo = predicaments[self.name]
+            open(datadir + '/' + filename, 'r')
         except KeyError:
+            # if the predicament isn't in our master dictionary...
             raise BadPredicamentError(3, self.name)
-        busy = False #whether we are currently reading a predicament
+        except:
+            # if the file can't be opened...
+            raise BadPredicamentError(15, filename, self.name)
         with open(datadir + '/' + filename, 'r') as fp:
             # basically all of this is just to get to the right line and test
             for line in fp:
@@ -89,7 +116,7 @@ by checking the predicaments dictionary."""
                 break
             if not busy:
                 # we should be busy reading a predicament by this point...
-                raise BadPredicamentError(5, filename)
+                raise BadPredicamentError(5, filename, self.name)
 
             # finally, we start actually assigning the data
             # line should be true (it should still be the new pred line)
@@ -103,13 +130,13 @@ by checking the predicaments dictionary."""
                     if readingIfLevel > 0:
                         readingIfLevel -= 1
                         continue
-                    raise BadPredicamentError(12, self.name)
+                    raise BadPredicamentError(12, filename, self.name)
                 key, value = line.split('=')
                 key = key.rstrip().lower()
                 if key == 'new predicament':
                     # we're in a new predicament without closing the last one.
                     # the pred file must be invalid.
-                    raise BadPredicamentError(4, filename)
+                    raise BadPredicamentError(4, filename, self.name)
                 elif key == 'text':
                     if not self.text:
                         self.text = []
@@ -132,10 +159,8 @@ by checking the predicaments dictionary."""
                     if len(self.goto) < 6:
                         self.goto.append(value.strip())
                 elif key == 'disable':
-                    if not self.disable:
-                        self.disable = []
-                    self.disable.append(value.strip())
-                elif key[:3] == 'set':
+                        self.disable.append(value.strip())
+                elif key[:4] == 'set ':
                     if not self.setvars:
                         self.setvars = []
                     # everything between 'set' and '=' is the parameter
@@ -147,17 +172,16 @@ by checking the predicaments dictionary."""
                     self.goto = value.strip()
                 elif key == 'inputtype':
                     if value.strip() not in ('none', 'normal', 'input'):
-                        print("WHOA! %s is not a chill inputtype!" % value)
-                        raise BadPredicamentError(6, self.name)
+                        raise BadPredicamentError(6, filename, self.name, value.strip())
                     self.inputtype = value.strip()
                 elif key == 'result':
                     self.result = value.strip()
                 elif key == 'prompt':
                     self.prompt = value.strip()
-                elif key[:2] == 'if':
+                elif key[:3] == 'if ':
                     parameter = key.split()[1].strip()
                     tempIfLevel = readingIfLevel + 1
-                    if doIf(fp, parameter, value.strip()):
+                    if doIf(fp, parameter, value.strip(), self.name, filename):
                         # if the condition is true, read normally
                         readingIfLevel += 1
                         continue
@@ -170,16 +194,20 @@ by checking the predicaments dictionary."""
                         elif nextline[:2] == 'if':
                             tempIfLevel += 1
                 else:
-                    print("%s is not a valid pred directive" % key)
-                    raise BadPredicamentError(6, self.name)
-        if busy or readingIfLevel:
-            raise BadPredicamentError(7, self.name)
+                    raise BadPredicamentError(14, filename, self.name, key.strip())
+                if not self.inputtype:
+                    raise BadPredicamentError(16, filename, self.name)
+        if readingIfLevel:
+            raise BadPredicamentError(13, filename, self.name)
+        elif busy:
+            # should always hit error 4 before this, so it may be redundant
+            raise BadPredicamentError(7, filename, self.name)
 
     # this isn't used anywhere, but handy for debugging
     def __str__(self):
         return 'Predicament: %s: %s' % (self.name, self.text)
 
-def doIf(fp, parameter, value):
+def doIf(fp, parameter, value, name, filename):
     # figures out whether to read conditional stuff in pred definitions
     if parameter not in profile:
         raise BadPredicamentError(10, parameter)
@@ -193,7 +221,7 @@ def doIf(fp, parameter, value):
         return conditionIsTrue
     line = getNonBlankLine(fp)
     if line[:3] != 'if ':
-        raise BadPredicamentError(11, "'%s'" % followup)
+        raise BadPredicamentError(11, filename, name, "'%s'" % followup)
     key, value = line.split('=')
     parameter = key.split()[1].strip()
     if followup[:7] == 'and not':
@@ -204,7 +232,7 @@ def doIf(fp, parameter, value):
         return ( not doIf(fp, parameter, value) or conditionIsTrue )
     elif followup[:2] == 'or':
         return ( doIf(fp, parameter, value) or conditionIsTrue )
-    raise BadPredicamentError(11, 'if %s = %s' % (parameter, value))
+    raise BadPredicamentError(11, filename, name, '%s = %s' % (parameter, value))
 
 def getNonBlankLine(fp):
     line = fp.readline().strip()
