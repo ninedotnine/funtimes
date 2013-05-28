@@ -6,6 +6,9 @@ preferredButtons = 'abcdef'
 #preferredButtons = '123456'
 #preferredButtons = 'aoeujk'
 
+fancyPrintSpeed = 0.004
+fancyPrintLineDelay = 0.500
+
 historycache = 10
 defaultNonePrompt = '-->'
 defaultNormalPrompt = 'What do you want to do?'

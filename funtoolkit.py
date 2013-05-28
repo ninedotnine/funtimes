@@ -9,6 +9,7 @@ import time
 import sys
 from subprocess import call
 from profiledata import profile, items, queststatus
+from settings import fancyPrintSpeed, fancyPrintLineDelay
 
 # define method to press any key. currently only works on unix
 if os.name != 'nt':
@@ -154,15 +155,6 @@ def replaceVariables(text):
         raise SystemExit
     return replaceVariables(text[:start] + str(profile[text[start+1:end]]) 
                             + text[end+1:])
-    # we only use dictionaries round these parts
-    #variables = {
-        #'~' : ' ',
-        #'%bran%' : profile['bran'],
-        #'%rainey%' : profile['rainey'],
-    #}
-    #for key, value in variables.items():
-        #text = text.replace(key, value)
-    #return text
 
 def fancyPrint(text):
     # prints lines character-by-character to be fancy
@@ -170,9 +162,9 @@ def fancyPrint(text):
     for character in text:
         sys.stdout.write(character)
         sys.stdout.flush()
-        time.sleep(0.004)
+        time.sleep(fancyPrintSpeed)
     if text == '':
-        time.sleep(0.5)
+        time.sleep(fancyPrintLineDelay)
     print() # put a newline at the end
 
 if __name__ == '__main__':
