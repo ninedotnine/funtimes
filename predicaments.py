@@ -193,6 +193,8 @@ by checking the predicaments dictionary."""
                             tempIfLevel -= 1
                         elif nextline[:2] == 'if':
                             tempIfLevel += 1
+                        elif nextline.find("end of predicament") == 0:
+                            raise BadPredicamentError(13, self.name)
                 else:
                     raise BadPredicamentError(14, filename, self.name, key.strip())
                 if not self.inputtype:
@@ -235,9 +237,14 @@ def doIf(fp, parameter, value, name, filename):
     raise BadPredicamentError(11, filename, name, '%s = %s' % (parameter, value))
 
 def getNonBlankLine(fp):
-    line = fp.readline().strip()
+    line = ''
     while line == '' or line[0] == '#':
-        line = fp.readline().strip()
+        line = fp.readline()
+        if not line:
+            # if eof is reached, that's bad. 
+            print("reached eof")
+            raise BadPredicamentError(3333)
+        line = line.strip()
     return line
 
 # populate predicaments dictionary with locations of all known predicaments
