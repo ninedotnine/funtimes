@@ -66,6 +66,9 @@ def play(predicament):
         # hit backspace or ^H to go back
         elif ch == '\x08' or ch == '\x7F':
             return '\x7F'
+        # hit ^R to redraw the text
+        elif ch == '\x12':
+            return predicament.name
         return predicament.goto
     elif predicament.inputtype == 'input':
         print(prompt)
@@ -89,8 +92,12 @@ def play(predicament):
         while True:
             if commonOptions(choice):
                 return predicament.name
+            # hit backspace or ^H to go back
             elif choice == '\x08' or choice == '\x7F':
                 return '\x7F'
+            # hit ^R to redraw the text
+            elif choice == '\x12':
+                return predicament.name
             elif choice not in letters:
                 choice = anykey("invalid option")
             else:
