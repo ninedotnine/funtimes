@@ -125,11 +125,9 @@ def commonOptions(ch):
         return True
     elif ch == 's':
         save()
-        lastPressedKey = 's'
         return True
     elif ch == 'h':
         helpme()
-        lastPressedKey = 'h'
         return True
     elif ch == 'q':
         raise SystemExit

@@ -1,0 +1,15 @@
+make > and < function in if statements
+
+make disable = pause
+
+make disable = save
+
+make disable = action (to make a room that does not require any action - can be used to set variables, or for a cutscene)
+
+<tassaron> I'm going to make it so the first pred is actually something like "Welcome to FUNTIMES! blah blah blah. When you see the [-->] prompt, it means you can hit any button to continue" and then the next predicament after that cuts back to reveal you were actually playing an arcade game called Funtimes at the mall, which you and your friend decide is crap and then go to Pizza Pizza instead. Then it continues like it does now
+
+improve error messages for if
+
+optimize BadPredicamentError
+
+allow index in if and set statements (for items, quests)

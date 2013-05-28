@@ -60,6 +60,9 @@ class BadPredicamentError(Exception):
                   "\ndid you rename or delete it while the game was running?")
         elif code == 16:
             print("in %s, %s has no inputtype." %(args[0],args[1]))
+        elif code == 17:
+            print("reach end of file while looking for 'end if'.",
+                  "\nthis is literally the end of the world.")
         print("i can't work under these conditions. i quit.\n")
         raise SystemExit
 
@@ -98,6 +101,7 @@ by checking the predicaments dictionary."""
         except:
             # if the file can't be opened...
             raise BadPredicamentError(15, filename, self.name)
+        busy = False # whether we are currently reading a predicament
         with open(datadir + '/' + filename, 'r') as fp:
             # basically all of this is just to get to the right line and test
             for line in fp:
@@ -242,8 +246,7 @@ def getNonBlankLine(fp):
         line = fp.readline()
         if not line:
             # if eof is reached, that's bad. 
-            print("reached eof")
-            raise BadPredicamentError(3333)
+            raise BadPredicamentError(17)
         line = line.strip()
     return line
 

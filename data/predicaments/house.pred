@@ -1,0 +1,31 @@
+new predicament = bedroom
+    inputtype = normal
+
+    text = You are standing in your bedroom. Sun streams through the window behind you.
+    text = To your left is a bed for you to rest in. To your right is your computer.
+
+    option = Go on your computer.
+
+    if love < 4
+        or
+    if love > 4
+        then
+        text = You have a cordless phone in here, too.
+        option = Use the phone.
+    end if
+
+    # %girlname% is calling you
+    if love = 4
+        then
+        text = Your cordless phone is ringing.
+        option = Pick up the phone.
+    end if
+
+    option = Rest in your bed.
+    option = Leave the bedroom.
+
+    choice = computer
+    choice = phone
+    choice = useBed
+    choice = hallway
+end of predicament bedroom

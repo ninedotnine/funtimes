@@ -99,7 +99,7 @@ def play(predicament):
                 fancyPrint(string)
         choice = anykey(prompt)
         while True:
-            if commonOptions(choice):            
+            if commonOptions(choice):
                 return predicament.name
             # hit backspace or ^H to go back
             elif choice == '\x08' or choice == '\x7F':
