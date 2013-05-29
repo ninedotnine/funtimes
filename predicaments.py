@@ -177,7 +177,7 @@ to play this predicament, call its play() method
                     key, parameter = key.split() 
                     # stored as a list of tuples (variable, value)
                     self.setvars.append((parameter.strip(), value.strip()))
-                elif key == 'next':
+                elif key == 'goto':
                     self.goto = value.strip()
                 elif key == 'inputtype':
                     if value.strip() not in ('none', 'normal', 'input'):

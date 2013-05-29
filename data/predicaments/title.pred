@@ -18,7 +18,7 @@ new predicament = title
     text = 
     text = Press any other key to create a new character!
 
-    next = tutorial
+    goto = tutorial
 end of predicament title
 
 new predicament = tutorial
@@ -31,7 +31,7 @@ new predicament = tutorial
     text = 
     text = When you see the [-->], press any button to continue!
 
-    next = tutorial2
+    goto = tutorial2
 end of predicament tutorial
 
 new predicament = tutorial2
@@ -46,7 +46,7 @@ new predicament = tutorial2
     text = 
     text = You frown.
     
-    next = tutorial3
+    goto = tutorial3
 end of predicament tutorial2
 
 new predicament = tutorial3
@@ -65,7 +65,7 @@ new predicament = tutorial3
     text = 
     text = "Don't change the subject."
     
-    next = createCharacter
+    goto = createCharacter
 end of predicament tutorial3
 
 new predicament = createCharacter
@@ -81,7 +81,7 @@ new predicament = createCharacter
     text = "Let's get pizza!"
     prompt = Smells like motivation to me!
 
-    next = createCharacter2
+    goto = createCharacter2
 end of predicament createCharacter
 
 
@@ -100,7 +100,7 @@ new predicament = createCharacter2
     text = Making sure to roll your eyes as visibly as possible, you stand
     text = up from your table and walk to the counter.
 
-    next = createCharacter3
+    goto = createCharacter3
 end of predicament createCharacter2
 
 new predicament = createCharacter3
@@ -117,7 +117,7 @@ new predicament = createCharacter3
     text = the counter when your pizza is ready."
     prompt = What is your name?
 
-    next = createCharacter4
+    goto = createCharacter4
 end of predicament createCharacter3
 
 new predicament = createCharacter4
@@ -130,7 +130,7 @@ new predicament = createCharacter4
     text = "LAST name?"
     prompt = What is your LAST name?
 
-    next = createCharacter5
+    goto = createCharacter5
 end of predicament createCharacter4
 
 new predicament = createCharacter5
@@ -143,7 +143,7 @@ new predicament = createCharacter5
     text = 
     text = He turns back and winks at you.
 
-    next = createCharacter6
+    goto = createCharacter6
 end of predicament createCharacter5
 
 new predicament = createCharacter6
@@ -174,7 +174,7 @@ new predicament = womans
     text = On your way out of the bathroom, you see a janitor come out of the first stall.
     text = A single tear runs down her cheek when she sees the mess you made.
 
-    next = leavingWashroom
+    goto = leavingWashroom
 end of predicament womans
 
 new predicament = mans
@@ -192,7 +192,7 @@ new predicament = mans
     text = desecrated. A single tear runs down his cheek as you hastily make your
     text = way towards the exit.
 
-    next = leavingWashroom
+    goto = leavingWashroom
 end of predicament mans
 
 new predicament = leavingWashroom
@@ -206,7 +206,7 @@ new predicament = leavingWashroom
     text = glancing back at a table on the other side of the room before she clears her
     text = throat in your general direction.
 
-    next = firstMeetingGirl
+    goto = firstMeetingGirl
 end of predicament leavingWashroom
 
 new predicament = firstMeetingGirl
@@ -223,7 +223,7 @@ new predicament = firstMeetingGirl
         text = When did you become a lesbian?
     end if
 
-    next = setFriendsName
+    goto = setFriendsName
 end of predicament firstMeetingGirl2
 
 new predicament = setFriendsName
@@ -242,7 +242,7 @@ new predicament = setFriendsName
     text = What IS his name?
     prompt = Your poor memory says that it is...
 
-    next = endOfCreateCharacter
+    goto = endOfCreateCharacter
 end of predicament setFriendsName
 
 new predicament = endOfCreateCharacter
@@ -258,7 +258,7 @@ new predicament = endOfCreateCharacter
     text = Somehow, you feel like there was more to that than knowing the name of your
     text = best friend. But a missed opportunity is better than no opportunity, right?
 
-    next = endOfCreateCharacter2
+    goto = endOfCreateCharacter2
 end of predicament endOfCreateCharacter
 
 new predicament = endOfCreateCharacter2
@@ -268,5 +268,5 @@ new predicament = endOfCreateCharacter2
     text = head back home for an early night. It's a good thing, too, because tomorrow
     text = will be the longest day ever...
 
-    next = bedroom
+    goto = bedroom
 end of predicament endOfCreateCharacter2
