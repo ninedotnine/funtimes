@@ -316,9 +316,9 @@ def getNonBlankLine(fp):
 
 # populate predicaments dictionary with locations of all known predicaments
 def findPredicaments(datadir):
-    predicaments = {}
     if not os.path.isdir(datadir):
         raise BadPredicamentError(8)
+    predicaments = {}
     for filename in os.listdir(datadir):
         basename, ext = os.path.splitext(filename)
         if ext != '.pred':
