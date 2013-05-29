@@ -1,5 +1,19 @@
 # title screen and character creation
 
+new predicament = nosound
+    inputtype = none
+    disable = fancytext
+    disable = prompt
+    
+    text = Unfortunately, sound won't work on your computer. Please pretend
+    text = that you're having a particularly quiet day, or the mute button
+    text = on your remote control is broken.
+    text = 
+    text = Press any key to continue.
+    
+    goto = title
+end of predicament nosound
+
 new predicament = title
     inputtype = none
     disable = fancytext
@@ -29,6 +43,7 @@ new predicament = tutorial
     text = is hip right now...
     text = 
     text =                So welcome to FUNTIMES!
+    sound = tada
     text = 
     text = When you see the [-->], press any button to continue!
 

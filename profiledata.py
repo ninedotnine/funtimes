@@ -24,6 +24,8 @@ profile = {
         'dexterity' : 10,
         'charisma' : 10,
         'intellect' : 10,
+        
+        'soundWorks' : True,
 }
 
 items = {

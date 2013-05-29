@@ -11,8 +11,53 @@ from subprocess import call
 from profiledata import profile, items, queststatus
 from settings import fancyPrintSpeed, fancyPrintLineDelay
 
-# define method to press any key. currently only works on unix
-if os.name != 'nt':
+sounddir = os.getcwd() + '/data/sound/'
+
+# define system-dependent features
+if os.name == 'nt':
+    import winsound
+    def clear():
+        call('cls',shell=True)
+    def playSound(sound):
+        if profile['soundWorks']:
+            if not os.path.isdir(sounddir):
+                return False
+            try:
+                error = winsound.PlaySound(sounddir + sound + '.wav', winsound.SND_FILENAME)
+            except:
+                return False
+        return True
+    
+    # this makes testing in windows at least mildly possible for now
+    # but obviously it doesn't work for 'normal' inputs, so it's rubbish
+    def anykey(message=''):
+        if message:
+            print(message)
+        call('pause >nul',shell=True)
+        
+    def initialize():
+        call('title FUNTIMES',shell=True)
+        call('color 5F',shell=True)
+else:
+    def clear():
+        call('clear',shell=True)
+        
+    def playSound(sound):
+        if profile['soundWorks']:
+            if not os.path.isdir(sounddir):
+                return False
+            try:
+                error = call('paplay ' + sounddir + sound + '.wav',shell=True)
+            except KeyboardInterrupt:
+                quit()
+            if error:
+                return False
+        return True
+
+    def initialize():
+        # nothing yet
+        return
+
     import termios, tty
     # allows user to press any key to continue. thanks, Matthew Adams:
     # http://stackoverflow.com/questions/11876618/python-press-any-key-to-exit
@@ -36,14 +81,6 @@ if os.name != 'nt':
             #raise KeyboardInterrupt
             quit()
         return char
-
-# define the method to clear the output, system-dependently
-if os.name == 'nt':
-    def clear():
-        call('cls',shell=True)
-else:
-    def clear():
-        call('clear',shell=True)
 
 def save(filename="save.sav", pause=True):
     clear()

@@ -8,7 +8,6 @@ import os
 from profiledata import profile
 from funtoolkit import *
 from settings import *
-#from stuffthatusedtobeinpredicaments import *
 from errors import errors
 
 class BadPredicamentError(Exception):
@@ -46,6 +45,7 @@ to play this predicament, call its play() method
         self.inputtype = None
         self.result = None
         self.prompt = None
+        self.sound = None
 
         try:
             filename, lineNo = predicaments[self.name]
@@ -81,7 +81,7 @@ to play this predicament, call its play() method
             # line should be true (it should still be the new pred line)
             readingIfLevel = 0
             while line:
-                line = getNonBlankLine(fp)
+                line = getNonBlankLine(fp, filename)
                 if line.find("end of predicament") == 0:
                     busy = False
                     break
@@ -93,7 +93,7 @@ to play this predicament, call its play() method
                 try:
                     key, value = line.split('=')
                 except ValueError: 
-                    raise BadPredicamentError(18, line)
+                    raise BadPredicamentError(18, filename, self.name, line)
                 key = key.rstrip().lower()
                 if key == 'new predicament':
                     # we're in a new predicament without closing the last one.
@@ -122,6 +122,10 @@ to play this predicament, call its play() method
                         self.goto.append(value.strip())
                 elif key == 'disable':
                         self.disable.append(value.strip())
+                elif key == 'sound':
+                    if not self.sound:
+                        self.sound = []
+                    self.sound.append(value.strip())
                 elif key.startswith("set "):
                     if not self.setvars:
                         self.setvars = []
@@ -151,7 +155,7 @@ to play this predicament, call its play() method
                     # if the condition isn't true, 
                     # discard lines until we reach end if
                     while readingIfLevel < tempIfLevel:
-                        nextline = getNonBlankLine(fp)
+                        nextline = getNonBlankLine(fp, filename)
                         if nextline.startswith("end if"):
                             tempIfLevel -= 1
                         elif nextline.startswith("if "):
@@ -200,6 +204,12 @@ to play this predicament, call its play() method
                 print(replaceVariables(line))
             else:
                 extraDelay = fancyPrint(line, extraDelay)
+        if profile['soundWorks']:
+            if self.sound:
+                for sound in self.sound:
+                    soundPlayed = playSound(sound)
+                if not soundPlayed:
+                    raise BadPredicamentError(19, self.name, sound)
         if self.inputtype != 'normal':
             # print a newline after things which don't 
             # have more options to print
@@ -281,7 +291,7 @@ def doIf(fp, parameter, value, name, filename):
     # figures out whether to read conditional stuff in pred definitions
     if parameter not in profile:
         raise BadPredicamentError(10, parameter)
-    followup = getNonBlankLine(fp).lower()
+    followup = getNonBlankLine(fp, filename).lower()
     conditionIsTrue = ( profile[parameter] == value.strip() )
     if followup.startswith("then not"):
         # don't use this, it breaks if more than one statement is processed
@@ -289,7 +299,7 @@ def doIf(fp, parameter, value, name, filename):
         return not conditionIsTrue
     elif followup.startswith("then"):
         return conditionIsTrue
-    line = getNonBlankLine(fp)
+    line = getNonBlankLine(fp, filename)
     if not line.startswith("if "):
         raise BadPredicamentError(11, filename, name, "'%s'" % followup)
     key, value = line.split('=')
@@ -304,13 +314,13 @@ def doIf(fp, parameter, value, name, filename):
         return ( doIf(fp, parameter, value) or conditionIsTrue )
     raise BadPredicamentError(11, filename, name, '%s = %s' % (parameter, value))
 
-def getNonBlankLine(fp):
+def getNonBlankLine(fp, filename):
     line = ''
     while line == '' or line.startswith("#"):
         line = fp.readline()
         if not line:
             # if eof is reached, that's bad. 
-            raise BadPredicamentError(17)
+            raise BadPredicamentError(17, filename)
         line = line.strip()
     return line
 
@@ -324,8 +334,7 @@ def findPredicaments(datadir):
         if ext != '.pred':
             print("WARNING: skipping %s/%s%s..." % (datadir, basename, ext))
             continue
-# ?_? what was the point of this boolean supposed to be
-        #busy = False # whether we're currently reading a predicament
+        pointless = True # whether this boolean is pointless
         lineNo = 0
         with open(datadir + '/' + filename, 'r') as fp:
             for line in fp:
