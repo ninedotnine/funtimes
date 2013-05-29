@@ -81,7 +81,7 @@ to play this predicament, call its play() method
             # line should be true (it should still be the new pred line)
             readingIfLevel = 0
             while line:
-                line = getNonBlankLine(fp, filename)
+                line = getNonBlankLine(fp)
                 if line.find("end of predicament") == 0:
                     busy = False
                     break
@@ -148,14 +148,14 @@ to play this predicament, call its play() method
                 elif key.startswith("if "):
                     parameter = key.split()[1].strip()
                     tempIfLevel = readingIfLevel + 1
-                    if doIf(fp, parameter, value.strip(), self.name, filename):
+                    if doIf(fp, parameter, value.strip(), self.name):
                         # if the condition is true, read normally
                         readingIfLevel += 1
                         continue
                     # if the condition isn't true, 
                     # discard lines until we reach end if
                     while readingIfLevel < tempIfLevel:
-                        nextline = getNonBlankLine(fp, filename)
+                        nextline = getNonBlankLine(fp)
                         if nextline.startswith("end if"):
                             tempIfLevel -= 1
                         elif nextline.startswith("if "):
@@ -287,11 +287,11 @@ to play this predicament, call its play() method
                 else:
                     return self.goto[letters.index(choice)]
 
-def doIf(fp, parameter, value, name, filename):
+def doIf(fp, parameter, value, name):
     # figures out whether to read conditional stuff in pred definitions
     if parameter not in profile:
         raise BadPredicamentError(10, parameter)
-    followup = getNonBlankLine(fp, filename).lower()
+    followup = getNonBlankLine(fp).lower()
     conditionIsTrue = ( profile[parameter] == value.strip() )
     if followup.startswith("then not"):
         # don't use this, it breaks if more than one statement is processed
@@ -299,28 +299,28 @@ def doIf(fp, parameter, value, name, filename):
         return not conditionIsTrue
     elif followup.startswith("then"):
         return conditionIsTrue
-    line = getNonBlankLine(fp, filename)
+    line = getNonBlankLine(fp)
     if not line.startswith("if "):
-        raise BadPredicamentError(11, filename, name, "'%s'" % followup)
+        raise BadPredicamentError(11, fp.name, name, "'%s'" % followup)
     key, value = line.split('=')
     parameter = key.split()[1].strip()
     if followup.startswith("and not"):
-        return ( not doIf(fp, parameter, value) and conditionIsTrue )
+        return ( not doIf(fp, parameter, value, name) and conditionIsTrue )
     elif followup.startswith("and"):
-        return ( doIf(fp, parameter, value) and conditionIsTrue )
+        return ( doIf(fp, parameter, value, name) and conditionIsTrue )
     elif followup.startswith("or not"):
-        return ( not doIf(fp, parameter, value) or conditionIsTrue )
+        return ( not doIf(fp, parameter, value, name) or conditionIsTrue )
     elif followup.startswith("or"):
-        return ( doIf(fp, parameter, value) or conditionIsTrue )
-    raise BadPredicamentError(11, filename, name, '%s = %s' % (parameter, value))
+        return ( doIf(fp, parameter, value, name) or conditionIsTrue )
+    raise BadPredicamentError(11, fp.name, name, '%s = %s' % (parameter, value))
 
-def getNonBlankLine(fp, filename):
+def getNonBlankLine(fp):
     line = ''
     while line == '' or line.startswith("#"):
         line = fp.readline()
         if not line:
             # if eof is reached, that's bad. 
-            raise BadPredicamentError(17, filename)
+            raise BadPredicamentError(17, fp.name)
         line = line.strip()
     return line
 
