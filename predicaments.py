@@ -164,7 +164,7 @@ by checking the predicaments dictionary."""
                         self.goto.append(value.strip())
                 elif key == 'disable':
                         self.disable.append(value.strip())
-                elif key[:4] == 'set ':
+                elif key.startswith("set "):
                     if not self.setvars:
                         self.setvars = []
                     # everything between 'set' and '=' is the parameter
@@ -182,7 +182,7 @@ by checking the predicaments dictionary."""
                     self.result = value.strip()
                 elif key == 'prompt':
                     self.prompt = value.strip()
-                elif key[:3] == 'if ':
+                elif key.startswith("if "):
                     parameter = key.split()[1].strip()
                     tempIfLevel = readingIfLevel + 1
                     if doIf(fp, parameter, value.strip(), self.name, filename):
@@ -193,9 +193,9 @@ by checking the predicaments dictionary."""
                     # discard lines until we reach end if
                     while readingIfLevel < tempIfLevel:
                         nextline = getNonBlankLine(fp)
-                        if nextline[:6] == 'end if':
+                        if nextline.startswith("end if"):
                             tempIfLevel -= 1
-                        elif nextline[:2] == 'if':
+                        elif nextline.startswith("if "):
                             tempIfLevel += 1
                         elif nextline.find("end of predicament") == 0:
                             raise BadPredicamentError(13, self.name)
@@ -219,30 +219,30 @@ def doIf(fp, parameter, value, name, filename):
         raise BadPredicamentError(10, parameter)
     followup = getNonBlankLine(fp).lower()
     conditionIsTrue = ( profile[parameter] == value.strip() )
-    if followup[:8] == 'then not':
+    if followup.startswith("then not"):
         # don't use this, it breaks if more than one statement is processed
         # for the simplest statements, it's okay. 
         return not conditionIsTrue
-    elif followup[:4] == 'then':
+    elif followup.startswith("then"):
         return conditionIsTrue
     line = getNonBlankLine(fp)
-    if line[:3] != 'if ':
+    if not line.startswith("if "):
         raise BadPredicamentError(11, filename, name, "'%s'" % followup)
     key, value = line.split('=')
     parameter = key.split()[1].strip()
-    if followup[:7] == 'and not':
+    if followup.startswith("and not"):
         return ( not doIf(fp, parameter, value) and conditionIsTrue )
-    elif followup[:3] == 'and':
+    elif followup.startswith("and"):
         return ( doIf(fp, parameter, value) and conditionIsTrue )
-    elif followup[:6] == 'or not':
+    elif followup.startswith("or not"):
         return ( not doIf(fp, parameter, value) or conditionIsTrue )
-    elif followup[:2] == 'or':
+    elif followup.startswith("or"):
         return ( doIf(fp, parameter, value) or conditionIsTrue )
     raise BadPredicamentError(11, filename, name, '%s = %s' % (parameter, value))
 
 def getNonBlankLine(fp):
     line = ''
-    while line == '' or line[0] == '#':
+    while line == '' or line.startswith("#"):
         line = fp.readline()
         if not line:
             # if eof is reached, that's bad. 

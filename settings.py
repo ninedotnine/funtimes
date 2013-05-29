@@ -6,7 +6,7 @@ preferredButtons = 'abcdef'
 #preferredButtons = '123456'
 #preferredButtons = 'aoeujk'
 
-fancyPrintSpeed = 0.004
+fancyPrintSpeed = 0.015
 fancyPrintLineDelay = 0.500
 
 historycache = 10

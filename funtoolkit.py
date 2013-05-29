@@ -156,18 +156,31 @@ def replaceVariables(text):
     return replaceVariables(text[:start] + str(profile[text[start+1:end]]) 
                             + text[end+1:])
 
-def fancyPrint(text):
+def fancyPrint(text, extraDelay):
+    # prints lines character-by-character to be fancy
+    # uses extraDelay to pause longer after bigger blocks of text
+    # pass in -1 as extraDelay to force a standard pause
     # watch for ^C so it can quit prettily if needed
     try:
-        # prints lines character-by-character to be fancy
         text = replaceVariables(text)
         for character in text:
             sys.stdout.write(character)
             sys.stdout.flush()
             time.sleep(fancyPrintSpeed)
+            if extraDelay > 0:
+                # subtle difference between long lines and short ones
+                extraDelay+=fancyPrintSpeed
         if text == '':
+            # use extraDelay to give bigger blocks of text longer pauses
+            time.sleep(fancyPrintLineDelay*extraDelay)
+            extraDelay = 0
+        elif extraDelay < 0:
+            # force a standard pause
             time.sleep(fancyPrintLineDelay)
+        else:
+            extraDelay += fancyPrintLineDelay
         print() # put a newline at the end
+        return extraDelay
     except KeyboardInterrupt:
         print()
         quit()

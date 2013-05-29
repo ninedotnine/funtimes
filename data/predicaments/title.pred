@@ -18,15 +18,68 @@ new predicament = title
     text = 
     text = Press any other key to create a new character!
 
-    next = createCharacter
+    next = tutorial
 end of predicament title
+
+new predicament = tutorial
+    inputtype = none
+    
+    text = According to our marketing team, purely text-based gaming
+    text = is hip right now...
+    text = 
+    text =                So welcome to FUNTIMES!
+    text = 
+    text = When you see the [-->], press any button to continue!
+
+    next = tutorial2
+end of predicament tutorial
+
+new predicament = tutorial2
+    inputtype = none
+    
+    text = "Only an idiot would press a button after an intro like that."
+    text = 
+    text = You look at your friend askance. "That's not nice," you say,
+    text = insincerely dropping the controls of the arcade cabinet.
+    text = 
+    text = "What, you think the marketing team is going to hear me?"
+    text = 
+    text = You frown.
+    
+    next = tutorial3
+end of predicament tutorial2
+
+new predicament = tutorial3
+    inputtype = none
+    
+    text = "Actually, maybe you have a point. The sort of marketing team
+    text = that would call something 'Funtimes' probably DOES work here."
+    text = He points at a passing janitor, on their way to Pizza Pizza.
+    text = 
+    text = "Stop that."
+    text = 
+    text = "Look," he continues, "all I'm saying is that even I could name
+    text = something better than that."
+    text = 
+    text = "Did you remember to feed Dog this morning?"
+    text = 
+    text = "Don't change the subject."
+    
+    next = createCharacter
+end of predicament tutorial3
 
 new predicament = createCharacter
     inputtype = none
 
-    text = Your best friend sits across from you at Pizza Pizza, picking
-    text = at his teeth idly. He glances up at the spotty clerk behind the
-    text = counter.
+    text = The days continues, and you do as you always do on lazy days
+    text = like this:
+    text = 
+    text = Nothing.
+    text = 
+    text = Before you can get too introspective about your lack of
+    text = motivation and forward momentum in life, your friend interrupts:
+    text = "Let's get pizza!"
+    prompt = Smells like motivation to me!
 
     next = createCharacter2
 end of predicament createCharacter
@@ -35,9 +88,14 @@ end of predicament createCharacter
 new predicament = createCharacter2
     inputtype = none
 
+    text = Your best friend sits across from you at Pizza Pizza, picking
+    text = at his teeth idly. He glances up at the spotty clerk behind the
+    text = counter.
+    text = 
     text = "Alright," he says. "You gonna go order, or should I?"
     text = 
-    text = This is the third time he's asked you this.
+    text = You've been here for 15 minutes. This is the third time he's
+    text = asked you this.
     text = 
     text = Making sure to roll your eyes as visibly as possible, you stand
     text = up from your table and walk to the counter.
@@ -109,13 +167,7 @@ new predicament = womans
     text = stall is occupied, so you run into the second one. Unfortunately, this
     text = slight delay causes you to miss the toilet entirely and throw up all over
     text = the already-filthy tiled floor.
-
-    next = womans2
-end of predicament womans
-
-new predicament = womans2
-    inputtype = none
-
+    text = 
     text = "Ugh," you mutter, wiping your mouth with some toilet paper. "What a way
     text = to start the game!"
     text = 
@@ -123,7 +175,7 @@ new predicament = womans2
     text = A single tear runs down her cheek when she sees the mess you made.
 
     next = leavingWashroom
-end of predicament womans2
+end of predicament womans
 
 new predicament = mans
     inputtype = none
@@ -134,20 +186,14 @@ new predicament = mans
     text = 
     text = "Ugh," you mutter, wiping your mouth with some paper towel. "What a
     text = way to start the game!"
-
-    next = mans2
-end of predicament mans
-
-new predicament = mans2
-    inputtype = none
-
+    text = 
     text = Before you can wash your hands, the stall opens. Out comes the imposing
     text = figure of a Pizza Pizza janitor! He takes one look at the urinal you
     text = desecrated. A single tear runs down his cheek as you hastily make your
     text = way towards the exit.
 
     next = leavingWashroom
-end of predicament mans2
+end of predicament mans
 
 new predicament = leavingWashroom
     inputtype = none
@@ -155,21 +201,15 @@ new predicament = leavingWashroom
     text = You're feeling a bit better now, soothed by the hideous fluorescent lighting
     text = of Pizza Pizza, and the fact that you can breathe out of your nose again.
     text = You're about to go back to your table when a girl walks up to you.
+    text = 
+    text = She looks endlessly embarrassed, biting her lip between every other word and
+    text = glancing back at a table on the other side of the room before she clears her
+    text = throat in your general direction.
 
     next = firstMeetingGirl
 end of predicament leavingWashroom
 
 new predicament = firstMeetingGirl
-    inputtype = none
-
-    text = She looks endlessly embarrassed, biting her lip between every other word and
-    text = glancing back at a table on the other side of the room before she clears her
-    text = throat in your general direction.
-
-    next = firstMeetingGirl2
-end of predicament firstMeetingGirl
-
-new predicament = firstMeetingGirl2
     inputtype = none
 
     text = "Hey," she says awkwardly. You return the greeting.
@@ -183,11 +223,12 @@ new predicament = firstMeetingGirl2
         text = When did you become a lesbian?
     end if
 
-    next = firstMeetingGirl3
+    next = setFriendsName
 end of predicament firstMeetingGirl2
 
-new predicament = firstMeetingGirl3
-    inputtype = none
+new predicament = setFriendsName
+    inputtype = input
+    result = friendname
 
     text = %girlname%'s friend bites her lip. "Is that your friend?"
     text = 
@@ -195,14 +236,7 @@ new predicament = firstMeetingGirl3
     text = pointing. He picks his nose idly.
     text = 
     text = "Yeah, I guess," you say.
-
-    next = setFriendsName
-end of predicament firstMeetingGirl3
-
-new predicament = setFriendsName
-    inputtype = input
-    result = friendname
-
+    text = 
     text = "What his name?" she asks, trying to sound casual.
     text = 
     text = What IS his name?

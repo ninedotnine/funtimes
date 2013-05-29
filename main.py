@@ -33,26 +33,31 @@ def play(predicament):
                 print("refers to nonexistent variable '%s'" % variable)
                 print("this is a fatal error. aborting")
                 raise SystemExit
+    # use extraDelay to give bigger blocks of text longer pauses
+    extraDelay = 0
     for line in predicament.text:
         if "fancytext" in predicament.disable:
             print(replaceVariables(line))
         else:
-            fancyPrint(line)
+            extraDelay = fancyPrint(line, extraDelay)
+    if predicament.inputtype != 'normal':
+        # print a newline after things which don't have more options to print
+        extraDelay = fancyPrint('', extraDelay)
     # decide what the prompt will be
     if predicament.prompt:
         # if there is a custom prompt, just use it
-        prompt = "\n[" + predicament.prompt + "]"
+        prompt = "[" + predicament.prompt + "]"
     elif predicament.disable and "prompt" in predicament.disable:
         # otherwise, disable the prompt if it's disabled
         prompt = ""
     elif not predicament.disable or "prompt" not in predicament.disable:
         # or, just use the default prompt depending on inputtype
         if predicament.inputtype == 'none':
-            prompt = "\n[" + defaultNonePrompt + "]"
+            prompt = "[" + defaultNonePrompt + "]"
         elif predicament.inputtype == 'normal':
             prompt = "\n[" + defaultNormalPrompt + "]"
         elif predicament.inputtype == 'input':
-            prompt = "\n[" + defaultInputPrompt + "]"
+            prompt = "[" + defaultInputPrompt + "]"
     # once we're done fancyprinting, we don't want to redraw the predicament if
     # we return to it while it's in memory (unpausing, using backspace, etc)
     if "fancytext" not in predicament.disable \
@@ -73,9 +78,6 @@ def play(predicament):
         return predicament.goto
     elif predicament.inputtype == 'input':
         print(prompt)
-        # because invalid input would be a newline, we don't want the newline
-        # again after the first one. this'll keep it looking consistent.
-        prompt = prompt[1:]
         try:
             profile[predicament.result] = input().strip()
             while profile[predicament.result] == '':
@@ -88,15 +90,15 @@ def play(predicament):
         letters = preferredButtons[:len(predicament.options)]
         iterletters = iter(letters)
         #print("options", len(predicament['options']))
-        print()
+        fancyPrint('', extraDelay)
         for option in predicament.options:
             string = next(iterletters) + ' - ' + option
             if 'fancytext' in predicament.disable:
                 print(string)
             else:
-                # *now* normal predicaments are done fancyprinting
-                predicament.disable.append("fancytext")
-                fancyPrint(string)
+                fancyPrint(string, -1)
+        # *now* normal predicaments are done fancyprinting
+        predicament.disable.append("fancytext")
         choice = anykey(prompt)
         while True:
             if commonOptions(choice):
