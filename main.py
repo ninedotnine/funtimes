@@ -9,14 +9,13 @@ from funtoolkit import clear, playSound, initialize
 from settings import historycache
 from profiledata import profile
 
-def main():
+def main(start='title'):
     initialize()
     # if playSound doesn't work, tell them the game will be mute
     profile['soundWorks'] = playSound('test')
-    if profile['soundWorks']:
-        currentPredicament = Predicament('title')
-    else:
-        currentPredicament = Predicament('nosound')
+    if not profile['soundWorks']:
+        Predicament('nosound').play()
+    currentPredicament = Predicament(start)
     # prevPredicaments is a queue. after each new predicament, append it.
     # it holds past Predicaments. it does not hold strings
     prevPredicaments = deque(maxlen=historycache)
