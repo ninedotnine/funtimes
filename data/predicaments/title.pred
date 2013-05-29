@@ -21,6 +21,7 @@ new predicament = title
     goto = tutorial
 end of predicament title
 
+
 new predicament = tutorial
     inputtype = none
     

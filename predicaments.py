@@ -1,68 +1,27 @@
 # predicaments.py
 # generates the dictionary that holds all the available predicaments
+# home to doIf() and getNonBlankLine()
 # also the new home of the Predicament class
 
-import os
+import os 
 
 from profiledata import profile
 from funtoolkit import *
 from settings import *
-from stuffthatusedtobeinpredicaments import *
- 
+#from stuffthatusedtobeinpredicaments import *
+from errors import errors
+
+predicaments = {}
+
+datadir = os.getcwd() + '/data/predicaments'
+if not os.path.isdir(datadir):
+    raise BadPredicamentError(8)
+
 class BadPredicamentError(Exception):
     def __init__(self, code=0, *args):
         print("\nerror code:", code)
-        if code == 1:
-            print("what the hell? i can't find predicament", args[0],
-                  "\ndid you modify it while the game was running?")
-        elif code == 2:
-            print("wrong predicament found:", args[0])
-        elif code == 3:
-            print("what?? predicament", args[0], "doesn't exist,",
-                  "\nor didn't exist when the game was started! >:(")
-        elif code == 4:
-            print("in %s, %s was not ended correctly." %(args[0], args[1]))
-        elif code == 5:
-            print("reached the end of", args[0], "before finding", args[1],
-                  "\ndid you modify it while the game was running?")
-        elif code == 6:
-            print("in %s, %s has" %(args[0],args[1]),
-                  "an inputtype of '%s'." %args[2],
-                  "\ni don't know what the hell that means.")
-        elif code == 7:
-            print("didn't find an end of predicament for:", args[0])
-        elif code == 8:
-            print("no data directory")
-        elif code == 9:
-            print("%s has inputtype %s, which is insane." %(args[0],args[1]))
-        elif code == 10:
-            print("if refers to '%s', which is not in profile." %args[0])
-        elif code == 11:
-            print("in %s, %s has %s after if." %(args[0], args[1], args[2]),
-                  "\nyou forgot to use a keyword, used an invalid keyword,",
-                  "\nor didn't include a condition after 'or' or 'and'.")
-            if '=' in args[2]:
-                print("keywords other than 'then' must precede an if.")
-                print("only use 'then' after the final if condition.")
-        elif code == 12:
-            print("in %s, there is an unexpected 'end if'" %args[0],
-                  "in predicament", args[1])
-        elif code == 13:
-            print("reached end of predicament", args[0], "before 'end if'.",
-                  "\nconditionals must remain within originating predicament.")
-        elif code == 14:
-            print("in %s, %s has a '%s' directive." %(args[0],args[1],args[2]),
-                  "\ni don't know what the hell that means.")
-        elif code == 15:
-            print(args[0], "could not be found while searching for", args[1],
-                  "\ndid you rename or delete it while the game was running?")
-        elif code == 16:
-            print("in %s, %s has no inputtype." %(args[0],args[1]))
-        elif code == 17:
-            print("reach end of file while looking for 'end if'.",
-                  "\nthis is literally the end of the world.")
-        elif code == 18:
-            print("there isn't an '=' on this line:\n", args[0])
+        if code != 0:
+            print(errors[code] % args) 
         print("i can't work under these conditions. i quit.\n")
         raise SystemExit
 
@@ -219,7 +178,6 @@ to play this predicament, call its play() method
     # this isn't used anywhere, but handy for debugging
     def __str__(self):
         return 'Predicament: %s: %s' % (self.name, self.text)
-
     
     # allows user to make a choice, returns their choice as a string
     # should return a string
@@ -325,9 +283,71 @@ to play this predicament, call its play() method
                 else:
                     return self.goto[letters.index(choice)]
 
+def doIf(fp, parameter, value, name, filename):
+    # figures out whether to read conditional stuff in pred definitions
+    if parameter not in profile:
+        raise BadPredicamentError(10, parameter)
+    followup = getNonBlankLine(fp).lower()
+    conditionIsTrue = ( profile[parameter] == value.strip() )
+    if followup.startswith("then not"):
+        # don't use this, it breaks if more than one statement is processed
+        # for the simplest statements, it's okay. 
+        return not conditionIsTrue
+    elif followup.startswith("then"):
+        return conditionIsTrue
+    line = getNonBlankLine(fp)
+    if not line.startswith("if "):
+        raise BadPredicamentError(11, filename, name, "'%s'" % followup)
+    key, value = line.split('=')
+    parameter = key.split()[1].strip()
+    if followup.startswith("and not"):
+        return ( not doIf(fp, parameter, value) and conditionIsTrue )
+    elif followup.startswith("and"):
+        return ( doIf(fp, parameter, value) and conditionIsTrue )
+    elif followup.startswith("or not"):
+        return ( not doIf(fp, parameter, value) or conditionIsTrue )
+    elif followup.startswith("or"):
+        return ( doIf(fp, parameter, value) or conditionIsTrue )
+    raise BadPredicamentError(11, filename, name, '%s = %s' % (parameter, value))
+
+def getNonBlankLine(fp):
+    line = ''
+    while line == '' or line.startswith("#"):
+        line = fp.readline()
+        if not line:
+            # if eof is reached, that's bad. 
+            raise BadPredicamentError(17)
+        line = line.strip()
+    return line
+
+# populate predicaments dictionary with locations of all known predicaments
+for filename in os.listdir(datadir):
+    basename, ext = os.path.splitext(filename)
+    if ext != '.pred':
+        print("WARNING: skipping %s/%s%s..." % (datadir, basename, ext))
+        continue
+    busy = False # whether we're currently reading a predicament
+    lineNo = 0
+    with open(datadir + '/' + filename, 'r') as fp:
+        for line in fp:
+            lineNo += 1
+            line = line.strip()
+            if line.find("new predicament") == 0:
+                name = line.split('=')[1]
+                # create entry in predicaments dictionary
+                # 'title of predicament' : ('which pred file it is in',lineNo)
+                name = name.strip()
+                predicaments[name] = (filename, lineNo)
+
 if __name__ == '__main__':
+    print("content of", datadir, ": ", os.listdir(datadir))
+    print()
+    print("number of predicaments:", len(predicaments))
+    for key in predicaments:
+        print(key + ":", predicaments[key])
     print('making first predicament')
     a = Predicament('title')
-    while True:
-        a = Predicament(a.play())
+    a.play()
+    print("\nnow raising BadPredicamentError:")
+    raise BadPredicamentError(0)
 
