@@ -2,128 +2,22 @@
 # main.py
 # THIS DOES EVERYTHING!
 
-from predicaments import predicaments, Predicament
-from funtoolkit import *
-from settings import *
 from collections import deque
 
-# moved this to funtoolkit
-# from profiledata import profile, items, queststatus
+from predicaments import Predicament
+from settings import historycache
 
-# allows user to make a choice, returns their choice or false if they didn't
-# i think i took out all the possible false returns...
-# the predicament parameter is one of the dictionaries stored in predicaments 
-# the predicament parameter is a Predicament 
-# should return a string
-def play(predicament):
-    global profile, items, queststatus
-    clear()
-    #predicament = Predicament(predicament)
-    #if there are SET statements in predicament, do those before printing text
-    if predicament.setvars:
-        for statement in predicament.setvars:
-            # make tuple readable
-            variable, value = statement[0], statement[1]
-            try:
-                profile[variable] = value
-            #if variable not in profile.keys():
-            except KeyError:
-                print("error: probable invalid SET statement in predicament",
-                       predicament.name)
-                print("refers to nonexistent variable '%s'" % variable)
-                print("this is a fatal error. aborting")
-                raise SystemExit
-    # use extraDelay to give bigger blocks of text longer pauses
-    extraDelay = 0
-    for line in predicament.text:
-        if "fancytext" in predicament.disable:
-            print(replaceVariables(line))
-        else:
-            extraDelay = fancyPrint(line, extraDelay)
-    if predicament.inputtype != 'normal':
-        # print a newline after things which don't have more options to print
-        extraDelay = fancyPrint('', extraDelay)
-    # decide what the prompt will be
-    if predicament.prompt:
-        # if there is a custom prompt, just use it
-        prompt = "[" + predicament.prompt + "]"
-    elif predicament.disable and "prompt" in predicament.disable:
-        # otherwise, disable the prompt if it's disabled
-        prompt = ""
-    elif not predicament.disable or "prompt" not in predicament.disable:
-        # or, just use the default prompt depending on inputtype
-        if predicament.inputtype == 'none':
-            prompt = "[" + defaultNonePrompt + "]"
-        elif predicament.inputtype == 'normal':
-            prompt = "\n[" + defaultNormalPrompt + "]"
-        elif predicament.inputtype == 'input':
-            prompt = "[" + defaultInputPrompt + "]"
-    # once we're done fancyprinting, we don't want to redraw the predicament if
-    # we return to it while it's in memory (unpausing, using backspace, etc)
-    if "fancytext" not in predicament.disable \
-    and "normal" not in predicament.inputtype:
-        # normal predicaments still have some fancyprinting to do
-        predicament.disable.append("fancytext")
-    if predicament.inputtype == 'none':
-        ch = anykey(prompt)
-        if commonOptions(ch):
-            return predicament.name
-        # hit backspace or ^H to go back
-        elif ch == '\x08' or ch == '\x7F':
-            return '\x7F'
-        # hit ^R to forcibly redraw the text
-        elif ch == '\x12':
-            predicament.disable.remove("fancytext")
-            return predicament.name
-        return predicament.goto
-    elif predicament.inputtype == 'input':
-        print(prompt)
-        try:
-            profile[predicament.result] = input().strip()
-            while profile[predicament.result] == '':
-                # output the last line of text until a valid input is provided
-                profile[predicament.result] = input(prompt + "\n").strip()
-        except KeyboardInterrupt:
-            quit()
-        return predicament.goto
-    elif predicament.inputtype == 'normal':
-        letters = preferredButtons[:len(predicament.options)]
-        iterletters = iter(letters)
-        #print("options", len(predicament['options']))
-        fancyPrint('', extraDelay)
-        for option in predicament.options:
-            string = next(iterletters) + ' - ' + option
-            if 'fancytext' in predicament.disable:
-                print(string)
-            else:
-                fancyPrint(string, -1)
-        # *now* normal predicaments are done fancyprinting
-        predicament.disable.append("fancytext")
-        choice = anykey(prompt)
-        while True:
-            if commonOptions(choice):
-                return predicament.name
-            # hit backspace or ^H to go back
-            elif choice == '\x08' or choice == '\x7F':
-                return '\x7F'
-            # hit ^R to forcibly redraw the text
-            elif choice == '\x12':
-                predicament.disable.remove("fancytext")
-                return predicament.name
-            elif choice not in letters:
-                choice = anykey(prompt)
-            else:
-                return predicament.goto[letters.index(choice)]
-
-
-if __name__ == '__main__':
-    currentPredicament = Predicament('title')
+def main(start='title'):
+    currentPredicament = Predicament(start)
     # prevPredicaments is a queue. after each new predicament, append it.
     # it holds past Predicaments. it does not hold strings
     prevPredicaments = deque(maxlen=historycache)
     while True:
-        nextPredicament = play(currentPredicament)
-        if nextPredicament == '\x7F':
+        nextPredicament = currentPredicament.play()
+        if nextPredicament == currentPredicament.name:
+            # if this is the same predicament, play it again
+            continue
+        elif nextPredicament == '\x7F':
             # go back to last predicament
             try:
                 currentPredicament = prevPredicaments.pop()
@@ -131,10 +25,9 @@ if __name__ == '__main__':
                 clear()
                 anykey("no history available.")
             continue
-        nextPredicament = Predicament(nextPredicament)
-        if nextPredicament.name != currentPredicament.name:
-            prevPredicaments.append(currentPredicament)
-            currentPredicament = nextPredicament
-        #if currentPredicament not in predicaments:
-            #print("oops! predicament '%s' doesn't exist yet :C" % nextPredicament)
-            #raise SystemExit
+        # store this predicament on the list of previous predicaments 
+        prevPredicaments.append(currentPredicament)
+        currentPredicament = Predicament(nextPredicament)
+
+if __name__ == '__main__':
+    main()
