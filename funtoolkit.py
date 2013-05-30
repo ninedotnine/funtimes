@@ -9,7 +9,8 @@ import time
 import sys
 from subprocess import call
 from profiledata import profile, items, queststatus
-from settings import fancyPrintSpeed, fancyPrintLineDelay
+from settings import ( fancyPrintSpeed, fancyPrintLineDelay, 
+                       stdinfd, oldtcattr )
 
 sounddir = os.getcwd() + '/data/sound/'
 
@@ -23,11 +24,12 @@ if os.name == 'nt':
             if not os.path.isdir(sounddir):
                 return False
             try:
-                error = winsound.PlaySound(sounddir + sound + '.wav', winsound.SND_FILENAME)
+                error = winsound.PlaySound(sounddir + sound + '.wav',
+                                           winsound.SND_FILENAME)
             except:
                 return False
         return True
-    
+
     # this makes testing in windows at least mildly possible for now
     # but obviously it doesn't work for 'normal' inputs, so it's rubbish
     def anykey(message=''):
@@ -108,6 +110,8 @@ def load(filename="save.sav"):
 
 def quit(message="\nSee you!"):
     print(message)
+    # restore terminal to the way it was 
+    termios.tcsetattr(stdinfd, termios.TCSADRAIN, oldtcattr)
     raise SystemExit
 
 def stats(pause=True): 

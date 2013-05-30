@@ -199,11 +199,16 @@ to play this predicament, call its play() method
                     raise SystemExit
         # use extraDelay to give bigger blocks of text longer pauses
         extraDelay = 0
-        for line in self.text:
-            if "fancytext" in self.disable:
-                print(replaceVariables(line))
-            else:
-                extraDelay = fancyPrint(line, extraDelay)
+        newtcattr[3] = newtcattr[3] & ~termios.ECHO
+        try:
+            termios.tcsetattr(stdinfd, termios.TCSADRAIN, newtcattr)
+            for line in self.text:
+                if "fancytext" in self.disable:
+                    print(replaceVariables(line))
+                else:
+                    extraDelay = fancyPrint(line, extraDelay)
+        finally:
+            termios.tcsetattr(stdinfd, termios.TCSANOW, oldtcattr)
         if profile['soundWorks']:
             if self.sound:
                 for sound in self.sound:

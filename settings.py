@@ -17,3 +17,11 @@ defaultInputPrompt = 'Please type something.'
 
 # figure this out later
 soundWorks = True
+
+# store terminal settings for restoration on quit()
+import sys
+import termios
+stdinfd = sys.stdin.fileno()
+oldtcattr = termios.tcgetattr(stdinfd)
+newtcattr = termios.tcgetattr(stdinfd)
+
