@@ -87,7 +87,7 @@ end of predicament tutorial3
 new predicament = createCharacter
     inputtype = none
 
-    text = The days continues, and you do as you always do on lazy days
+    text = The day continues, and you do as you always do on lazy days
     text = like this:
     text = 
     text = Nothing.
