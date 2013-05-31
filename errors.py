@@ -24,4 +24,6 @@ errors = (
     "reached end of %s while looking for 'end if'.\nthis is literally the end of the world.",
     "in %s, %s has no '=' on this line:\n%s\nmaybe you made a typo?",
     "%s refers to a '%s.wav'. there was an error accessing\nor playing this file. did you mistype the name?",
+    "predicament %s tries to set %s to '%s'\nbut %s is supposed to be a number!",
+    "predicament %s tries to set '%s' to a value\nbut that variable does not exist!",
 )

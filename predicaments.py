@@ -190,17 +190,20 @@ to play this predicament, call its play() method
                 # make tuple readable
                 variable, value = statement[0], statement[1]
                 try:
-                    profile[variable] = value
-                #if variable not in profile.keys():
+                    if type(profile[variable]) == int:
+                        profile[variable] = int(value)
+                    else:
+                        profile[variable] = value
                 except KeyError:
-                    print("error: probable invalid SET statement" + 
-                          "in predicament", self.name)
-                    print("refers to nonexistent variable '%s'" % variable)
-                    print("this is a fatal error. aborting")
-                    #raise SystemExit
-                    quit()
+                    # nonexistent variable
+                    raise BadPredicamentError(21, self.name, variable)
+                except ValueError:
+                    # tried to set an int to a string
+                    raise BadPredicamentError(20, self.name, variable, value,
+                                              variable)
         # use extraDelay to give bigger blocks of text longer pauses
         extraDelay = 0
+        # prevent player from barfing on the text (by hiding their input)
         newtcattr[3] = newtcattr[3] & ~termios.ECHO
         try:
             termios.tcsetattr(stdinfd, termios.TCSADRAIN, newtcattr)
@@ -211,15 +214,15 @@ to play this predicament, call its play() method
                     extraDelay = fancyPrint(line, extraDelay)
         finally:
             termios.tcsetattr(stdinfd, termios.TCSANOW, oldtcattr)
+        # try playing sounds if they work and exist
         if profile['soundWorks']:
             if self.sound:
                 for sound in self.sound:
                     soundPlayed = playSound(sound)
                 if not soundPlayed:
                     raise BadPredicamentError(19, self.name, sound)
+        # print a newline after things which don't have more options to print
         if self.inputtype != 'normal':
-            # print a newline after things which don't 
-            # have more options to print
             extraDelay = fancyPrint('', extraDelay)
         # decide what the prompt will be
         if self.prompt:
@@ -239,10 +242,8 @@ to play this predicament, call its play() method
         # once we're done fancyprinting, we don't want to redraw the 
         # predicament if we return to it while it's in memory 
         # (unpausing, using backspace, etc)
-        if "fancytext" not in self.disable \
-        and self.inputtype == "normal":
-        #and "normal" not in self.inputtype:
-            # normal predicaments still have some fancyprinting to do
+        if "fancytext" not in self.disable and self.inputtype != "normal":
+            # but normal predicaments still have some fancyprinting to do
             self.disable.append("fancytext")
         if self.inputtype == 'none':
             ch = anykey(prompt)

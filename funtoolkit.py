@@ -120,7 +120,9 @@ def stats(pause=True):
     print("You are a %s named %s %s." % (profile['gender'], profile['firstname'],
                                         profile['lastname']))
     print("You currently have %d weet point(s)." % profile['weet'])
-    print("You have $%d in your pocket." % profile['money'])
+    # format money number to be human-readable (add commas)
+    money = format(profile['money'], "8,d")
+    print("You have $%s in your pocket." % money)
     print("You have %d energy point(s) left." % profile['energy'])
     if profile['strongth'] > 14:
         print("You are quite strong.")

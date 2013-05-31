@@ -9,7 +9,7 @@ from funtoolkit import clear, playSound, initialize, anykey
 from settings import historycache
 from profiledata import profile
 
-def main(start='title'):
+def main(start='murdochInDaHouse'):
     initialize()
     # if playSound doesn't work, tell them the game will be mute
     profile['soundWorks'] = playSound('test')

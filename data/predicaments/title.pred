@@ -47,32 +47,6 @@ new predicament = tutorial
     text = 
     text = When you see the [-->], press any button to continue!
 
-# simple comparison
-    if money => 1000
-        then
-        text = murdoch in the house yo 
-    end if
-    
-# using eval()
-    if money =< 10 + 10
-        then
-        text = i added some 10s
-    end if
-
-# refer to an entry in profile
-    if money =< energy
-        then
-        text = comparing profile stuff
-    end if
-
-# abusing eval()
-    if money =< historycache
-        then
-        text = this is some seriously ugly code though
-    end if
-
-# also you cant combine eval() with a profile entry 
-
     goto = tutorial2
 end of predicament tutorial
 
@@ -186,7 +160,32 @@ new predicament = createCharacter5
     text = He turns back and winks at you.
 
     goto = createCharacter6
+    if firstname = Rupert
+        and
+    if lastname = Murdoch
+        then
+        goto = murdochInDaHouse
+    end if
 end of predicament createCharacter5
+
+# if the player is rupert murdoch, give em mad dollaz
+new predicament = murdochInDaHouse
+    inputtype = none
+    set money = 10000000000
+    set gender = boy
+    
+    text = The spotty clerk's sudden advance turns your stomach. As the Right
+    text = Honourable Rupert Murdoch, you should not have to stand for this
+    text = treatment!
+    text = 
+    text = He is kind of cute though, so you decide to tweet about gay marriage
+    text = instead. Damn corrupting gays with their supple, kissable bums
+    text = and dexterous skill with male anatomy!
+    text = 
+    text = You feel your bile rising...
+    
+    goto = mans
+end of predicament murdochInDaHouse
 
 new predicament = createCharacter6
     inputtype = normal
