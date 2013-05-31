@@ -9,7 +9,7 @@ from funtoolkit import clear, playSound, initialize, anykey
 from settings import historycache
 from profiledata import profile
 
-def main(start='murdochInDaHouse'):
+def main(start='title'):
     initialize()
     # if playSound doesn't work, tell them the game will be mute
     profile['soundWorks'] = playSound('test')
@@ -37,4 +37,4 @@ def main(start='murdochInDaHouse'):
         currentPredicament = Predicament(nextPredicament)
 
 if __name__ == '__main__':
-    main()
+    main('testicel')

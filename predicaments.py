@@ -138,7 +138,7 @@ to play this predicament, call its play() method
                 elif key == 'goto':
                     self.goto = value.strip()
                 elif key == 'inputtype':
-                    if value.strip() not in ('none', 'normal', 'input'):
+                    if value.strip() not in ('none', 'normal', 'input', 'skip'):
                         raise BadPredicamentError(6, filename, self.name,
                                                   value.strip())
                     self.inputtype = value.strip()
@@ -239,6 +239,8 @@ to play this predicament, call its play() method
                 prompt = "\n[" + defaultNormalPrompt + "]"
             elif self.inputtype == 'input':
                 prompt = "[" + defaultInputPrompt + "]"
+            elif self.inputtype == 'skip':
+                prompt = "[" + defaultInputPrompt + "]"
         # once we're done fancyprinting, we don't want to redraw the 
         # predicament if we return to it while it's in memory 
         # (unpausing, using backspace, etc)
@@ -256,6 +258,8 @@ to play this predicament, call its play() method
             elif ch == '\x12':
                 self.disable.remove("fancytext")
                 return self.name
+            return self.goto
+        elif self.inputtype == 'skip':
             return self.goto
         elif self.inputtype == 'input':
             print(prompt)

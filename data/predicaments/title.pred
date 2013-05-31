@@ -1,5 +1,11 @@
 # title screen and character creation
 
+new predicament = testicel
+    inputtype = skip
+    text = wuaothunsaohetnsaohuteoanhsuotnaseuhaotnsheuao
+    goto = title
+end of predicament testicel
+
 new predicament = nosound
     inputtype = none
     disable = fancytext
