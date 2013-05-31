@@ -47,6 +47,32 @@ new predicament = tutorial
     text = 
     text = When you see the [-->], press any button to continue!
 
+# simple comparison
+    if money => 1000
+        then
+        text = murdoch in the house yo 
+    end if
+    
+# using eval()
+    if money =< 10 + 10
+        then
+        text = i added some 10s
+    end if
+
+# refer to an entry in profile
+    if money =< energy
+        then
+        text = comparing profile stuff
+    end if
+
+# abusing eval()
+    if money =< historycache
+        then
+        text = this is some seriously ugly code though
+    end if
+
+# also you cant combine eval() with a profile entry 
+
     goto = tutorial2
 end of predicament tutorial
 

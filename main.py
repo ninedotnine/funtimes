@@ -5,7 +5,7 @@
 from collections import deque
 
 from predicaments import Predicament
-from funtoolkit import clear, playSound, initialize
+from funtoolkit import clear, playSound, initialize, anykey
 from settings import historycache
 from profiledata import profile
 

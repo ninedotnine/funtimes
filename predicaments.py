@@ -13,10 +13,11 @@ from errors import errors
 class BadPredicamentError(Exception):
     def __init__(self, code=0, *args):
         print("\nerror code:", code)
-        if code != 0:
+        if code != 0 and code < len(errors):
             print(errors[code] % args) 
         print("i can't work under these conditions. i quit.\n")
-        raise SystemExit
+        #raise SystemExit
+        quit()
 
 class Predicament:
     """this is a class for holding a predicament!
@@ -196,7 +197,8 @@ to play this predicament, call its play() method
                           "in predicament", self.name)
                     print("refers to nonexistent variable '%s'" % variable)
                     print("this is a fatal error. aborting")
-                    raise SystemExit
+                    #raise SystemExit
+                    quit()
         # use extraDelay to give bigger blocks of text longer pauses
         extraDelay = 0
         newtcattr[3] = newtcattr[3] & ~termios.ECHO
@@ -297,7 +299,40 @@ def doIf(fp, parameter, value, name):
     if parameter not in profile:
         raise BadPredicamentError(10, parameter)
     followup = getNonBlankLine(fp).lower()
-    conditionIsTrue = ( profile[parameter] == value.strip() )
+
+    # comparison cases
+    if value.startswith('>') or value.startswith('<'):
+        if type(profile[parameter]) not in (int, float):
+            # the parameter in profile isn't a comparable type
+            raise BadPredicamentError(99)
+        try:
+            comparee = eval(value[1:])
+        except NameError:
+            # it's not a comparable value.
+            # maybe it's supposed to be a profile entry? 
+            if ( value[1:].strip() in profile and 
+                 type(profile[value[1:].strip()]) in (int, float) ):
+                # aha! we're probably comparing profile stuff
+                comparee = profile[value[1:].strip()] 
+            else:
+                raise BadPredicamentError(97)
+        if value[1:].strip() in dir():
+        #if value[1:].strip() in dir(__name__):
+            # uh oh. a consequence of using eval...
+            # the pred file can refer to variables in this code
+            # this doesn't even catch all of these cases 
+            # it might, if we hadn't called something else predicaments
+            raise BadPredicamentError(96)
+        if type(comparee) not in (int, float):
+            # the value isn't a comparable type
+            raise BadPredicamentError(98)
+        if value.startswith('>'):
+            conditionIsTrue = ( profile[parameter] > comparee )
+        if value.startswith('<'):
+            conditionIsTrue = ( profile[parameter] < comparee )
+    else:
+        conditionIsTrue = ( profile[parameter] == value.strip() )
+
     if followup.startswith("then not"):
         # don't use this, it breaks if more than one statement is processed
         # for the simplest statements, it's okay. 
