@@ -7,7 +7,7 @@ import os
 import pickle
 import time
 import sys
-from subprocess import call
+from subprocess import call, DEVNULL
 from profiledata import profile, items, queststatus
 from settings import ( fancyPrintSpeed, fancyPrintLineDelay, 
                        stdinfd, oldtcattr )
@@ -45,17 +45,73 @@ else:
     def clear():
         call('clear',shell=True)
         
-    def playSound(sound):
-        if profile['soundWorks']:
+    def makePlaySound(sound):
+        # find a good way to find available sound-playing commands
+        players = ('paplay', 'aplay', 'mplayer')
+        for playa in players:
+            print("trying playa: ", playa)
+            try:
+                exit = call([playa, sounddir + sound + '.wav'],
+                            stdout=DEVNULL, stderr=DEVNULL)
+            except FileNotFoundError:
+                # this program isn't installed, move on to the next one
+                continue
+            if exit == 0:
+                print('success with:', playa)
+                break
+        else:
+            return None
+        def playSound(sound):
+            #if not profile['soundWorks']:
+                #return True
             if not os.path.isdir(sounddir):
                 return False
             try:
-                error = call('paplay ' + sounddir + sound + '.wav',shell=True)
+                # making this explicit since shell exits
+                # go opposite of typical python booleans
+                if call([playa, sounddir + sound + '.wav'], 
+                        stdout=DEVNULL, stderr=DEVNULL) != 0:
+                    return False
+                return True
             except KeyboardInterrupt:
                 quit()
-            if error:
-                return False
-        return True
+            except Exception as e:
+                print('strange error playing sounds. i didnt test much\n', e)
+                quit()
+        return playSound
+
+    playSound = makePlaySound('test')
+
+    #def playSound(sound):
+        #if profile['soundWorks']:
+            #if not os.path.isdir(sounddir):
+                #return False
+            #players = ('paplay', 'aplay', 'mplayer')
+            #try:
+                ## making this explicit since shell exits go opposite of python
+                #for playa in players:
+                    #exit = call([playa, sounddir + sound + '.wav'],
+                                #stdout=DEVNULL, stderr=DEVNULL)
+                    #if exit == 0:
+                        #return playa
+#
+                ##exit = call('paplay ' + sounddir + sound + '.wav',shell=True)
+                ##if exit == 0:
+                    ##return 'paplay'
+                ##exit = call('aplay ' + 'data/sound/test' + '.wav',shell=True)
+                ##if exit == 0:
+                    ##return 'aplay'
+                ##exit = call(['mplayer', '-really-quiet', 
+                             ##'data/sound/cash' + '.wav'])
+                ##if exit = 0:
+                    ##return 'mplayer'
+            #except KeyboardInterrupt:
+                #quit()
+            #except Exception as e:
+                #print('strange error playing sounds. i didnt test much\n', e)
+                #quit()
+            #return False
+        #return True
 
     def initialize():
         # nothing yet

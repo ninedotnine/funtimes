@@ -12,9 +12,11 @@ from profiledata import profile
 def main(start='title'):
     initialize()
     # if playSound doesn't work, tell them the game will be mute
-    profile['soundWorks'] = playSound('test')
-    if not profile['soundWorks']:
+    #playSound = makePlaySound('test')
+    if not playSound:
         Predicament('nosound').play()
+    #profile['soundWorks'] = playSound('test')
+    #if not profile['soundWorks']:
     currentPredicament = Predicament(start)
     # prevPredicaments is a queue. after each new predicament, append it.
     # it holds past Predicaments. it does not hold strings

@@ -38,6 +38,7 @@ end of predicament title
 
 new predicament = tutorial
     type = none
+    sound = tada
     
     text = According to our marketing team, purely text-based gaming
     text = is hip right now...

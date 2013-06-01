@@ -202,12 +202,12 @@ to play this predicament, call its play() method
                     raise BadPredicamentError(20, self.name, variable, value,
                                               variable)
         # try playing sounds if they work and exist
-        if profile['soundWorks']:
-            if self.sound:
-                for sound in self.sound:
-                    soundPlayed = playSound(sound)
-                if not soundPlayed:
-                    raise BadPredicamentError(19, self.name, sound)
+        #if profile['soundWorks']:
+        if playSound and self.sound:
+            for sound in self.sound:
+                soundPlayed = playSound(sound)
+            if not soundPlayed:
+                raise BadPredicamentError(19, self.name, sound)
         # use extraDelay to give bigger blocks of text longer pauses
         extraDelay = 0
         # prevent player from barfing on the text (by hiding their input)
