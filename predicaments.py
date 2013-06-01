@@ -137,7 +137,7 @@ to play this predicament, call its play() method
                     self.setvars.append((parameter.strip(), value.strip()))
                 elif key == 'goto':
                     self.goto = value.strip()
-                elif key == 'inputtype':
+                elif key == 'type':
                     if value.strip() not in ('none', 'normal', 'input', 'skip'):
                         raise BadPredicamentError(6, filename, self.name,
                                                   value.strip())
@@ -201,6 +201,13 @@ to play this predicament, call its play() method
                     # tried to set an int to a string
                     raise BadPredicamentError(20, self.name, variable, value,
                                               variable)
+        # try playing sounds if they work and exist
+        if profile['soundWorks']:
+            if self.sound:
+                for sound in self.sound:
+                    soundPlayed = playSound(sound)
+                if not soundPlayed:
+                    raise BadPredicamentError(19, self.name, sound)
         # use extraDelay to give bigger blocks of text longer pauses
         extraDelay = 0
         # prevent player from barfing on the text (by hiding their input)
@@ -212,18 +219,11 @@ to play this predicament, call its play() method
                     print(replaceVariables(line))
                 else:
                     extraDelay = fancyPrint(line, extraDelay)
+            # print a newline after things which don't have more options to print
+            if self.inputtype != 'normal':
+                extraDelay = fancyPrint('', extraDelay)
         finally:
             termios.tcsetattr(stdinfd, termios.TCSANOW, oldtcattr)
-        # try playing sounds if they work and exist
-        if profile['soundWorks']:
-            if self.sound:
-                for sound in self.sound:
-                    soundPlayed = playSound(sound)
-                if not soundPlayed:
-                    raise BadPredicamentError(19, self.name, sound)
-        # print a newline after things which don't have more options to print
-        if self.inputtype != 'normal':
-            extraDelay = fancyPrint('', extraDelay)
         # decide what the prompt will be
         if self.prompt:
             # if there is a custom prompt, just use it
@@ -264,6 +264,9 @@ to play this predicament, call its play() method
         elif self.inputtype == 'input':
             print(prompt)
             try:
+                # flush terminal input so nothing gets prefixed to this value
+                sys.stdout.flush()
+                termios.tcflush(sys.stdin, TCIOFLUSH)
                 profile[self.result] = input().strip()
                 while profile[self.result] == '':
                     # print the last line of text till valid input is provided
@@ -274,13 +277,19 @@ to play this predicament, call its play() method
         elif self.inputtype == 'normal':
             letters = preferredButtons[:len(self.options)]
             iterletters = iter(letters)
-            fancyPrint('', extraDelay)
-            for option in self.options:
-                string = next(iterletters) + ' - ' + option
-                if 'fancytext' in self.disable:
-                    print(string)
-                else:
-                    fancyPrint(string, -1)
+            # prevent player from barfing on text (by hiding their input)
+            newtcattr[3] = newtcattr[3] & ~termios.ECHO
+            try:
+                termios.tcsetattr(stdinfd, termios.TCSADRAIN, newtcattr)
+                fancyPrint('', extraDelay)
+                for option in self.options:
+                    string = next(iterletters) + ' - ' + option
+                    if 'fancytext' in self.disable:
+                        print(string)
+                    else:
+                        fancyPrint(string, -1)
+            finally:
+                termios.tcsetattr(stdinfd, termios.TCSANOW, oldtcattr)
             # *now* normal predicaments are done fancyprinting
             self.disable.append("fancytext")
             choice = anykey(prompt)

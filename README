@@ -1,16 +1,38 @@
-funtimes! a simple text-based adventure game.      
+funtimes! a simple text adventure game
 
-its only dependency is python3. it might work with 2.7, maybe.
-you might be wondering about the reasoning behind some design decisions that were made. funtimes was originally a MS-DOS program written by a highschooler who apparently only knew how to use IF and GOTO. this version honours that legacy by... it doesn't really. i was just a little lazy with the porting. 
+its only dependency is python 3. currently only works well on linux, but we're
+going to make it cross-platform later.
 
-<@ninedotnine> this approach should make it easy to code the rest of the game
-<@ninedotnine> there are some things i don't like about it though 
-<@ninedotnine> like having a file that does nothing except list things that exist
-<@ninedotnine> but if there's another way to do that, i'm currently overlooking it
-<@ninedotnine> also, it loads the entire game into memory when you start playing
-<@ninedotnine> that's not wonderful either
-<@ninedotnine> but there are a few major upsides to this implementation 
-<@ninedotnine> number one being at least it's not fucking dos
+this is based on a batch-file game written by a high schooler. instead of doing
+things the simple way and writing it all in python, it's a game engine that
+interprets 'pred' files that use our own specialized syntax.
+
+why? because why not. it's funtimes.
+
+-----------------------------------
+               TO-DO:
+-----------------------------------
+
+make all those termios things work on windows
+
+make anykey() work on windows
+
+improve sound support on linux?
+
+create some way to randomize variables (dice rolling)
+
+if statements need better error messages
+
+either make it so pred ifs can't access internal variables, or give a special
+error for them so the user knows they used a reserved name. something.
+
+make disable = pause
+
+make disable = save
+
+allow index in if and set statements (for items, quests)
+
+-----------------------------------
 
 included below is the original readme.txt.
 
@@ -24,7 +46,7 @@ included below is the original readme.txt.
 #       #     # #   # #    #     #  #     # #             # 
 #       #     # #    ##    #     #  #     # #       #     # 
 #        #####  #     #    #    ### #     # #######  #####  
-		(hope you have fun!)
+        (hope you have fun!)
 
 
 A simple little life sim composed of a million batch files

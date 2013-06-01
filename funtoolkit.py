@@ -19,6 +19,7 @@ if os.name == 'nt':
     import winsound
     def clear():
         call('cls',shell=True)
+    
     def playSound(sound):
         if profile['soundWorks']:
             if not os.path.isdir(sounddir):
@@ -119,11 +120,17 @@ def stats(pause=True):
     print("CHARACTER STATS:")
     print("You are a %s named %s %s." % (profile['gender'], profile['firstname'],
                                         profile['lastname']))
-    print("You currently have %d weet point(s)." % profile['weet'])
+    if profile['weet'] == 1:
+        print("You currently have 1 weet point.")
+    else:
+        print("You currently have %d weet points." % profile['weet'])
     # format money number to be human-readable (add commas)
-    money = format(profile['money'], "8,d")
+    money = format(profile['money'], ",d")
     print("You have $%s in your pocket." % money)
-    print("You have %d energy point(s) left." % profile['energy'])
+    if profile['energy'] == 1:
+        print("You have %d energy point left." % profile['energy'])
+    else:
+        print("You have %d energy points left." % profile['energy'])
     if profile['strongth'] > 14:
         print("You are quite strong.")
     if profile['charisma'] > 14:

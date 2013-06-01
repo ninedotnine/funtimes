@@ -21,6 +21,7 @@ soundWorks = True
 # store terminal settings for restoration on quit()
 import sys
 import termios
+from termios import tcflush, TCIOFLUSH
 stdinfd = sys.stdin.fileno()
 oldtcattr = termios.tcgetattr(stdinfd)
 newtcattr = termios.tcgetattr(stdinfd)

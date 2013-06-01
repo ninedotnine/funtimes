@@ -37,4 +37,4 @@ def main(start='title'):
         currentPredicament = Predicament(nextPredicament)
 
 if __name__ == '__main__':
-    main('testicel')
+    main()

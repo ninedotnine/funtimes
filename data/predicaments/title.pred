@@ -1,13 +1,7 @@
 # title screen and character creation
 
-new predicament = testicel
-    inputtype = skip
-    text = wuaothunsaohetnsaohuteoanhsuotnaseuhaotnsheuao
-    goto = title
-end of predicament testicel
-
 new predicament = nosound
-    inputtype = none
+    type = none
     disable = fancytext
     disable = prompt
     
@@ -21,7 +15,7 @@ new predicament = nosound
 end of predicament nosound
 
 new predicament = title
-    inputtype = none
+    type = none
     disable = fancytext
     disable = prompt
 
@@ -43,13 +37,12 @@ end of predicament title
 
 
 new predicament = tutorial
-    inputtype = none
+    type = none
     
     text = According to our marketing team, purely text-based gaming
     text = is hip right now...
     text = 
     text =                So welcome to FUNTIMES!
-    sound = tada
     text = 
     text = When you see the [-->], press any button to continue!
 
@@ -57,7 +50,7 @@ new predicament = tutorial
 end of predicament tutorial
 
 new predicament = tutorial2
-    inputtype = none
+    type = none
     
     text = "Only an idiot would press a button after an intro like that."
     text = 
@@ -72,7 +65,7 @@ new predicament = tutorial2
 end of predicament tutorial2
 
 new predicament = tutorial3
-    inputtype = none
+    type = none
     
     text = "Actually, maybe you have a point. The sort of marketing team
     text = that would call something 'Funtimes' probably DOES work here."
@@ -91,7 +84,7 @@ new predicament = tutorial3
 end of predicament tutorial3
 
 new predicament = createCharacter
-    inputtype = none
+    type = none
 
     text = The day continues, and you do as you always do on lazy days
     text = like this:
@@ -108,7 +101,7 @@ end of predicament createCharacter
 
 
 new predicament = createCharacter2
-    inputtype = none
+    type = none
 
     text = Your best friend sits across from you at Pizza Pizza, picking
     text = at his teeth idly. He glances up at the spotty clerk behind the
@@ -126,7 +119,7 @@ new predicament = createCharacter2
 end of predicament createCharacter2
 
 new predicament = createCharacter3
-    inputtype = input
+    type = input
     result = firstname
 
     text = "Medium pepperoni."
@@ -143,7 +136,7 @@ new predicament = createCharacter3
 end of predicament createCharacter3
 
 new predicament = createCharacter4
-    inputtype = input
+    type = input
     result = lastname
     
     text = "%firstname%."
@@ -156,7 +149,7 @@ new predicament = createCharacter4
 end of predicament createCharacter4
 
 new predicament = createCharacter5
-    inputtype = none
+    type = none
     text = "%lastname%."
     text = 
     text = "Thank you," he says. He turns over his shoulder and yells to someone
@@ -176,9 +169,10 @@ end of predicament createCharacter5
 
 # if the player is rupert murdoch, give em mad dollaz
 new predicament = murdochInDaHouse
-    inputtype = none
+    type = none
     set money = 10000000000
     set gender = boy
+    sound = cash
     
     text = The spotty clerk's sudden advance turns your stomach. As the Right
     text = Honourable Rupert Murdoch, you should not have to stand for this
@@ -194,7 +188,7 @@ new predicament = murdochInDaHouse
 end of predicament murdochInDaHouse
 
 new predicament = createCharacter6
-    inputtype = normal
+    type = normal
 
     text = The spotty clerk's sudden advance turns your stomach. Before heading
     text = back to your table, you make a detour to the washrooms.
@@ -207,7 +201,7 @@ new predicament = createCharacter6
 end of predicament createCharacter6
 
 new predicament = womans
-    inputtype = none
+    type = none
     set gender = girl
 
     text = You stumble into the washroom, trying to hold in the puke. The first
@@ -225,7 +219,7 @@ new predicament = womans
 end of predicament womans
 
 new predicament = mans
-    inputtype = none
+    type = none
     set gender = boy
 
     text = You stumble into the washroom, trying to hold in the puke. The only
@@ -243,7 +237,7 @@ new predicament = mans
 end of predicament mans
 
 new predicament = leavingWashroom
-    inputtype = none
+    type = none
 
     text = You're feeling a bit better now, soothed by the hideous fluorescent lighting
     text = of Pizza Pizza, and the fact that you can breathe out of your nose again.
@@ -257,7 +251,7 @@ new predicament = leavingWashroom
 end of predicament leavingWashroom
 
 new predicament = firstMeetingGirl
-    inputtype = none
+    type = none
 
     text = "Hey," she says awkwardly. You return the greeting.
     text = 
@@ -274,7 +268,7 @@ new predicament = firstMeetingGirl
 end of predicament firstMeetingGirl2
 
 new predicament = setFriendsName
-    inputtype = input
+    type = input
     result = friendname
 
     text = %girlname%'s friend bites her lip. "Is that your friend?"
@@ -293,7 +287,7 @@ new predicament = setFriendsName
 end of predicament setFriendsName
 
 new predicament = endOfCreateCharacter
-    inputtype = none
+    type = none
 
     text = "%friendname%," you answer. %girlname%'s friend nods.
     text = 
@@ -309,7 +303,7 @@ new predicament = endOfCreateCharacter
 end of predicament endOfCreateCharacter
 
 new predicament = endOfCreateCharacter2
-    inputtype = none
+    type = none
 
     text = The rest of the day goes by as normal. You and %friendname% split up and you
     text = head back home for an early night. It's a good thing, too, because tomorrow
