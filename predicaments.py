@@ -36,7 +36,7 @@ to play this predicament, call its play() method
         self.text = None
         self.setvars = None
         # 99% of objects will have a disable at some point, because we append
-        # 'fancytext' at the end of initial execution. this stops it from
+        # 'redraw' at the end of initial execution. this stops it from
         # being redrawn when the user unpauses, backspaces, etc. therefore
         # disable might as well be an existing list all the time
         self.disable = []
@@ -122,6 +122,8 @@ to play this predicament, call its play() method
                     if len(self.goto) < 6:
                         self.goto.append(value.strip())
                 elif key == 'disable':
+                    # i don't want smart-alecs assigning this directly
+                    if value.strip() != 'redraw':
                         self.disable.append(value.strip())
                 elif key == 'sound':
                     if not self.sound:
@@ -203,11 +205,13 @@ to play this predicament, call its play() method
                                               variable)
         # try playing sounds if they work and exist
         #if profile['soundWorks']:
-        if playSound and self.sound:
+        if playSound and self.sound and 'redraw' not in self.disable:
             for sound in self.sound:
                 soundPlayed = playSound(sound)
             if not soundPlayed:
                 raise BadPredicamentError(19, self.name, sound)
+        if 'fancytext' in self.disable and 'redraw' not in self.disable:
+            self.disable.append('redraw')
         # use extraDelay to give bigger blocks of text longer pauses
         extraDelay = 0
         # prevent player from barfing on the text (by hiding their input)
@@ -215,7 +219,7 @@ to play this predicament, call its play() method
         try:
             termios.tcsetattr(stdinfd, termios.TCSADRAIN, newtcattr)
             for line in self.text:
-                if "fancytext" in self.disable:
+                if 'redraw' in self.disable:
                     print(replaceVariables(line))
                 else:
                     extraDelay = fancyPrint(line, extraDelay)
@@ -244,9 +248,9 @@ to play this predicament, call its play() method
         # once we're done fancyprinting, we don't want to redraw the 
         # predicament if we return to it while it's in memory 
         # (unpausing, using backspace, etc)
-        if "fancytext" not in self.disable and self.inputtype != "normal":
+        if 'redraw' not in self.disable and self.inputtype != "normal":
             # but normal predicaments still have some fancyprinting to do
-            self.disable.append("fancytext")
+            self.disable.append('redraw')
         if self.inputtype == 'none':
             ch = anykey(prompt)
             if commonOptions(ch):
@@ -256,7 +260,7 @@ to play this predicament, call its play() method
                 return '\x7F'
             # hit ^R to forcibly redraw the text
             elif ch == '\x12':
-                self.disable.remove("fancytext")
+                self.disable.remove('redraw')
                 return self.name
             return self.goto
         elif self.inputtype == 'skip':
@@ -284,14 +288,14 @@ to play this predicament, call its play() method
                 fancyPrint('', extraDelay)
                 for option in self.options:
                     string = next(iterletters) + ' - ' + option
-                    if 'fancytext' in self.disable:
+                    if 'redraw' in self.disable:
                         print(string)
                     else:
                         fancyPrint(string, -1)
             finally:
                 termios.tcsetattr(stdinfd, termios.TCSANOW, oldtcattr)
             # *now* normal predicaments are done fancyprinting
-            self.disable.append("fancytext")
+            self.disable.append('redraw')
             choice = anykey(prompt)
             while True:
                 if commonOptions(choice):
@@ -301,7 +305,7 @@ to play this predicament, call its play() method
                     return '\x7F'
                 # hit ^R to forcibly redraw the text
                 elif choice == '\x12':
-                    self.disable.remove("fancytext")
+                    self.disable.remove('redraw')
                     return self.name
                 elif choice not in letters:
                     choice = anykey(prompt)

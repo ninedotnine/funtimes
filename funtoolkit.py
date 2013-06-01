@@ -21,14 +21,13 @@ if os.name == 'nt':
         call('cls',shell=True)
     
     def playSound(sound):
-        if profile['soundWorks']:
-            if not os.path.isdir(sounddir):
-                return False
-            try:
-                error = winsound.PlaySound(sounddir + sound + '.wav',
-                                           winsound.SND_FILENAME)
-            except:
-                return False
+        if not os.path.isdir(sounddir):
+            return False
+        try:
+            error = winsound.PlaySound(sounddir + sound + '.wav',
+                                       winsound.SND_FILENAME)
+        except:
+            return False
         return True
 
     # this makes testing in windows at least mildly possible for now
@@ -46,10 +45,11 @@ else:
         call('clear',shell=True)
         
     def makePlaySound(sound):
+        print("Loading...")
         # find a good way to find available sound-playing commands
         players = ('paplay', 'aplay', 'mplayer')
         for playa in players:
-            print("trying playa: ", playa)
+            #print("trying playa: ", playa)
             try:
                 exit = call([playa, sounddir + sound + '.wav'],
                             stdout=DEVNULL, stderr=DEVNULL)
@@ -57,10 +57,11 @@ else:
                 # this program isn't installed, move on to the next one
                 continue
             if exit == 0:
-                print('success with:', playa)
+                #print('success with:', playa)
                 break
         else:
             return None
+            
         def playSound(sound):
             #if not profile['soundWorks']:
                 #return True
