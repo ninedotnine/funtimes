@@ -44,14 +44,14 @@ else:
     def clear():
         call('clear',shell=True)
         
-    def makePlaySound(sound):
+    def makePlaySound(sound, ext='.wav'):
         print("Loading...")
         # find a good way to find available sound-playing commands
         players = ('paplay', 'aplay', 'mplayer')
         for playa in players:
             #print("trying playa: ", playa)
             try:
-                exit = call([playa, sounddir + sound + '.wav'],
+                exit = call([playa, sounddir + sound + ext],
                             stdout=DEVNULL, stderr=DEVNULL)
             except FileNotFoundError:
                 # this program isn't installed, move on to the next one
@@ -70,7 +70,7 @@ else:
             try:
                 # making this explicit since shell exits
                 # go opposite of typical python booleans
-                if call([playa, sounddir + sound + '.wav'], 
+                if call([playa, sounddir + sound + ext], 
                         stdout=DEVNULL, stderr=DEVNULL) != 0:
                     return False
                 return True
@@ -121,12 +121,12 @@ else:
     import termios, tty
     # allows user to press any key to continue. thanks, Matthew Adams:
     # http://stackoverflow.com/questions/11876618/python-press-any-key-to-exit
-    def anykey(message=''):
+    def anykey(*messages):
         # store stdin's file descriptor
         stdinFileDesc = sys.stdin.fileno() 
         # save stdin's tty attributes so I can reset it later
         oldStdinTtyAttr = termios.tcgetattr(stdinFileDesc) 
-        if message:
+        for message in messages:
             print(message)
         try:
             # set the input mode of stdin so that it gets added to 
