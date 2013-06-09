@@ -17,6 +17,7 @@ defaultInputPrompt = 'Please type something.'
 
 # figure this out later
 soundWorks = True
+soundOn = False
 
 # store terminal settings for restoration on quit()
 import sys

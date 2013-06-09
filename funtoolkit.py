@@ -10,7 +10,7 @@ import sys
 from subprocess import call, DEVNULL
 from profiledata import profile, items, queststatus
 from settings import ( fancyPrintSpeed, fancyPrintLineDelay, 
-                       stdinfd, oldtcattr )
+                       stdinfd, oldtcattr, soundOn )
 
 sounddir = os.getcwd() + '/data/sound/'
 
@@ -40,12 +40,12 @@ if os.name == 'nt':
     def initialize():
         call('title FUNTIMES',shell=True)
         call('color 5F',shell=True)
-else:
+else: # anything but windows
     def clear():
         call('clear',shell=True)
         
     def makePlaySound(sound, ext='.wav'):
-        print("Loading...")
+        print("Configuring sounds...")
         # find a good way to find available sound-playing commands
         players = ('paplay', 'aplay', 'mplayer')
         for playa in players:
@@ -81,7 +81,10 @@ else:
                 quit()
         return playSound
 
-    playSound = makePlaySound('test')
+    if soundOn:
+        playSound = makePlaySound('test')
+    else:
+        playSound = None
 
     #def playSound(sound):
         #if profile['soundWorks']:

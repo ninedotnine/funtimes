@@ -3,18 +3,19 @@
 # THIS DOES EVERYTHING!
 
 from collections import deque
+import pickle
 
 from predicaments import Predicament
 from funtoolkit import clear, playSound, initialize, anykey
-from settings import historycache
+from settings import historycache, soundOn
 from profiledata import profile
 
 def main(start='title'):
     initialize()
     # if playSound doesn't work, tell them the game will be mute
-    if not playSound:
-        Predicament('nosound').play()
     #if not profile['soundWorks']:
+    if not playSound and soundOn:
+        Predicament('nosound').play()
     currentPredicament = Predicament(start)
     # prevPredicaments is a queue. after each new predicament, append it.
     # it holds past Predicaments. it does not hold strings
