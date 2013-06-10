@@ -6,8 +6,8 @@ preferredButtons = 'abcdef'
 #preferredButtons = '123456'
 #preferredButtons = 'aoeujk'
 
-fancyPrintSpeed = 0.015
-#fancyPrintSpeed = 0.001
+#fancyPrintSpeed = 0.015
+fancyPrintSpeed = 0.001
 #fancyPrintLineDelay = 0.500
 fancyPrintLineDelay = 0.01
 
@@ -23,8 +23,7 @@ defaultMultilinePrompt = 'Please type something. ^D when done.'
 soundOn = False
 
 # store terminal settings for restoration on quit()
-import sys
-import termios
-from termios import tcflush, TCIOFLUSH
-stdinfd = sys.stdin.fileno()
-oldtcattr = termios.tcgetattr(stdinfd)
+#import sys
+#import termios
+#stdinfd = sys.stdin.fileno()
+#oldtcattr = termios.tcgetattr(stdinfd)

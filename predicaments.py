@@ -4,6 +4,7 @@
 # also the new home of the Predicament class
 
 import os 
+import termios
 
 from profiledata import profile
 from funtoolkit import *
@@ -289,7 +290,7 @@ to play this predicament, call its play() method
             try:
                 # flush terminal input so nothing gets prefixed to this value
                 sys.stdout.flush()
-                termios.tcflush(sys.stdin, TCIOFLUSH)
+                termios.tcflush(sys.stdin, termios.TCIOFLUSH)
                 profile[self.result] = input().strip()
                 while profile[self.result] == '':
                     # print the last line of text till valid input is provided
@@ -301,7 +302,7 @@ to play this predicament, call its play() method
             print(self.prompt)
             try: 
                 sys.stdout.flush()
-                termios.tcflush(sys.stdin, TCIOFLUSH)
+                termios.tcflush(sys.stdin, termios.TCIOFLUSH)
                 profile[self.result] = []
                 words = ''
                 while True:

@@ -3,7 +3,6 @@
 # THIS DOES EVERYTHING!
 
 from collections import deque
-import pickle
 from sys import argv
 
 from predicaments import Predicament

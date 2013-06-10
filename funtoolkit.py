@@ -7,12 +7,17 @@ import os
 import pickle
 import time
 import sys
+import termios
 from subprocess import call, DEVNULL
 from profiledata import profile, items, queststatus
-from settings import ( fancyPrintSpeed, fancyPrintLineDelay, 
-                       stdinfd, oldtcattr, soundOn )
+from settings import ( fancyPrintSpeed, fancyPrintLineDelay, soundOn )
+                       #stdinfd, oldtcattr, soundOn )
 
 sounddir = os.getcwd() + '/data/sound/'
+
+# store terminal settings for restoration on quit()
+stdinfd = sys.stdin.fileno()
+oldtcattr = termios.tcgetattr(stdinfd)
 
 # define system-dependent features
 if os.name == 'nt':
@@ -86,60 +91,30 @@ else: # anything but windows
     else:
         playSound = None
 
-    #def playSound(sound):
-        #if profile['soundWorks']:
-            #if not os.path.isdir(sounddir):
-                #return False
-            #players = ('paplay', 'aplay', 'mplayer')
-            #try:
-                ## making this explicit since shell exits go opposite of python
-                #for playa in players:
-                    #exit = call([playa, sounddir + sound + '.wav'],
-                                #stdout=DEVNULL, stderr=DEVNULL)
-                    #if exit == 0:
-                        #return playa
-#
-                ##exit = call('paplay ' + sounddir + sound + '.wav',shell=True)
-                ##if exit == 0:
-                    ##return 'paplay'
-                ##exit = call('aplay ' + 'data/sound/test' + '.wav',shell=True)
-                ##if exit == 0:
-                    ##return 'aplay'
-                ##exit = call(['mplayer', '-really-quiet', 
-                             ##'data/sound/cash' + '.wav'])
-                ##if exit = 0:
-                    ##return 'mplayer'
-            #except KeyboardInterrupt:
-                #quit()
-            #except Exception as e:
-                #print('strange error playing sounds. i didnt test much\n', e)
-                #quit()
-            #return False
-        #return True
-
     def initialize():
         # nothing yet
         return
 
-    import termios, tty
+    import tty
     # allows user to press any key to continue. thanks, Matthew Adams:
     # http://stackoverflow.com/questions/11876618/python-press-any-key-to-exit
     def anykey(*messages):
+        # a lot of this is already taken care of elsewhere
         # store stdin's file descriptor
-        stdinFileDesc = sys.stdin.fileno() 
+        #stdinFileDesc = sys.stdin.fileno() 
         # save stdin's tty attributes so I can reset it later
-        oldStdinTtyAttr = termios.tcgetattr(stdinFileDesc) 
+        #oldStdinTtyAttr = termios.tcgetattr(stdinFileDesc) 
         for message in messages:
             print(message)
         try:
             # set the input mode of stdin so that it gets added to 
             # char by char rather than line by line
-            tty.setraw(stdinFileDesc)
+            tty.setraw(stdinfd)
             # read 1 byte from stdin (indicating that a key has been pressed)
             char = sys.stdin.read(1)
         finally:
             # reset 
-            termios.tcsetattr(stdinFileDesc, termios.TCSADRAIN, oldStdinTtyAttr)
+            termios.tcsetattr(stdinfd, termios.TCSADRAIN, oldtcattr)
         if char == '\x03' or char == 'q':
             #raise KeyboardInterrupt
             quit()
