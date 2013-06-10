@@ -25,7 +25,7 @@ profile = {
         'charisma' : 10,
         'intellect' : 10,
         
-        'soundWorks' : True,
+        #'soundWorks' : True,
 }
 
 items = {

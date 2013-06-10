@@ -33,20 +33,21 @@ to play this predicament, call its play() method
     def __init__(self, name):
         Predicament.numPredicaments += 1
         self.name = name
-        self.text = None
-        self.setvars = None
+        self.text = []
+        self.setvars = []
         # 99% of objects will have a disable at some point, because we append
         # 'redraw' at the end of initial execution. this stops it from
         # being redrawn when the user unpauses, backspaces, etc. therefore
         # disable might as well be an existing list all the time
         self.disable = []
-        self.options = None
+        self.options = []
         # goto is a list if inputtype = 'normal', a string otherwise 
-        self.goto = None
+        self.goto = []
         self.inputtype = None
         self.result = None
         self.prompt = None
-        self.sound = None
+        self.sound = []
+        self.write = None
 
         try:
             filename, lineNo = predicaments[self.name]
@@ -101,8 +102,8 @@ to play this predicament, call its play() method
                     # the pred file must be invalid.
                     raise BadPredicamentError(4, filename, self.name)
                 elif key == 'text':
-                    if not self.text:
-                        self.text = []
+                    #if not self.text:
+                        #self.text = []
                     # remove only the first space if any. 
                     # leading whitespace is now allowed!
                     if value and value[0] == ' ':
@@ -110,14 +111,14 @@ to play this predicament, call its play() method
                     # add each line of text onto the prev line of text
                     self.text.append(value)
                 elif key == 'option':
-                    if not self.options:
-                        self.options = []
+                    #if not self.options:
+                        #self.options = []
                     # we only allow abcdef - 6 options
                     if len(self.options) < 6:
                         self.options.append(value.strip())
                 elif key == 'choice':
-                    if not self.goto:
-                        self.goto = []
+                    #if not self.goto:
+                        #self.goto = []
                     # we only allow abcdef - 6 choices
                     if len(self.goto) < 6:
                         self.goto.append(value.strip())
@@ -126,12 +127,12 @@ to play this predicament, call its play() method
                     if value.strip() != 'redraw':
                         self.disable.append(value.strip())
                 elif key == 'sound':
-                    if not self.sound:
-                        self.sound = []
+                    #if not self.sound:
+                        #self.sound = []
                     self.sound.append(value.strip())
                 elif key.startswith("set "):
-                    if not self.setvars:
-                        self.setvars = []
+                    #if not self.setvars:
+                        #self.setvars = []
                     # everything between 'set' and '=' is the parameter
                     # parameter cannot have spaces in it
                     key, parameter = key.split() 
@@ -140,7 +141,8 @@ to play this predicament, call its play() method
                 elif key == 'goto':
                     self.goto = value.strip()
                 elif key == 'type':
-                    if value.strip() not in ('none', 'normal', 'input', 'skip'):
+                    if value.strip() not in ('none', 'normal', 'input',
+                                             'skip', 'multiline'):
                         raise BadPredicamentError(6, filename, self.name,
                                                   value.strip())
                     self.inputtype = value.strip()
@@ -148,6 +150,8 @@ to play this predicament, call its play() method
                     self.result = value.strip()
                 elif key == 'prompt':
                     self.prompt = value.strip()
+                elif key == 'write':
+                    self.write = value.strip()
                 elif key.startswith("if "):
                     parameter = key.split()[1].strip()
                     tempIfLevel = readingIfLevel + 1
@@ -179,11 +183,12 @@ to play this predicament, call its play() method
     # this isn't used anywhere, but handy for debugging
     def __str__(self):
         return 'Predicament: %s: %s' % (self.name, self.text)
-    
+
     # allows user to make a choice, returns their choice as a string
-    # should return a string
+    # separated into two functions to make pre- and post- actions easier
     def play(self):
-        global profile, items, queststatus
+        # don't remember what this was for
+        #global profile
         clear()
         # if there are SET statements in predicament, 
         # do those before printing text
@@ -213,7 +218,7 @@ to play this predicament, call its play() method
         if 'fancytext' in self.disable and 'redraw' not in self.disable:
             self.disable.append('redraw')
         # use extraDelay to give bigger blocks of text longer pauses
-        extraDelay = 0
+        self.extraDelay = 0
         # prevent player from barfing on the text (by hiding their input)
         newtcattr[3] = newtcattr[3] & ~termios.ECHO
         try:
@@ -222,37 +227,57 @@ to play this predicament, call its play() method
                 if 'redraw' in self.disable:
                     print(replaceVariables(line))
                 else:
-                    extraDelay = fancyPrint(line, extraDelay)
-            # print a newline after things which don't have more options to print
+                    self.extraDelay = fancyPrint(line, self.extraDelay)
+            # print a newline after things which don't 
+            # have more options to print
             if self.inputtype != 'normal':
-                extraDelay = fancyPrint('', extraDelay)
+                self.extraDelay = fancyPrint('', self.extraDelay)
         finally:
             termios.tcsetattr(stdinfd, termios.TCSANOW, oldtcattr)
         # decide what the prompt will be
         if self.prompt:
             # if there is a custom prompt, just use it
-            prompt = "[" + self.prompt + "]"
+            if not self.prompt.strip().startswith('['):
+                self.prompt = "[" + self.prompt + "]"
         elif self.disable and "prompt" in self.disable:
             # otherwise, disable the prompt if it's disabled
-            prompt = ""
+            self.prompt = ""
         elif not self.disable or "prompt" not in self.disable:
             # or, just use the default prompt depending on inputtype
             if self.inputtype == 'none':
-                prompt = "[" + defaultNonePrompt + "]"
+                self.prompt = "[" + defaultNonePrompt + "]"
             elif self.inputtype == 'normal':
-                prompt = "\n[" + defaultNormalPrompt + "]"
+                self.prompt = "\n[" + defaultNormalPrompt + "]"
             elif self.inputtype == 'input':
-                prompt = "[" + defaultInputPrompt + "]"
-            elif self.inputtype == 'skip':
-                prompt = "[" + defaultInputPrompt + "]"
+                self.prompt = "[" + defaultInputPrompt + "]"
+            # why was this defined? it isn't used...
+            #elif self.inputtype == 'skip':
+                #self.prompt = "[" + defaultInputPrompt + "]"
+            elif self.inputtype == 'multiline':
+                self.prompt = "[" + defaultMultilinePrompt + "]"
         # once we're done fancyprinting, we don't want to redraw the 
         # predicament if we return to it while it's in memory 
         # (unpausing, using backspace, etc)
         if 'redraw' not in self.disable and self.inputtype != "normal":
             # but normal predicaments still have some fancyprinting to do
             self.disable.append('redraw')
-        if self.inputtype == 'none':
-            ch = anykey(prompt)
+        result = self.play2()
+        if self.write:
+            with open('funtimes.out', 'a') as output:
+                if type(profile[self.write]) is list:
+                    for line in profile[self.write]:
+                        output.write(line + '\n')
+                else:
+                    output.write(profile[self.write] + '\n')
+        return result
+
+    # allows user to make a choice, returns their choice as a string
+    # this bit only handles the different inputtypes
+    def play2(self):
+        if self.inputtype == 'skip':
+            return self.goto
+        elif self.inputtype == 'none':
+            ch = anykey(self.prompt)
             if commonOptions(ch):
                 return self.name
             # hit backspace or ^H to go back
@@ -263,10 +288,8 @@ to play this predicament, call its play() method
                 self.disable.remove('redraw')
                 return self.name
             return self.goto
-        elif self.inputtype == 'skip':
-            return self.goto
         elif self.inputtype == 'input':
-            print(prompt)
+            print(self.prompt)
             try:
                 # flush terminal input so nothing gets prefixed to this value
                 sys.stdout.flush()
@@ -274,10 +297,24 @@ to play this predicament, call its play() method
                 profile[self.result] = input().strip()
                 while profile[self.result] == '':
                     # print the last line of text till valid input is provided
-                    profile[self.result] = input(prompt + "\n").strip()
+                    profile[self.result] = input(self.prompt + "\n").strip()
             except KeyboardInterrupt:
                 quit()
             return self.goto
+        elif self.inputtype == 'multiline':
+            print(self.prompt)
+            try: 
+                sys.stdout.flush()
+                termios.tcflush(sys.stdin, TCIOFLUSH)
+                profile[self.result] = []
+                words = ''
+                while True:
+                    words = input().strip()
+                    profile[self.result].append(words)
+            except KeyboardInterrupt:
+                quit()
+            except EOFError:
+                return self.goto
         elif self.inputtype == 'normal':
             letters = preferredButtons[:len(self.options)]
             iterletters = iter(letters)
@@ -285,7 +322,7 @@ to play this predicament, call its play() method
             newtcattr[3] = newtcattr[3] & ~termios.ECHO
             try:
                 termios.tcsetattr(stdinfd, termios.TCSADRAIN, newtcattr)
-                fancyPrint('', extraDelay)
+                fancyPrint('', self.extraDelay)
                 for option in self.options:
                     string = next(iterletters) + ' - ' + option
                     if 'redraw' in self.disable:
@@ -296,7 +333,7 @@ to play this predicament, call its play() method
                 termios.tcsetattr(stdinfd, termios.TCSANOW, oldtcattr)
             # *now* normal predicaments are done fancyprinting
             self.disable.append('redraw')
-            choice = anykey(prompt)
+            choice = anykey(self.prompt)
             while True:
                 if commonOptions(choice):
                     return self.name
@@ -308,7 +345,7 @@ to play this predicament, call its play() method
                     self.disable.remove('redraw')
                     return self.name
                 elif choice not in letters:
-                    choice = anykey(prompt)
+                    choice = anykey(self.prompt)
                 else:
                     return self.goto[letters.index(choice)]
 
