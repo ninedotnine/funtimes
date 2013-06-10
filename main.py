@@ -6,7 +6,7 @@ from collections import deque
 from sys import argv
 
 from predicaments import Predicament
-from funtoolkit import clear, playSound, initialize, anykey
+from funtoolkit import clear, playSound, initialize, anykey, quit
 from settings import historycache, soundOn
 from profiledata import profile
 
@@ -40,6 +40,12 @@ def main(start='title'):
 if __name__ == '__main__':
     if len(argv) > 1:
         for predicament in argv[1:]:
-            main(predicament)
+            try:
+                main(predicament)
+            except KeyboardInterrupt:
+                quit()
     else:
-        main()
+        try:
+            main()
+        except KeyboardInterrupt:
+            quit()

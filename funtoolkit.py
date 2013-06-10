@@ -81,8 +81,8 @@ else: # anything but windows
                         stdout=DEVNULL, stderr=DEVNULL) != 0:
                     return False
                 return True
-            except KeyboardInterrupt:
-                quit()
+            #except KeyboardInterrupt:
+                #quit()
             except Exception as e:
                 print('strange error playing sounds. i didnt test much\n', e)
                 quit()
@@ -250,7 +250,8 @@ def fancyPrint(text, extraDelay):
     # uses extraDelay to pause longer after bigger blocks of text
     # pass in -1 as extraDelay to force a standard pause
     # watch for ^C so it can quit prettily if needed
-    try:
+    #try:
+    if True:
         text = replaceVariables(text)
         for character in text:
             sys.stdout.write(character)
@@ -270,9 +271,9 @@ def fancyPrint(text, extraDelay):
             extraDelay += fancyPrintLineDelay
         print() # put a newline at the end
         return extraDelay
-    except KeyboardInterrupt:
-        print()
-        quit()
+    #except KeyboardInterrupt:
+        #print()
+        #quit()
 
 class PreventBarfing:
     def __enter__(self):

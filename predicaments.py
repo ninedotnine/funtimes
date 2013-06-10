@@ -288,7 +288,8 @@ to play this predicament, call its play() method
             return self.goto
         elif self.inputtype == 'input':
             print(self.prompt)
-            try:
+            if True:
+            #try:
                 # flush terminal input so nothing gets prefixed to this value
                 sys.stdout.flush()
                 termios.tcflush(sys.stdin, termios.TCIOFLUSH)
@@ -296,8 +297,8 @@ to play this predicament, call its play() method
                 while profile[self.result] == '':
                     # print the last line of text till valid input is provided
                     profile[self.result] = input(self.prompt + "\n").strip()
-            except KeyboardInterrupt:
-                quit()
+            #except KeyboardInterrupt:
+                #quit()
             return self.goto
         elif self.inputtype == 'multiline':
             print(self.prompt)
@@ -309,8 +310,8 @@ to play this predicament, call its play() method
                 while True:
                     words = input().strip()
                     profile[self.result].append(words)
-            except KeyboardInterrupt:
-                quit()
+            #except KeyboardInterrupt:
+                #quit()
             except EOFError:
                 return self.goto
         elif self.inputtype == 'normal':
