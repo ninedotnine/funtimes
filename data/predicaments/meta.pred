@@ -1,0 +1,46 @@
+# predicament maker
+
+new predicament = meta
+    type = input
+    result = output
+    disable = fancytext
+    write = output
+
+    text = what kind of predicament will it be?
+    
+    goto = meta1
+end of predicament meta
+
+new predicament = meta1
+    type = multiline
+    result = output
+    disable = fancytext
+    write = output
+    
+    text = put words in
+    text = 
+    text = go ahead!
+    
+    goto = meta2
+end of predicament meta1
+
+new predicament = meta2 
+    type = multiline
+    disable = fancytext
+    result = output
+    write = output
+    
+    text = bogus
+    
+    goto = meta3
+end of predicament meta2
+
+new predicament = meta3
+    type = none
+    disable = fancytext
+    
+    text = wtfbogus
+    text = You frown.
+    
+    goto = gay
+end of predicament meta3
