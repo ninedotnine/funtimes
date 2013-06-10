@@ -220,9 +220,7 @@ to play this predicament, call its play() method
         # use extraDelay to give bigger blocks of text longer pauses
         self.extraDelay = 0
         # prevent player from barfing on the text (by hiding their input)
-        newtcattr[3] = newtcattr[3] & ~termios.ECHO
-        try:
-            termios.tcsetattr(stdinfd, termios.TCSADRAIN, newtcattr)
+        with PreventBarfing():
             for line in self.text:
                 if 'redraw' in self.disable:
                     print(replaceVariables(line))
@@ -232,8 +230,6 @@ to play this predicament, call its play() method
             # have more options to print
             if self.inputtype != 'normal':
                 self.extraDelay = fancyPrint('', self.extraDelay)
-        finally:
-            termios.tcsetattr(stdinfd, termios.TCSANOW, oldtcattr)
         # decide what the prompt will be
         if self.prompt:
             # if there is a custom prompt, just use it
@@ -319,9 +315,7 @@ to play this predicament, call its play() method
             letters = preferredButtons[:len(self.options)]
             iterletters = iter(letters)
             # prevent player from barfing on text (by hiding their input)
-            newtcattr[3] = newtcattr[3] & ~termios.ECHO
-            try:
-                termios.tcsetattr(stdinfd, termios.TCSADRAIN, newtcattr)
+            with PreventBarfing():
                 fancyPrint('', self.extraDelay)
                 for option in self.options:
                     string = next(iterletters) + ' - ' + option
@@ -329,8 +323,6 @@ to play this predicament, call its play() method
                         print(string)
                     else:
                         fancyPrint(string, -1)
-            finally:
-                termios.tcsetattr(stdinfd, termios.TCSANOW, oldtcattr)
             # *now* normal predicaments are done fancyprinting
             self.disable.append('redraw')
             choice = anykey(self.prompt)

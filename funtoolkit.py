@@ -295,6 +295,15 @@ def fancyPrint(text, extraDelay):
         print()
         quit()
 
+class PreventBarfing:
+    def __enter__(self):
+        newtcattr = oldtcattr[:]
+        newtcattr[3] = newtcattr[3] & ~termios.ECHO
+        termios.tcsetattr(stdinfd, termios.TCSADRAIN, newtcattr)
+    def __exit__(self, typ, value, callback):
+        termios.tcsetattr(stdinfd, termios.TCSADRAIN, oldtcattr)
+
+
 if __name__ == '__main__':
     savedata = load()
     profile = savedata[0]
