@@ -3,8 +3,9 @@
 # home to doIf() and getNonBlankLine()
 # also the new home of the Predicament class
 
-import os 
-import termios
+# these are already imported from funtoolkit anyway...
+#import os 
+#import termios
 
 from profiledata import profile
 from funtoolkit import *
@@ -400,7 +401,7 @@ def doIf(fp, parameter, value, name):
         return ( not doIf(fp, parameter, value, name) or conditionIsTrue )
     elif followup.startswith("or"):
         return ( doIf(fp, parameter, value, name) or conditionIsTrue )
-    raise BadPredicamentError(11, fp.name, name, '%s = %s' % (parameter, value))
+    raise BadPredicamentError(11, fp.name, name, '%s = %s' % (parameter,value))
 
 def getNonBlankLine(fp):
     line = ''

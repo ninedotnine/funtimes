@@ -21,9 +21,3 @@ defaultMultilinePrompt = 'Please type something. ^D when done.'
 # figure this out later
 #soundWorks = True
 soundOn = False
-
-# store terminal settings for restoration on quit()
-#import sys
-#import termios
-#stdinfd = sys.stdin.fileno()
-#oldtcattr = termios.tcgetattr(stdinfd)

@@ -9,9 +9,9 @@ import time
 import sys
 import termios
 from subprocess import call, DEVNULL
+
 from profiledata import profile, items, queststatus
-from settings import ( fancyPrintSpeed, fancyPrintLineDelay, soundOn )
-                       #stdinfd, oldtcattr, soundOn )
+from settings import fancyPrintSpeed, fancyPrintLineDelay, soundOn
 
 sounddir = os.getcwd() + '/data/sound/'
 
@@ -153,8 +153,8 @@ def quit(message="\nSee you!"):
 def stats(pause=True): 
     clear()
     print("CHARACTER STATS:")
-    print("You are a %s named %s %s." % (profile['gender'], profile['firstname'],
-                                        profile['lastname']))
+    print("You are a %s named %s %s." % (profile['gender'], 
+          profile['firstname'], profile['lastname']))
     if profile['weet'] == 1:
         print("You currently have 1 weet point.")
     else:
@@ -192,7 +192,8 @@ def stats(pause=True):
 
 def pause():
     stats(pause=False)
-    print("\nMash 's' to save, 'l' to load, 'q' to quaff potion--er, I mean quit")
+    print("\nMash 's' to save, 'l' to load, " + 
+          "'q' to quaff potion--er, I mean quit")
     ch = anykey()
     # hit 'p' or escape to unpause
     if ch == 'p' or ch == '\x1B':
@@ -228,7 +229,8 @@ an action. Use S and L to save and load your progress, and Q to quit.
 Use of this game while intoxicated may be illegal in some jurisdictions.''')
     anykey()
 
-# method what replaces variables' plaintext representations with the actual variable
+# method what replaces variables' plaintext representations 
+# with the actual variable
 def replaceVariables(text):
     if '%' not in text or '%' not in text[text.index('%')+1:]:
         # '%' doesn't appear or doesn't appear again after appearing
