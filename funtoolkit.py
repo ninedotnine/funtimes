@@ -11,7 +11,7 @@ import termios
 from subprocess import call, DEVNULL
 
 from profiledata import profile, items, queststatus
-from settings import fancyPrintSpeed, fancyPrintLineDelay, soundOn
+from settings import fancyPrintSpeed, fancyPrintLineDelay, soundOn, clearOn
 
 sounddir = os.getcwd() + '/data/sound/'
 
@@ -23,7 +23,8 @@ oldtcattr = termios.tcgetattr(stdinfd)
 if os.name == 'nt':
     import winsound
     def clear():
-        call('cls',shell=True)
+        if clearOn:
+            call('cls',shell=True)
     
     def playSound(sound):
         if not os.path.isdir(sounddir):
@@ -47,7 +48,8 @@ if os.name == 'nt':
         call('color 5F',shell=True)
 else: # anything but windows
     def clear():
-        call('clear',shell=True)
+        if clearOn:
+            call('clear',shell=True)
         
     def makePlaySound(sound, ext='.wav'):
         print("Configuring sounds...")
