@@ -18,7 +18,6 @@ class BadPredicamentError(Exception):
         if code != 0 and code < len(errors):
             print(errors[code] % args) 
         print("i can't work under these conditions. i quit.\n")
-        #raise SystemExit
         quit()
 
 class Predicament:

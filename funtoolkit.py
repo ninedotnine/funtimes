@@ -202,6 +202,9 @@ def pause():
         return
     elif commonOptions(ch):
         return
+    elif ch == 's':
+        save()
+        return 
     elif ch == 'l':
         global profile, items, queststatus
         profile, items, queststatus = load()
@@ -211,14 +214,9 @@ def commonOptions(ch):
     if ch == 'p' or ch == '\x1B':
         pause()
         return True
-    elif ch == 's':
-        save()
-        return True
     elif ch == 'h':
         helpme()
         return True
-    elif ch == 'q':
-        raise SystemExit
     return False
 
 def helpme():
@@ -241,7 +239,7 @@ def replaceVariables(text):
     end = text[start+1:].index('%') + start + 1
     if text[start+1:end] not in profile:
         print("can't find %s in profile" % text[start+1:end])
-        raise SystemExit
+        quit()
     return replaceVariables(text[:start] + str(profile[text[start+1:end]]) 
                             + text[end+1:])
 
