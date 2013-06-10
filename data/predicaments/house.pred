@@ -6,15 +6,15 @@ new predicament = bedroom
 
     option = Go on your computer.
 
-    if love =< 4
+    if love =< 3
         or
-    if love => 4
+    if love => 6
         then
         text = You have a cordless phone in here, too.
         option = Use the phone.
     end if
 
-    # %girlname% is calling you
+    # mom is calling you
     if love = 4
         then
         text = Your cordless phone is ringing.
@@ -23,9 +23,106 @@ new predicament = bedroom
 
     option = Rest in your bed.
     option = Leave the bedroom.
+    option = [Debug] Drink anti-energy drink.
 
     choice = computer
     choice = phone
     choice = useBed
     choice = hallway
+    choice = antienergy
 end of predicament bedroom
+
+new predicament = useBed
+    type = none
+    
+    if energy =< 11
+        then
+        text = You pull the curtains across your bright window and lie down on your
+        text = bed. Just a quick nap to get your energy levels up...
+        prompt = Wake up.
+        goto = setEnergy
+    end if
+    
+    if energy => 10
+        then
+        text = You approach the bed, intending to ruffle its feathers. Or its
+        text = sheets. Whatever beds have.
+        text = 
+        text = Suddenly you are struck with the overwhelming feeling that an
+        text = external force is making you do this -- possibly some sort of bored
+        text = nerd from another dimension dicking about in a text adventure.
+        text = 
+        text = You aren't even tired! If that nerd does exist, they should stop
+        text = trying to find out what happens when illogical actions are performed.
+        text = 
+        text = Also, maybe contemplate free will and the ethicality of what they
+        text = are forcing you to do.
+        goto = bedroom
+    end if
+end of predicament useBed
+
+new predicament = setEnergy
+    type = skip
+    set energy = 15
+    goto = bedroom
+end of predicament setEnergy
+
+new predicament = antienergy
+    type = none
+    set energy = 0
+    
+    text = These new anti-energy drinks are all the rage amongst straight-edge kids
+    text = nowadays. It's like all the lethargy of smoking pot, but without the fun
+    text = parts.
+    text = 
+    text = Your lawyer informs you never to think that again.
+    text =
+    text = YOU ARE NOW TIRED.
+    
+    goto = bedroom
+end of predicament antienergy
+
+new predicament = hallway
+    type = normal
+    text = You are standing in the hallway. The hardwood floor is cold on your feet.
+    text = The living room is just over there. Your bedroom is right behind you.
+    text = There's also a bathroom.
+    
+    option = Go into your bedroom.
+    option = Check out the bathroom.
+    option = Enter the living room.
+    
+    choice = bedroom
+    choice = bathroom
+    choice = livingRoom
+    
+    #if quest fixedCrookedPicture is not done
+    #    then
+        text =
+        text = A picture frame on the wall is crooked.
+        option = Tilt the picture frame.
+        choice = fixCrookedPicture
+    #end if
+end of predicament hallway
+
+new predicament = fixCrookedPicture
+    type = none
+    #set quest fixedCrookedPicture to done
+    #give 1 weet
+    
+    text = You straighten the picture frame. It contains a photo of you and
+    text = %friendname% at the local playground, five years ago. This was before
+    text = his acne started playing up, so you guys were pretty cute.
+    text = 
+    text = YOU GOT A FUCKIN WEET POINT, MOTHERFUCKER
+    
+    goto = hallway
+end of predicament
+
+new predicament = computer
+    type = none
+    
+    text = You go to use your computer, but it's a Mac so you're like "Fuck dat."
+    
+    goto = bedroom
+end of predicament

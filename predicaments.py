@@ -376,9 +376,9 @@ def doIf(fp, parameter, value, name):
             # the value isn't a comparable type
             raise BadPredicamentError(98)
         if value.startswith('>'):
-            conditionIsTrue = ( profile[parameter] > comparee )
+            conditionIsTrue = ( profile[parameter] >= comparee )
         if value.startswith('<'):
-            conditionIsTrue = ( profile[parameter] < comparee )
+            conditionIsTrue = ( profile[parameter] <= comparee )
     else:
         conditionIsTrue = ( profile[parameter] == value.strip() )
 

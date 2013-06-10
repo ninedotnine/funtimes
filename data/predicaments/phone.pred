@@ -1,1 +1,365 @@
 # your phone - for calling %girlname% and mom
+
+# firstly, send the player to the correct destination
+new predicament = phone
+    type = skip
+    
+    goto = nobodyToCall
+
+    # mom's calling
+    if love = 4
+        then
+        goto = comingOut
+        # i don't know what this is supposed to do when you're not gay
+    end if
+    
+    #if quest metDana is done
+    #    then
+    #    goto = planDate
+    #end if
+    
+    #if quest metGirl is done
+    #    then
+    #    goto = askToMeetUp
+    #end if
+    
+    #if quest metGirl is done
+    #   and
+    #if quest youKnowGirlname is done
+    #    then
+    #    goto = askToMeetUp-afterFirstTime
+    #end if
+end of predicament phone
+
+new predicament = nobodyToCall
+    type = none
+    
+    text = There isn't anyone you want to call at the moment.
+
+    goto = bedroom
+end of predicament nobodyToCall
+
+new predicament = askToMeetUp
+    type = none
+    
+    text = You decide to dial that girl's number. The one you met on your way to
+    text = the mall, that is. The phone rings.
+    text = 
+    text = She picks up right away. "Hello?"
+    text = 
+    text = Your heart rate skyrockets.
+    
+    goto = askToMeetUp2
+end of predicament askToMeetUp
+
+new predicament = askToMeetUp2
+    type = none
+    
+    text = "Hey. It's %firstname%, the %gender% you saw near the mall earlier."
+    # you ARE your gender! insert gay agenda joke here
+    text = "Oh, %firstname%! Sorry, I totally forgot to ask your name when we
+    text = talked. I'm %girlname%."
+
+    set quest youKnowGirlname to done
+    set flirt = 0
+    # are we going to have some kind of universal 'status of this thing' variable?
+    # or allow creation of arbitrary, little-usage variables like this one?
+    
+    goto = askToMeetUp-hub
+end of predicament askToMeetUp2
+
+new predicament = askToMeetUp-afterFirstTime
+    type = none
+
+    text = You dial %girlname%'s number. She picks up right away.
+    text = 
+    text = "Hey %katie%, it's %bran%."
+    text = 
+    text = "Oh! What's up?"
+    set flirt = 0
+    
+    goto = askToMeetUp-hub
+
+new predicament = askToMeetUp-hub
+    type = normal
+    
+    if flirt => 5
+        then
+        set love = 1
+    end if
+    
+    text = There's an awkward silence as %girlname% waits for you to say something.
+
+    option = Flirt awkwardly.
+    option = Ask her to meet you.
+    option = Ask her on a date.
+    option = Hang up.
+    
+    if flirt = 0
+        then
+        choice = askToMeetUp-flirt0
+    end if
+    if flirt = 1
+        then
+        choice = askToMeetUp-flirt1
+    end if
+    if flirt = 2
+        then
+        choice = askToMeetUp-flirt2
+    end if
+    if flirt = 3
+        then
+        choice = askToMeetUp-flirt3
+    end if
+    if flirt = 4
+        then
+        choice = askToMeetUp-flirt4
+    end if
+    if flirt = 5
+        then
+        choice = askToMeetUp-flirt5
+    end if
+    if flirt = 6
+        then
+        choice = askToMeetUp-flirt6
+    end if
+    if flirt = 7
+        then
+        choice = askToMeetUp-flirt7
+    end if
+    if flirt = 8
+        then
+        choice = askToMeetUp-flirt8
+    end if
+    if flirt = 9
+        then
+        choice = askToMeetUp-flirt9
+    end if
+    
+    choice = askToMeetUp-finish
+    choice = askToMeetUp-tryForADate
+    choice = askToMeetUp-hangUp
+end of predicament askToMeetUp-hub
+
+new predicament = askToMeetUp-flirt0
+    type = none
+    
+    text = "Do you babysit?"
+    text = 
+    text = "No, why do you ask?"
+    text = 
+    text = "You talked to me because you thought I was a babysitter."
+    text = 
+    text = "Well, it's not every day that you see someone leading a big group
+    text = of kids to the mall," she laughs. "So you aren't a babysitter?"
+    text = 
+    text = "No, I'm not. Those kids were... my cousins."
+    text = 
+    text = "Wow," %girlname% breathes. She sounds impressed for some reason.
+
+    add 1 to flirt
+    goto = askToMeetUp-hub
+end of predicament
+
+new predicament = askToMeetUp-flirt1
+    type = none
+    
+    text = "Do you like corn?"
+    text =
+    text = "Yeah, I guess."
+    text = 
+    text = You're not really sure where you were going with that question.
+    
+    add 1 to flirt
+    goto = askToMeetUp-hub
+end of predicament
+
+new predicament = askToMeetUp-flirt2
+    type = none
+    
+    text = "What kind of music do you like?"
+    text = 
+    text = She tells you. It's the same kind of music you like!
+    text = (Whatever that is.)
+    
+    add 1 to flirt
+    goto = askToMeetUp-hub
+end of predicament
+
+new predicament = askToMeetUp-flirt3
+    type = none
+    
+    text = "I really want to have sex with you!" you blurt.
+    text = 
+    text = The line goes totally silent.
+    
+    goto askToMeetUp-flirt3-2
+end of predicament askToMeetUp-flirt3
+
+new predicament = askToMeetUp-flirt3-2
+    type = none
+
+    text = After a moment, %girlname% replies.
+    text = 
+    text = "Sorry, my phone cut out for a bit there," she explains. "What did
+    text = you say?"
+    text = 
+    text = "Oh n-n-nothing..."
+    # suave and/or sauve
+    
+    add 1 to flirt
+    goto = askToMeetUp-hub
+end of predicament
+
+new predicament = askToMeetUp-flirt4
+    type = none
+    
+    text = "What do you think about bumbling buns?"
+    text = 
+    text = "I dunno," she says. "It's okay if both parties consent, obviously,
+    text = but I still think it's pretty gross, y'know?"
+    text = 
+    text = "I read a study once that said even wild animals have been observed
+    text = bumbling buns in nature."
+    text = 
+    text = "I'm not denying that it's natural!" she says defensively.
+    text = 
+    text = "I know what you mean," you assure her. "I'm just talking."
+    text = 
+    text = "Alright."
+    
+    add 1 to flirt
+    goto = askToMeetUp-hub
+end of predicament
+
+new predicament = askToMeetUp-flirt5
+    type = none
+    
+    text = "Where do you get your groceries?"
+    text = 
+    text = She pauses for a moment. "Why do you ask?"
+    text = 
+    text = "I dunno," you admit. "I'm really searching for things to talk about."
+    text = 
+    text = %girlname% laughs. Whether that's good or bad is beyond you.
+    text = 
+    text = "My mother goes to the other side of the city for food," she says.
+    text = 
+    text = "Ah, right," you say. "I buy groceries at Metro, since it's the only
+    text = grocery store in this game... I mean, in this part of town."
+    text = 
+    text = "That's cool."
+    
+    add 1 to flirt
+    goto = askToMeetUp-hub
+end of predicament
+
+new predicament = askToMeetUp-flirt6
+    type = none
+    
+    text = "Have you ever seen Fight Club?"
+    text = 
+    text = "No," she replies.
+    text = 
+    text = "Yeah... me neither."
+    
+    add 1 to flirt
+    goto = askToMeetUp-hub
+end of predicament
+
+new predicament = askToMeetUp-flirt7
+    type = none
+    
+    text = "Have you ever stolen a gun from Ammu-Nation?"
+    text = 
+    text = "What?"
+    text = 
+    text = "Never mind."
+    
+    add 1 to flirt
+    goto = askToMeetUp-hub
+end of predicament
+
+new predicament = askToMeetUp-flirt8
+    type = none
+    
+    text = "%girlname% is a very nice name. I... uh, I used to have a cat
+    text = named %girlname%."
+    text = 
+    text = "Uh... okay."
+    text = 
+    text = She giggles a bit. You wipe the sweat from your brow.
+    
+    add 1 to flirt
+    goto = askToMeetUp-hub
+end of predicament
+
+new predicament = askToMeetUp-flirt9
+    type = none
+    
+    text = You can't think of anything else to say.
+    
+    goto = askToMeetUp-hub
+end of predicament
+
+new predicament = askToMeetUp-finish
+    type = none
+    
+    if love = 1
+        then
+        text = "I'm gonna be heading to the mall later."
+        text = 
+        text = "Again?" She laughs.
+        text = 
+        text = "Well, without my cousins this time..."
+        text = 
+        text = "Right on."
+        text =
+        text = Your heart literally burps as you scrounge up the courage to ask.
+        goto = askToMeetUp-finish2
+    end if
+    
+    if love = 0
+        then
+        text = You want to ask if she'll meet up with you, but you're still afraid
+        text = that she doesn't like you. The words just won't come out.
+        goto = askToMeetUp-hub
+    end if
+end of predicament askToMeetUp-finish
+
+new predicament = askToMeetUp-finish2
+    type = none
+    
+    text = "You want to meet me there?"
+    text = 
+    text = "Uh..." she pauses for a moment. "I guess, yeah."
+    text = 
+    text = "Cool," you say, sighing in relief. "I'll see you soon."
+    text = 
+    text = "Bye."
+    text = 
+    text = You hang up the phone.
+    
+    add 1 to charisma
+    set quest plannedToMeetUp to done
+    goto = bedroom
+end of predicament askToMeetUp-finish2
+
+new predicament = askToMeetUp-tryForADate
+    type = none
+    
+    text = You barely know this girl! There's no way in hell that you're gonna
+    text = ask her on a date yet. No way.
+    
+    goto = askToMeetUp-hub
+end of predicament askToMeetUp-tryForADate
+
+new predicament = askToMeetUp-hangUp
+    type = none
+
+    text = "It was nice talking to you," you say.
+    text =
+    text = "Bye."
+    
+    goto = bedroom
+end of predicament askToMeetUp-hangUp

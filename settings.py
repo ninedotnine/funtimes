@@ -6,10 +6,10 @@ preferredButtons = 'abcdef'
 #preferredButtons = '123456'
 #preferredButtons = 'aoeujk'
 
-#fancyPrintSpeed = 0.015
-fancyPrintSpeed = 0.001
-#fancyPrintLineDelay = 0.500
-fancyPrintLineDelay = 0.01
+fancyPrintSpeed = 0.015
+#fancyPrintSpeed = 0.001
+fancyPrintLineDelay = 0.500
+#fancyPrintLineDelay = 0.01
 
 historycache = 10
 defaultNonePrompt = '-->'
@@ -18,6 +18,6 @@ defaultInputPrompt = 'Please type something.'
 defaultMultilinePrompt = 'Please type something. ^D when done.'
 
 
-# figure this out later
-#soundWorks = True
-soundOn = False
+
+soundOn = True
+#soundOn = False
