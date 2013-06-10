@@ -4,6 +4,7 @@
 
 from collections import deque
 import pickle
+from sys import argv
 
 from predicaments import Predicament
 from funtoolkit import clear, playSound, initialize, anykey
@@ -38,4 +39,8 @@ def main(start='title'):
         currentPredicament = Predicament(nextPredicament)
 
 if __name__ == '__main__':
-    main()
+    if len(argv) > 1:
+        for predicament in argv[1:]:
+            main(predicament)
+    else:
+        main()
