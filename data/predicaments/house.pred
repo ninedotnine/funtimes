@@ -1,8 +1,10 @@
 new predicament = bedroom
     type = normal
+    map = bedroom
+    name = Bedroom
 
-    text = You are standing in your bedroom. Sun streams through the window behind you.
-    text = To your left is a bed for you to rest in. To your right is your computer.
+    text = You are standing in your bedroom. Sun streams through the window
+    text = behind you. To your left is a bed for you to rest in. To your right
 
     option = Go on your computer.
 
@@ -10,13 +12,15 @@ new predicament = bedroom
         or
     if love => 6
         then
-        text = You have a cordless phone in here, too.
+        text = is your computer. You have a cordless phone in here, too.
         option = Use the phone.
     end if
 
     # mom is calling you
     if love = 4
         then
+        text = is your computer.
+        text =
         text = Your cordless phone is ringing.
         option = Pick up the phone.
     end if
@@ -79,6 +83,8 @@ end of predicament antienergy
 
 new predicament = hallway
     type = normal
+    map = hallway
+    name = Hallway
     
     text = You are standing in the hallway. The hardwood floor is cold on your feet.
     text = The living room is just over there. Your bedroom is right behind you.
@@ -125,6 +131,8 @@ end of predicament
 
 new predicament = bathroom
     type = normal
+    map = bathroom
+    name = Bathroom
     
     text = You're in the bathroom. There's not much to do in here. You could
     text = take a shower, I guess?

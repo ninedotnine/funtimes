@@ -23,7 +23,7 @@ class BadPredicamentError(Exception):
 class Predicament:
     """this is a class for holding a predicament!
 when creating a Predicament, pass in a string holding the name. 
-the constructor will try to find this pred's data in the datadir
+the constructor will try to find this pred's data in the preddir
 by checking the predicaments dictionary.
 to play this predicament, call its play() method
 """
@@ -38,21 +38,22 @@ to play this predicament, call its play() method
         self.setvars = []
         # 99% of objects will have a disable at some point, because we append
         # 'redraw' at the end of initial execution. this stops it from
-        # being redrawn when the user unpauses, backspaces, etc. therefore
-        # disable might as well be an existing list all the time
+        # being redrawn when the user unpauses, backspaces, etc.
         self.disable = []
         self.options = []
-        # goto is a list if inputtype = 'normal', a string otherwise 
+        # goto is a list if inputtype == 'normal', a string otherwise 
         self.goto = []
         self.inputtype = None
         self.result = None
         self.prompt = None
         self.sound = []
         self.write = None
+        self.predmap = None
+        self.mapname = None
 
         try:
             filename, lineNo = predicaments[self.name]
-            open(datadir + '/' + filename, 'r')
+            open(preddir + filename, 'r')
         except KeyError:
             # if the predicament isn't in our master dictionary...
             raise BadPredicamentError(3, self.name)
@@ -60,7 +61,7 @@ to play this predicament, call its play() method
             # if the file can't be opened...
             raise BadPredicamentError(15, filename, self.name)
         busy = False # whether we are currently reading a predicament
-        with open(datadir + '/' + filename, 'r') as fp:
+        with open(preddir + filename, 'r') as fp:
             # basically all of this is just to get to the right line and test
             for line in fp:
                 # count down to the correct line
@@ -153,6 +154,10 @@ to play this predicament, call its play() method
                     self.prompt = value.strip()
                 elif key == 'write':
                     self.write = value.strip()
+                elif key == 'map':
+                    self.predmap = value.strip()
+                elif key == 'name':
+                    self.mapname = value.strip()
                 elif key.startswith("if "):
                     parameter = key.split()[1].strip()
                     tempIfLevel = readingIfLevel + 1
@@ -180,6 +185,17 @@ to play this predicament, call its play() method
         elif busy:
             # should always hit error 4 before this, so it may be redundant
             raise BadPredicamentError(7, filename, self.name)
+        # if the map is 'none', make it really None so there's literally no map
+        # if it's merely unspecified, assume it's the last map loaded
+        if self.predmap == "none":
+            self.predmap = None
+            self.mapname = None
+        elif not self.predmap:
+            self.predmap = profile['latestPredmap']
+            self.mapname = profile['latestMapname']
+        profile['latestPredmap'] = self.predmap
+        profile['latestMapname'] = self.mapname
+        
 
     # this isn't used anywhere, but handy for debugging
     def __str__(self):
@@ -209,8 +225,13 @@ to play this predicament, call its play() method
                     # tried to set an int to a string
                     raise BadPredicamentError(20, self.name, variable, value,
                                               variable)
+        # draw the map
+        if self.predmap:
+            try:
+                self.drawMap()
+            except FileNotFoundError:
+                raise BadPredicamentError(22, self.name, self.predmap, mapdir)
         # try playing sounds if they work and exist
-        #if profile['soundWorks']:
         if playSound and self.sound and 'redraw' not in self.disable:
             for sound in self.sound:
                 soundPlayed = playSound(sound)
@@ -247,18 +268,14 @@ to play this predicament, call its play() method
                 self.prompt = "\n[" + defaultNormalPrompt + "]"
             elif self.inputtype == 'input':
                 self.prompt = "[" + defaultInputPrompt + "]"
-            # why was this defined? it isn't used...
-            #elif self.inputtype == 'skip':
-                #self.prompt = "[" + defaultInputPrompt + "]"
             elif self.inputtype == 'multiline':
                 self.prompt = "[" + defaultMultilinePrompt + "]"
         # once we're done fancyprinting, we don't want to redraw the 
-        # predicament if we return to it while it's in memory 
-        # (unpausing, using backspace, etc)
+        # predicament if we return to it after unpausing, backspacing, etc
         if 'redraw' not in self.disable and self.inputtype != "normal":
             # but normal predicaments still have some fancyprinting to do
             self.disable.append('redraw')
-        result = self.play2()
+        result = self.getPlayerInput()
         if self.write:
             with open('funtimes.out', 'a') as output:
                 if type(profile[self.write]) is list:
@@ -270,7 +287,7 @@ to play this predicament, call its play() method
 
     # allows user to make a choice, returns their choice as a string
     # this bit only handles the different inputtypes
-    def play2(self):
+    def getPlayerInput(self):
         if self.inputtype == 'skip':
             return self.goto
         elif self.inputtype == 'none':
@@ -287,17 +304,13 @@ to play this predicament, call its play() method
             return self.goto
         elif self.inputtype == 'input':
             print(self.prompt)
-            if True:
-            #try:
-                # flush terminal input so nothing gets prefixed to this value
-                sys.stdout.flush()
-                termios.tcflush(sys.stdin, termios.TCIOFLUSH)
-                profile[self.result] = input().strip()
-                while profile[self.result] == '':
-                    # print the last line of text till valid input is provided
-                    profile[self.result] = input(self.prompt + "\n").strip()
-            #except KeyboardInterrupt:
-                #quit()
+            # flush terminal input so nothing gets prefixed to this value
+            sys.stdout.flush()
+            termios.tcflush(sys.stdin, termios.TCIOFLUSH)
+            profile[self.result] = input().strip()
+            while profile[self.result] == '':
+                # print the last line of text till valid input is provided
+                profile[self.result] = input(self.prompt + "\n").strip()
             return self.goto
         elif self.inputtype == 'multiline':
             print(self.prompt)
@@ -309,12 +322,10 @@ to play this predicament, call its play() method
                 while True:
                     words = input().strip()
                     profile[self.result].append(words)
-            #except KeyboardInterrupt:
-                #quit()
             except EOFError:
                 return self.goto
         elif self.inputtype == 'normal':
-            letters = preferredButtons[:len(self.options)]
+            letters = actionButtons[:len(self.options)]
             iterletters = iter(letters)
             # prevent player from barfing on text (by hiding their input)
             with PreventBarfing():
@@ -342,6 +353,25 @@ to play this predicament, call its play() method
                     choice = anykey(self.prompt)
                 else:
                     return self.goto[letters.index(choice)]
+    
+    def drawMap(self):
+        with open(mapdir + self.predmap + '.map', 'r') as currentMap:
+            # find out the longest line so we can centre according to it
+            longestLine = 0
+            for line in currentMap:
+                if len(line) > longestLine:
+                    longestLine = len(line)
+        with open(mapdir + self.predmap + '.map', 'r') as currentMap:
+            # print the map's name over the map if it exists
+            if self.mapname:
+                sys.stdout.write \
+                (' ' * int((lineLength - len(self.mapname) - 1) / 2))
+                print(self.mapname.upper())
+            for line in currentMap:
+                sys.stdout.write(' ' * int((lineLength - longestLine) / 2))
+                print(line, end='')
+            print()
+    
 
 def doIf(fp, parameter, value, name):
     # figures out whether to read conditional stuff in pred definitions
@@ -414,18 +444,18 @@ def getNonBlankLine(fp):
     return line
 
 # populate predicaments dictionary with locations of all known predicaments
-def findPredicaments(datadir):
-    if not os.path.isdir(datadir):
+def findPredicaments(preddir):
+    if not os.path.isdir(preddir):
         raise BadPredicamentError(8)
     predicaments = {}
-    for filename in os.listdir(datadir):
+    for filename in os.listdir(preddir):
         basename, ext = os.path.splitext(filename)
         if ext != '.pred':
-            print("WARNING: skipping %s/%s%s..." % (datadir, basename, ext))
+            print("WARNING: skipping %s/%s%s..." % (preddir, basename, ext))
             continue
         pointless = True # whether this boolean is pointless
         lineNo = 0
-        with open(datadir + '/' + filename, 'r') as fp:
+        with open(preddir + filename, 'r') as fp:
             for line in fp:
                 lineNo += 1
                 line = line.strip()
@@ -438,11 +468,12 @@ def findPredicaments(datadir):
                     predicaments[name] = (filename, lineNo)
     return predicaments
 
-datadir = os.getcwd() + '/data/predicaments'
-predicaments = findPredicaments(datadir)
+preddir = os.getcwd() + '/data/predicaments/'
+mapdir = os.getcwd() + '/data/maps/'
+predicaments = findPredicaments(preddir)
 
 if __name__ == '__main__':
-    print("content of", datadir, ": ", os.listdir(datadir))
+    print("content of", preddir, ": ", os.listdir(preddir))
     print()
     print("number of predicaments:", len(predicaments))
     for key in predicaments:

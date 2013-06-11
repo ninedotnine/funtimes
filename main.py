@@ -13,7 +13,6 @@ from profiledata import profile
 def main(start='title'):
     initialize()
     # if playSound doesn't work, tell them the game will be mute
-    #if not profile['soundWorks']:
     if not playSound and soundOn:
         Predicament('nosound').play()
     currentPredicament = Predicament(start)

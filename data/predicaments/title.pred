@@ -2,6 +2,7 @@
 
 new predicament = nosound
     type = none
+    map = none
     disable = fancytext
     disable = prompt
     
@@ -18,19 +19,13 @@ new predicament = title
     type = none
     disable = fancytext
     disable = prompt
+    disable = mapname
 
-    text = ####### #     # #     # ####### ### #     # #######  #####
-    text = #       #     # ##    #    #     #  ##   ## #       #     #
-    text = #       #     # # #   #    #     #  # # # # #       #
-    text = #####   #     # #  #  #    #     #  #  #  # #####    #####
-    text = #       #     # #   # #    #     #  #     # #             # 
-    text = #       #     # #    ##    #     #  #     # #       #     #
-    text = #        #####  #     #    #    ### #     # #######  #####
-    text =                    (hope you have fun!)
+    text =                         (hope you have fun!)
     text = 
-    text = Press h for controls and help.
+    text =                    Press h for controls and help.
     text = 
-    text = Press any other key to create a new character!
+    text =            Press any other key to create a new character!
 
     goto = tutorial
 end of predicament title
@@ -39,6 +34,7 @@ end of predicament title
 new predicament = tutorial
     type = none
     sound = tada
+    map = none
     
     text = According to our marketing team, purely text-based gaming
     text = is hip right now...

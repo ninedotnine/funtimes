@@ -123,23 +123,23 @@ else: # anything but windows
         return char
 
 def save(filename="save.sav", pause=True):
-    clear()
     savedata = (profile, items, queststatus)
+    print()
     try: 
         with open(filename, 'wb') as savefile: 
             pickle.dump(savedata, savefile)
-        print("your data is saved!")
+        print("Your data is saved!")
     except IOError:
         print("error saving data :(")
     if pause:
         anykey()
 
 def load(filename="save.sav"):
-    clear()
+    print()
     try:
         with open(filename, 'rb') as savefile:
             savedata = pickle.load(savefile)
-        print("data loaded successfully.")
+        print("Data loaded successfully.")
         anykey()
         return savedata
     except IOError:
@@ -247,8 +247,6 @@ def fancyPrint(text, extraDelay):
     # prints lines character-by-character to be fancy
     # uses extraDelay to pause longer after bigger blocks of text
     # pass in -1 as extraDelay to force a standard pause
-    # watch for ^C so it can quit prettily if needed
-    #try:
     if True:
         text = replaceVariables(text)
         for character in text:
@@ -257,7 +255,7 @@ def fancyPrint(text, extraDelay):
             time.sleep(fancyPrintSpeed)
             if extraDelay > 0:
                 # subtle difference between long lines and short ones
-                extraDelay+=fancyPrintSpeed
+                extraDelay += fancyPrintSpeed
         if text == '':
             # use extraDelay to give bigger blocks of text longer pauses
             time.sleep(fancyPrintLineDelay*extraDelay)
@@ -269,11 +267,9 @@ def fancyPrint(text, extraDelay):
             extraDelay += fancyPrintLineDelay
         print() # put a newline at the end
         return extraDelay
-    #except KeyboardInterrupt:
-        #print()
-        #quit()
 
 class PreventBarfing:
+    # stops user from barfing on the text (by pressing keys during fancyPrint)
     def __enter__(self):
         newtcattr = oldtcattr[:]
         newtcattr[3] = newtcattr[3] & ~termios.ECHO

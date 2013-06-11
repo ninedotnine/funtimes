@@ -26,4 +26,5 @@ errors = (
     "%s refers to a '%s.wav'. there was an error accessing\nor playing this file. did you mistype the name?",
     "predicament %s tries to set %s to '%s'\nbut %s is supposed to be a number!",
     "predicament %s tries to set '%s' to a value\nbut that variable does not exist!",
+    "predicament %s refers to %s.map,\nwhich doesn't exist in %s! >:(\nwhat kind of game are you playing at?",
 )

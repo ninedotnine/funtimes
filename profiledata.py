@@ -25,7 +25,8 @@ profile = {
         'charisma' : 10,
         'intellect' : 10,
         
-        #'soundWorks' : True,
+        'latestPredmap' : 'title',
+        'latestMapname' : None,
 }
 
 items = {
