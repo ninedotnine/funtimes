@@ -22,4 +22,4 @@ defaultMultilinePrompt = 'Please type something. ^D when done.'
 soundOn = False
 #soundOn = False
 
-clearOn = 1
+clearOn = 0

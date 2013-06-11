@@ -37,10 +37,10 @@ new predicament = useBed
     
     if energy =< 11
         then
+        set energy = 15
         text = You pull the curtains across your bright window and lie down on your
         text = bed. Just a quick nap to get your energy levels up...
         prompt = Wake up.
-        goto = setEnergy
     end if
     
     if energy => 10
@@ -57,15 +57,10 @@ new predicament = useBed
         text = 
         text = Also, maybe contemplate free will and the ethicality of what they
         text = are forcing you to do.
-        goto = bedroom
     end if
-end of predicament useBed
-
-new predicament = setEnergy
-    type = skip
-    set energy = 15
+    
     goto = bedroom
-end of predicament setEnergy
+end of predicament useBed
 
 new predicament = antienergy
     type = none
@@ -84,6 +79,7 @@ end of predicament antienergy
 
 new predicament = hallway
     type = normal
+    
     text = You are standing in the hallway. The hardwood floor is cold on your feet.
     text = The living room is just over there. Your bedroom is right behind you.
     text = There's also a bathroom.
@@ -125,4 +121,84 @@ new predicament = computer
     text = You go to use your computer, but it's a Mac so you're like "Fuck dat."
     
     goto = bedroom
+end of predicament
+
+new predicament = bathroom
+    type = normal
+    
+    text = You're in the bathroom. There's not much to do in here. You could
+    text = take a shower, I guess?
+    
+    option = Take a shower, you guess.
+    option = Check yourself out in the mirror.
+    option = Leave the bathroom.
+    
+    choice = shower
+    choice = mirror
+    choice = hallway
+end of predicament
+
+new predicament = shower
+    type = none
+    
+    if quest hasTakenShower is done
+        then
+        text = You hop in the shower and scrub yourself clean, hoping to impress
+        text = Howard Hughes. Unfortunately you don't have any bottles to pee in,
+        text = so your effort is a bit futile.
+    end if
+    
+    if quest hasTakenShower is not done
+        then
+        text = You hop in the shower and scrub yourself clean.
+        text = 
+        text = A clean %gender% is a weet %gender%, so have yourself a weet point!
+        give 1 weet
+        set quest hasTakenShower to done
+    end if
+    
+    goto = bathroom
+end of predicament shower
+
+new predicament = mirror
+    type = none
+    
+    text = You take a quick look at yourself in the mirror.
+    text = 
+    
+    if sexy = 0
+        then
+        text = There have been uglier %gender%s. I guess. Maybe.
+        # for example, smizmars
+    end if
+    
+    if sexy = 1
+        then
+        text = Well, at least you know they like you for your personality...
+    end if
+    
+    if sexy = 2
+        then
+        text = Not too shabby...
+    end if
+    
+    if sexy = 3
+        then
+        text = Is that YOU looking back? You're looking good!
+    end if
+    
+    if sexy = 4
+        then
+        text = %firstname% %lastname%: sexiest %gender% on Earth.
+    end if
+    
+    if firstname = Brianna
+        and
+    if lastname = Rainey
+        then
+        text = 
+        text = Good enough.
+    end if
+    
+    goto = bathroom
 end of predicament

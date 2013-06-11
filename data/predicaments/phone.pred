@@ -73,7 +73,7 @@ new predicament = askToMeetUp-afterFirstTime
 
     text = You dial %girlname%'s number. She picks up right away.
     text = 
-    text = "Hey %katie%, it's %bran%."
+    text = "Hey %girlname%. It's %firstname%."
     text = 
     text = "Oh! What's up?"
     set flirt = 0
