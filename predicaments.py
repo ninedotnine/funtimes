@@ -50,6 +50,7 @@ to play this predicament, call its play() method
         self.write = None
         self.predmap = None
         self.mapname = None
+        self.directions = [0, 0, 0, 0] # up, down, left, right
 
         try:
             filename, lineNo = predicaments[self.name]
@@ -158,6 +159,14 @@ to play this predicament, call its play() method
                     self.predmap = value.strip()
                 elif key == 'name':
                     self.mapname = value.strip()
+                elif key == 'up':
+                    self.directions[0] = value.strip()
+                elif key == 'down':
+                    self.directions[1] = value.strip()
+                elif key == 'left':
+                    self.directions[2] = value.strip()
+                elif key == 'right':
+                    self.directions[3] = value.strip()
                 elif key.startswith("if "):
                     parameter = key.split()[1].strip()
                     tempIfLevel = readingIfLevel + 1
@@ -325,13 +334,13 @@ to play this predicament, call its play() method
             except EOFError:
                 return self.goto
         elif self.inputtype == 'normal':
-            letters = actionButtons[:len(self.options)]
-            iterletters = iter(letters)
+            actions = actionButtons[:len(self.options)]
+            iteractions = iter(actions)
             # prevent player from barfing on text (by hiding their input)
             with PreventBarfing():
                 fancyPrint('', self.extraDelay)
                 for option in self.options:
-                    string = next(iterletters) + ' - ' + option
+                    string = next(iteractions) + ' - ' + option
                     if 'redraw' in self.disable:
                         print(string)
                     else:
@@ -349,10 +358,22 @@ to play this predicament, call its play() method
                 elif choice == '\x12':
                     self.disable.remove('redraw')
                     return self.name
-                elif choice not in letters:
+                elif choice in movementButtons:
+                    # if the corresponding direction exists, return it
+                    if self.directions[0] and choice == movementButtons[0]:
+                        return self.directions[0]
+                    elif self.directions[1] and choice == movementButtons[1]:
+                        return self.directions[1]
+                    elif self.directions[2] and choice == movementButtons[2]:
+                        return self.directions[2]
+                    elif self.directions[3] and choice == movementButtons[3]:
+                        return self.directions[3]
+                    else:
+                        choice = anykey(self.prompt)
+                elif choice not in actions:
                     choice = anykey(self.prompt)
                 else:
-                    return self.goto[letters.index(choice)]
+                    return self.goto[actions.index(choice)]
     
     def drawMap(self):
         with open(mapdir + self.predmap + '.map', 'r') as currentMap:
@@ -364,6 +385,7 @@ to play this predicament, call its play() method
         with open(mapdir + self.predmap + '.map', 'r') as currentMap:
             # print the map's name over the map if it exists
             if self.mapname:
+                # centre it over the map
                 sys.stdout.write \
                 (' ' * int((lineLength - len(self.mapname) - 1) / 2))
                 print(self.mapname.upper())

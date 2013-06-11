@@ -1,11 +1,8 @@
 funtimes! a simple text adventure game
 
-its only dependency is python 3. currently only works well on linux, but we're
-going to make it cross-platform later.
+its only dependency is python 3. currently only works well on linux, but we're going to make it cross-platform later.
 
-this is based on a batch-file game written by a high schooler. instead of doing
-things the simple way and writing it all in python, it's a game engine that
-interprets 'pred' files that use our own specialized syntax.
+this is based on a batch-file game written by a high schooler. instead of doing things the simple way and writing it all in python, it's a game engine that interprets 'pred' files that use our own specialized syntax.
 
 why? because why not. it's funtimes.
 
@@ -13,7 +10,7 @@ why? because why not. it's funtimes.
                TO-DO:
 -----------------------------------
 
-make all those termios things work on windows
+make PreventBarfing work on windows/not crash windows version
 
 make anykey() work on windows
 
@@ -31,6 +28,14 @@ make disable = pause
 make disable = save
 
 allow index in if and set statements (for items, quests)
+
+make a way to set and unset quest and item booleans
+
+make save system not use pickle and save into /data/
+
+draw compass next to map showing what lies in each direction (using mapnames)
+
+allow user to change settings (adjust clearOn, soundOn, fancyPrint, etc)
 
 -----------------------------------
 

@@ -7,6 +7,7 @@ new predicament = bedroom
     text = behind you. To your left is a bed for you to rest in. To your right
 
     option = Go on your computer.
+    choice = computer
 
     if love =< 3
         or
@@ -24,16 +25,16 @@ new predicament = bedroom
         text = Your cordless phone is ringing.
         option = Pick up the phone.
     end if
-
-    option = Rest in your bed.
-    option = Leave the bedroom.
-    option = [Debug] Drink anti-energy drink.
-
-    choice = computer
+    
     choice = phone
+    option = Rest in your bed.
     choice = useBed
+    option = Leave the bedroom.
     choice = hallway
+    option = [Debug] Drink anti-energy drink.
     choice = antienergy
+    
+    up = hallway
 end of predicament bedroom
 
 new predicament = useBed
@@ -91,12 +92,14 @@ new predicament = hallway
     text = There's also a bathroom.
     
     option = Go into your bedroom.
-    option = Check out the bathroom.
-    option = Enter the living room.
-    
     choice = bedroom
+    option = Check out the bathroom.
     choice = bathroom
+    option = Enter the living room.
     choice = livingRoom
+    up = bathroom
+    down = bedroom
+    left = livingRoom
     
     #if quest fixedCrookedPicture is not done
     #    then
@@ -138,12 +141,12 @@ new predicament = bathroom
     text = take a shower, I guess?
     
     option = Take a shower, you guess.
-    option = Check yourself out in the mirror.
-    option = Leave the bathroom.
-    
     choice = shower
+    option = Check yourself out in the mirror.
     choice = mirror
+    option = Leave the bathroom.
     choice = hallway
+    down = hallway
 end of predicament
 
 new predicament = shower
