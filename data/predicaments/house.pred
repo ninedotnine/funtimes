@@ -6,15 +6,14 @@ new predicament = bedroom
     text = You are standing in your bedroom. Sun streams through the window
     text = behind you. To your left is a bed for you to rest in. To your right
 
-    option = Go on your computer.
-    choice = computer
+    action = Go on your computer. -> computer
 
     if love =< 3
         or
     if love => 6
         then
         text = is your computer. You have a cordless phone in here, too.
-        option = Use the phone.
+        action = Use the phone. -> phone
     end if
 
     # mom is calling you
@@ -23,18 +22,12 @@ new predicament = bedroom
         text = is your computer.
         text =
         text = Your cordless phone is ringing.
-        option = Pick up the phone.
+        action = Pick up the phone. -> phone
     end if
     
-    choice = phone
-    option = Rest in your bed.
-    choice = useBed
-    option = Leave the bedroom.
-    choice = hallway
-    option = [Debug] Drink anti-energy drink.
-    choice = antienergy
-    
-    up = hallway
+    action = Rest in your bed. -> useBed
+    up = Leave the bedroom. -> hallway
+    action = [Debug] Drink anti-energy drink. -> antienergy
 end of predicament bedroom
 
 new predicament = useBed
@@ -91,22 +84,15 @@ new predicament = hallway
     text = The living room is just over there. Your bedroom is right behind you.
     text = There's also a bathroom.
     
-    option = Go into your bedroom.
-    choice = bedroom
-    option = Check out the bathroom.
-    choice = bathroom
-    option = Enter the living room.
-    choice = livingRoom
-    up = bathroom
-    down = bedroom
-    left = livingRoom
+    down = Go into your bedroom. -> bedroom
+    up = Check out the bathroom. -> bathroom
+    left = Enter the living room. -> livingRoom
     
     #if quest fixedCrookedPicture is not done
     #    then
         text =
         text = A picture frame on the wall is crooked.
-        option = Tilt the picture frame.
-        choice = fixCrookedPicture
+        action = Tilt the picture frame. -> fixCrookedPicture
     #end if
 end of predicament hallway
 
@@ -140,13 +126,9 @@ new predicament = bathroom
     text = You're in the bathroom. There's not much to do in here. You could
     text = take a shower, I guess?
     
-    option = Take a shower, you guess.
-    choice = shower
-    option = Check yourself out in the mirror.
-    choice = mirror
-    option = Leave the bathroom.
-    choice = hallway
-    down = hallway
+    down = Leave the bathroom. -> hallway
+    action = Take a shower, you guess. -> shower
+    action = Check yourself out in the mirror. -> mirror
 end of predicament
 
 new predicament = shower

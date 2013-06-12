@@ -40,8 +40,8 @@ to play this predicament, call its play() method
         # 'redraw' at the end of initial execution. this stops it from
         # being redrawn when the user unpauses, backspaces, etc.
         self.disable = []
-        self.options = []
-        # goto is a list if inputtype == 'normal', a string otherwise 
+        self.actions = []
+        # self.goto is a list if inputtype == 'normal', a string otherwise 
         self.goto = []
         self.inputtype = None
         self.result = None
@@ -50,6 +50,9 @@ to play this predicament, call its play() method
         self.write = None
         self.predmap = None
         self.mapname = None
+        # self.directions contains a list of lists
+        # in the format of [label, destination]
+        # this is inconsistent with the way we handle action destinations. v_v
         self.directions = [0, 0, 0, 0] # up, down, left, right
 
         try:
@@ -105,37 +108,28 @@ to play this predicament, call its play() method
                     # the pred file must be invalid.
                     raise BadPredicamentError(4, filename, self.name)
                 elif key == 'text':
-                    #if not self.text:
-                        #self.text = []
                     # remove only the first space if any. 
                     # leading whitespace is now allowed!
                     if value and value[0] == ' ':
                         value = value[1:]
                     # add each line of text onto the prev line of text
                     self.text.append(value)
-                elif key == 'option':
-                    #if not self.options:
-                        #self.options = []
-                    # we only allow abcdef - 6 options
-                    if len(self.options) < 6:
-                        self.options.append(value.strip())
-                elif key == 'choice':
-                    #if not self.goto:
-                        #self.goto = []
-                    # we only allow abcdef - 6 choices
-                    if len(self.goto) < 6:
-                        self.goto.append(value.strip())
+                elif key == 'action':
+                    # we only allow abcdef - 6 actions
+                    if len(self.actions) < 6 and len(self.goto) < 6:
+                        try:
+                            action, goto = value.split('->')
+                        except ValueError:
+                            raise BadPredicamentError(23, self.name, line)
+                        self.actions.append(action.strip())
+                        self.goto.append(goto.strip())
                 elif key == 'disable':
                     # i don't want smart-alecs assigning this directly
                     if value.strip() != 'redraw':
                         self.disable.append(value.strip())
                 elif key == 'sound':
-                    #if not self.sound:
-                        #self.sound = []
                     self.sound.append(value.strip())
                 elif key.startswith("set "):
-                    #if not self.setvars:
-                        #self.setvars = []
                     # everything between 'set' and '=' is the parameter
                     # parameter cannot have spaces in it
                     key, parameter = key.split() 
@@ -159,14 +153,19 @@ to play this predicament, call its play() method
                     self.predmap = value.strip()
                 elif key == 'name':
                     self.mapname = value.strip()
-                elif key == 'up':
-                    self.directions[0] = value.strip()
-                elif key == 'down':
-                    self.directions[1] = value.strip()
-                elif key == 'left':
-                    self.directions[2] = value.strip()
-                elif key == 'right':
-                    self.directions[3] = value.strip()
+                elif key in ('up', 'down', 'left', 'right'):
+                    try:
+                        label, goto = value.split('->')
+                    except ValueError:
+                        raise BadPredicamentError(23, self.name, line)
+                    if key == 'up':
+                        self.directions[0] = [label.strip(), goto.strip()]
+                    elif key == 'down':
+                        self.directions[1] = [label.strip(), goto.strip()]
+                    elif key == 'left':
+                        self.directions[2] = [label.strip(), goto.strip()]
+                    elif key == 'right':
+                        self.directions[3] = [label.strip(), goto.strip()]
                 elif key.startswith("if "):
                     parameter = key.split()[1].strip()
                     tempIfLevel = readingIfLevel + 1
@@ -334,13 +333,21 @@ to play this predicament, call its play() method
             except EOFError:
                 return self.goto
         elif self.inputtype == 'normal':
-            actions = actionButtons[:len(self.options)]
+            actions = actionButtons[:len(self.actions)]
             iteractions = iter(actions)
             # prevent player from barfing on text (by hiding their input)
             with PreventBarfing():
                 fancyPrint('', self.extraDelay)
-                for option in self.options:
-                    string = next(iteractions) + ' - ' + option
+                for direction in self.directions:
+                    if type(direction) == list:
+                        string = (' ' + arrows[self.directions.index(direction)]
+                                  + '  - ' + direction[0])
+                        if 'redraw' in self.disable:
+                            print(string)
+                        else:
+                            fancyPrint(string, -1)
+                for action in self.actions:
+                    string = ' ' + next(iteractions) + '  - ' + action
                     if 'redraw' in self.disable:
                         print(string)
                     else:
@@ -361,13 +368,13 @@ to play this predicament, call its play() method
                 elif choice in movementButtons:
                     # if the corresponding direction exists, return it
                     if self.directions[0] and choice == movementButtons[0]:
-                        return self.directions[0]
+                        return self.directions[0][1]
                     elif self.directions[1] and choice == movementButtons[1]:
-                        return self.directions[1]
+                        return self.directions[1][1]
                     elif self.directions[2] and choice == movementButtons[2]:
-                        return self.directions[2]
+                        return self.directions[2][1]
                     elif self.directions[3] and choice == movementButtons[3]:
-                        return self.directions[3]
+                        return self.directions[3][1]
                     else:
                         choice = anykey(self.prompt)
                 elif choice not in actions:

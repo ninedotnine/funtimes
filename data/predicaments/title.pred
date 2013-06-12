@@ -17,9 +17,9 @@ end of predicament nosound
 
 new predicament = title
     type = none
+    map = title
     disable = fancytext
     disable = prompt
-    disable = mapname
 
     text =                         (hope you have fun!)
     text = 
@@ -190,11 +190,8 @@ new predicament = createCharacter6
     text = The spotty clerk's sudden advance turns your stomach. Before heading
     text = back to your table, you make a detour to the washrooms.
 
-    option = Go into the women's room.
-    option = Go into the men's room.
-
-    choice = womans
-    choice = mans
+    action = Go into the women's room. -> womans
+    action = Go into the men's room. -> mans
 end of predicament createCharacter6
 
 new predicament = womans

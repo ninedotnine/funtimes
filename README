@@ -33,9 +33,9 @@ make a way to set and unset quest and item booleans
 
 make save system not use pickle and save into /data/
 
-draw compass next to map showing what lies in each direction (using mapnames)
-
 allow user to change settings (adjust clearOn, soundOn, fancyPrint, etc)
+
+why does ^R not work anymore?
 
 -----------------------------------
 

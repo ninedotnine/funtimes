@@ -27,4 +27,5 @@ errors = (
     "predicament %s tries to set %s to '%s'\nbut %s is supposed to be a number!",
     "predicament %s tries to set '%s' to a value\nbut that variable does not exist!",
     "predicament %s refers to %s.map,\nwhich doesn't exist in %s! >:(\nwhat kind of game are you playing at?",
+    "a movement or action directive in predicament %s contains this line:\n %s\nwhich does not have a -> in it.\nmovement and action must declare the label, then ->,\nthen the name of the predicament which the labelled movement\nor action leads to. for example:\n Leave the house. -> outside",
 )

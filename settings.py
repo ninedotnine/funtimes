@@ -17,8 +17,8 @@ defaultNonePrompt = '-->'
 defaultNormalPrompt = 'What do you want to do?'
 defaultInputPrompt = 'Please type something.'
 defaultMultilinePrompt = 'Please type something. ^D when done.'
+arrows = '↑↓←→'
 lineLength = 69
-
 
 soundOn = False
 clearOn = True

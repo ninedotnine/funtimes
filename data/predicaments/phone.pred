@@ -89,56 +89,51 @@ new predicament = askToMeetUp-hub
     end if
     
     text = There's an awkward silence as %girlname% waits for you to say something.
-
-    option = Flirt awkwardly.
-    option = Ask her to meet you.
-    option = Ask her on a date.
-    option = Hang up.
     
     if flirt = 0
         then
-        choice = askToMeetUp-flirt0
+        action = Flirt awkwardly. -> askToMeetUp-flirt0
     end if
     if flirt = 1
         then
-        choice = askToMeetUp-flirt1
+        action = Flirt awkwardly. -> askToMeetUp-flirt1
     end if
     if flirt = 2
         then
-        choice = askToMeetUp-flirt2
+        action = Flirt awkwardly. -> askToMeetUp-flirt2
     end if
     if flirt = 3
         then
-        choice = askToMeetUp-flirt3
+        action = Flirt awkwardly. -> askToMeetUp-flirt3
     end if
     if flirt = 4
         then
-        choice = askToMeetUp-flirt4
+        action = Flirt awkwardly. -> askToMeetUp-flirt4
     end if
     if flirt = 5
         then
-        choice = askToMeetUp-flirt5
+        action = Flirt awkwardly. -> askToMeetUp-flirt5
     end if
     if flirt = 6
         then
-        choice = askToMeetUp-flirt6
+        action = Flirt awkwardly. -> askToMeetUp-flirt6
     end if
     if flirt = 7
         then
-        choice = askToMeetUp-flirt7
+        action = Flirt awkwardly. -> askToMeetUp-flirt7
     end if
     if flirt = 8
         then
-        choice = askToMeetUp-flirt8
+        action = Flirt awkwardly. -> askToMeetUp-flirt8
     end if
     if flirt = 9
         then
-        choice = askToMeetUp-flirt9
+        action = Flirt awkwardly. -> askToMeetUp-flirt9
     end if
     
-    choice = askToMeetUp-finish
-    choice = askToMeetUp-tryForADate
-    choice = askToMeetUp-hangUp
+    action = Ask her to meet you. -> askToMeetUp-finish
+    action = Ask her on a date. -> askToMeetUp-tryForADate
+    action = Hang up. -> askToMeetUp-hangUp
 end of predicament askToMeetUp-hub
 
 new predicament = askToMeetUp-flirt0
