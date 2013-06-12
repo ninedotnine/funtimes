@@ -1,6 +1,6 @@
 funtimes! a simple text adventure game
 
-its only dependency is python 3. currently only works well on linux, but we're going to make it cross-platform later.
+its only dependency is python 3.3 (or higher). currently only works well on linux, but we're going to make it cross-platform later.
 
 this is based on a batch-file game written by a high schooler. instead of doing things the simple way and writing it all in python, it's a game engine that interprets 'pred' files that use our own specialized syntax.
 
