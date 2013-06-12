@@ -17,7 +17,13 @@ defaultNonePrompt = '-->'
 defaultNormalPrompt = 'What do you want to do?'
 defaultInputPrompt = 'Please type something.'
 defaultMultilinePrompt = 'Please type something. ^D when done.'
-arrows = '^v<>'
+
+try:
+    arrows = '\u2191\u2193\u2190\u2192'
+    print(arrows)
+except UnicodeEncodeError:
+    arrows = '^v<>'
+
 lineLength = 69
 
 soundOn = False
