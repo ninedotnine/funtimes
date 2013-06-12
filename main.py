@@ -30,7 +30,7 @@ def main(start='title'):
                 currentPredicament = prevPredicaments.pop()
             except IndexError:
                 clear()
-                anykey("no history available.")
+                anykey("No more history available.")
             continue
         # store this predicament on the list of previous predicaments 
         prevPredicaments.append(currentPredicament)

@@ -4,12 +4,16 @@ Some basic things to remember before you jump in:
 1. Each "screen" of text in Funtimes is 1 predicament. The screen is cleared before each one.
 2. All predicaments must be in /data/predicaments (relative to main.py) and have the .pred extension.
 3. A .pred file can contain any number of predicaments, not just one. Use this for organization.
-4. You can't use = anywhere, ever. It's used for our syntax and we're too lazy to make an escape character.
+4. You can't really use = anywhere, ever. It's used for our syntax and we're too lazy to make an escape character.
 5. Lines starting with # are comments -- Funtimes will ignore them.
 
 Got it? Okay.
 
-There are five absolutely essential parts of a predicament. If you don't have these, the game won't be able to figure out what's going on and will crash on start-up. These parts are:
+There are four absolutely essential parts of a predicament. If you don't have these, the game won't be able to figure out what's going on and will crash on start-up. These parts are:
+
+-----------------------------------
+            THE ESSENTIALS
+-----------------------------------
 
 1. A title
 Each predicament must start by telling the game its title. This title must be unique. To set a title, use:
@@ -17,39 +21,87 @@ Each predicament must start by telling the game its title. This title must be un
 
 2. The type of input required
 We want the player to do something after reading the text of the predicament. Tell Funtimes what you want from the player.
-    inputtype = none <-- if you just want the player to press any key to continue to the next predicament
-    inputtype = normal <-- if you want the player to choose from multiple options (usually a, b, c, d)
-    inputtype = input <-- if you want the player to type something, like their name
+    type = skip <-- if you want no input (funtimes goes to next predicament immediately)
+    type = none <-- if you just want the player to press any key to continue to the next predicament
+    type = normal <-- if you want the player to choose from multiple actions and movement (wsad, 1234)
+    type = input <-- if you want the player to type something, like their name
 In the case of 'input', you must also tell Funtimes where to store the stuff that the player typed:
     result = whatThePlayerTyped
 
-
-3. Text
-Every predicament needs at least one line of text.
-    text = Insert your text here.
-    text = Here's a second line of text.
-You can write however many lines of text you want, but each new line needs to start with "text ="
-Leading and trailing whitespace is stripped out by Funtimes, so you can format stuff however you want and have it display the same within the game. If you want Funtimes to preserve your whitespace, use ~. Every ~ in your text field will be replaced by a space.
-If you want Funtimes to print whatThePlayerTyped from above, put %whatThePlayerTyped% -- it'll be replaced too.
-If you want a blank line, just put "text =" and then continue to the next line. An empty text field will turn into a blank line.
-
-4. The next predicament
-Nothing in Funtimes can be a dead end, so every predicament needs to point to at least one other predicament. For inputtypes of 'none' and 'input', there will only be one destination, defined with:
-    next = titleOfTheNextPredicament
+3. The next predicament(s)
+Nothing in Funtimes can be a dead end, so every predicament needs to point to at least one other predicament. For types of 'none', 'input', and 'skip', there will only be one destination, defined with:
+    goto = titleOfTheNextPredicament
 The player will go to titleOfTheNextPredicament after they hit any key (for 'none') or enter text and press enter (for 'input').
-For 'normal' predicaments (those with multiple choice options), you need to tell Funtimes what the options are, and where they go:
-    option = Drink too much grape juice.
-    option = Build a better skirt.
-    choice = tooMuchGrape
-    choice = beKimPossible
-In this case, the first option will be 'a - Drink too much grape juice.' and pressing 'a' will bring the player to tooMuchGrape (another predicament, this time in a more literal sense). Bear in mind that while you can put as many options into the pred file as you want, Funtimes will actually ignore anything after the first six.
+For 'normal' predicaments (those with multiple options), you need to tell Funtimes what the potential options are, and where they go:
+    action = Drink too much grape juice. -> tooMuchGrape
+    action = Build a better skirt. -> beKimPossible
+In this case, the first action will be 'a - Drink too much grape juice.' and pressing 'a' will bring the player to tooMuchGrape (another predicament, this time in a more literal sense). Bear in mind that while you can put as many actions into the pred file as you want, Funtimes will actually ignore anything after the first six (123456).
+Normal predicaments usually allow for movement as well:
+    down = Go down. -> speakInTongues
+Just like with actions, this will make Funtimes print "v - Go Down." and pressing the down key (by default s) will send the player to speakInTongues. The other directions are obviously up, left, and right.
 
-5. The ending
+4. The ending
 Every predicament needs to end with the following line:
     end of predicament
 
 Those are the basics.
 
+Other things you'll want to have in the majority of predicaments:
+
+-----------------------------------
+            THE BASICS
+-----------------------------------
+
+1. Text
+Most predicaments need at least one line of text.
+    text = Insert your text here.
+    text = Here's a second line of text.
+You can write however many lines of text you want, but each new line needs to start with "text ="
+Leading whitespace is normally stripped out by Funtimes, so you can format stuff however you want and have it display the same within the game. However, text only strips out the *first* space, so be mindful of that. This is so you can format the text to look all pretty -- for example, the way the instructions are centred on the Funtimes title screen.
+If you want Funtimes to print whatThePlayerTyped from above, put %whatThePlayerTyped% -- it'll be replaced by the value.
+If you want a blank line, just put "text =" and then continue to the next line. An empty text field will turn into a blank line.
+
+2. Map
+You'll want most of the game to have maps, which help orient the player by providing limited visuals. Bear in mind that they are *very* limited: you can only use ascii characters. All maps are stored in /data/maps, relative to main.py, and are defined such:
+    map = bedroom
+This will make the predicament display /data/maps/bedroom.map
+Funtimes will centre the map at the top of the screen, before printing any text (but under the 'name', see below). This map will continue to display at the top of your predicaments until another predicament re-sets the map to something else, or you explicitly clear it with the following:
+    map = none
+If the "room" your map portrays has multiple entry points, make sure to set the map in all of them or you'll have unintended results.
+
+3. Name
+This is the pretty name for your predicament, which gets displayed over the map.
+    name = Bedroom
+Just like with maps, Funtimes will continue to display this name over maps until it gets re-set to something else. Therefore, if the "room" it refers to has multiple entry points, make sure to set the name in all of them. If the map is cleared (set to none), then Funtimes won't show the name.
+
+4. Prompt
+At the bottom of each predicament, Funtimes prints some kind of prompt within square brackets. For 'normal' predicaments, the prompt is "What do you want to do?" by default. You can change this for the current predicament with:
+    prompt = What don't you want to do?
+Don't try to set prompt to a blank value when you want to remove the prompt. To remove it, use 'disable' (see below).
+
+-----------------------------------
+           ADVANCED STUFF
+-----------------------------------
+
+Things you might want in some predicaments:
+
+1. Disable
+Funtimes has a set of common things that you want in 99% of predicaments. In the rare cases when you want these things not to happen, you can disable them using:
+    disable = [keyword]
+The keywords are thus:
+    prompt: Removes the square-bracketed prompt (e.g., "What do you want to do?")
+    fancytext: Makes the predicament pop immediately into existence, instead of animating.
+    pause: Makes ESC and P not work -- this also disallows saving and loading.
+
+2. Sound
+Makes Funtimes play a wav file out of /data/sounds
+    sound = cash
+Makes it play '/data/sounds/cash.wav'. Bear in mind that sound doesn't work for everyone. It's for fanciness -- you can't use it as a mandatory part of your predicament.
+
+3. Set
 To set a variable to later be used, use the following:
     set nameOfVariable = value
 This will create nameOfVariable (if it doesn't already exist) and set it to "value". You can later use this value in your predicaments by typing %nameOfVariable% into a text field.
+
+4. If
+oh god what am i doing

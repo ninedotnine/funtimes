@@ -8,10 +8,10 @@ actionButtons = '123456'
 movementButtons = 'wsad' # up, down, left, right
 #movementButtons = 'jkhl' # up, down, left, right
 
-#fancyPrintSpeed = 0.015
-fancyPrintSpeed = 0.001
-#fancyPrintLineDelay = 0.500
-fancyPrintLineDelay = 0.01
+fancyPrintSpeed = 0.015
+#fancyPrintSpeed = 0.001
+fancyPrintLineDelay = 0.500
+#fancyPrintLineDelay = 0.01
 
 historycache = 10
 defaultNonePrompt = '-->'
@@ -19,6 +19,7 @@ defaultNormalPrompt = 'What do you want to do?'
 defaultInputPrompt = 'Please type something.'
 defaultMultilinePrompt = 'Please type something. ^D when done.'
 
+# use unicode arrows if the character set supports it
 try:
     arrows = '\u2191\u2193\u2190\u2192'
     print(arrows, file=open('/dev/null','w'))

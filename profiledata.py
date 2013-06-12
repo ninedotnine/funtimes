@@ -6,7 +6,7 @@ profile = {
         'firstname' : "Default",
         'lastname': "Namington",
         'gender' : "boy",
-        'friendname' : "Ryan",
+        'friendname' : "Ron",
         'girlname' : "Katie",
         'weet' : 0,
         'posts' : 0,
@@ -25,7 +25,7 @@ profile = {
         'charisma' : 10,
         'intellect' : 10,
         
-        'latestPredmap' : 'title',
+        'latestPredmap' : None,
         'latestMapname' : None,
 }
 
