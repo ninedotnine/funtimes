@@ -1,0 +1,15 @@
+#!/bin/sh
+
+python3 -V 2>&1
+
+if [[ $? != 0 ]]; then
+    echo "no python3 detected"
+    exit 1
+fi
+
+python3 -c 'import sys
+if sys.version_info[1] < 3:
+     print("err")
+'
+
+python main.py "$@"
