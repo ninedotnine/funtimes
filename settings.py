@@ -20,9 +20,10 @@ defaultInputPrompt = 'Please type something.'
 defaultMultilinePrompt = 'Please type something. ^D when done.'
 
 # use unicode arrows if the character set supports it
+import os
 try:
     arrows = '\u2191\u2193\u2190\u2192'
-    print(arrows, file=open('/dev/null','w'))
+    print(arrows, file=open(os.devnull,'w'))
 except UnicodeEncodeError:
     arrows = '^v<>'
 

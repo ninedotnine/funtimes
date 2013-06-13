@@ -7,17 +7,12 @@ import os
 import pickle
 import time
 import sys
-import termios
 from subprocess import call, DEVNULL
 
 from profiledata import profile, items, queststatus
 from settings import fancyPrintSpeed, fancyPrintLineDelay, soundOn, clearOn
 
 sounddir = os.getcwd() + '/data/sound/'
-
-# store terminal settings for restoration on quit()
-stdinfd = sys.stdin.fileno()
-oldtcattr = termios.tcgetattr(stdinfd)
 
 # define system-dependent features
 if os.name == 'nt':
@@ -26,15 +21,18 @@ if os.name == 'nt':
         if clearOn:
             call('cls',shell=True)
     
-    def playSound(sound):
-        if not os.path.isdir(sounddir):
-            return False
-        try:
-            error = winsound.PlaySound(sounddir + sound + '.wav',
-                                       winsound.SND_FILENAME)
-        except:
-            return False
-        return True
+    if soundOn:
+        def playSound(sound):
+            if not os.path.isdir(sounddir):
+                return False
+            try:
+                error = winsound.PlaySound(sounddir + sound + '.wav',
+                                           winsound.SND_FILENAME)
+            except:
+                return False
+            return True
+    else:
+        playSound = None
 
     # this makes testing in windows at least mildly possible for now
     # but obviously it doesn't work for 'normal' inputs, so it's rubbish
@@ -46,7 +44,28 @@ if os.name == 'nt':
     def initialize():
         call('title FUNTIMES',shell=True)
         call('color 5F',shell=True)
+
+    def quit(message="\nSee you!"):
+        # for some reason resetting doesn't work when you use call()?
+        # so for now we'll just assume they're using the default 07
+        call('color 07',shell=True)
+        print(message)
+        raise SystemExit
+
+    class PreventBarfing:
+        def __enter__(self):
+            barf = True
+        def __exit__(self, typ, value, callback):
+            barf = False
+            # there we go, barfing stopped
+    
 else: # anything but windows
+    
+    import termios
+    # store terminal settings for restoration on quit()
+    stdinfd = sys.stdin.fileno()
+    oldtcattr = termios.tcgetattr(stdinfd)
+    
     def clear():
         if clearOn:
             call('clear',shell=True)
@@ -93,6 +112,13 @@ else: # anything but windows
         # nothing yet
         return
 
+    def quit(message="\nSee you!"):
+        print("\x1b[0m" + message)
+        #        ^-- ansi esc to reset terminal appearance, just in case
+        # restore terminal to the way it was 
+        termios.tcsetattr(stdinfd, termios.TCSADRAIN, oldtcattr)
+        raise SystemExit
+
     import tty
     # allows user to press any key to continue. thanks, Matthew Adams:
     # http://stackoverflow.com/questions/11876618/python-press-any-key-to-exit
@@ -132,6 +158,15 @@ else: # anything but windows
                     char = movementButtons[3]
         return char.lower() # ignore caps lock
 
+    class PreventBarfing:
+        # stops user from barfing on the text (by pressing keys during fancyPrint)
+        def __enter__(self):
+            newtcattr = oldtcattr[:]
+            newtcattr[3] = newtcattr[3] & ~termios.ECHO
+            termios.tcsetattr(stdinfd, termios.TCSADRAIN, newtcattr)
+        def __exit__(self, typ, value, callback):
+            termios.tcsetattr(stdinfd, termios.TCSADRAIN, oldtcattr)
+
 def save(filename="save.sav", pause=True):
     savedata = (profile, items, queststatus)
     print()
@@ -155,13 +190,6 @@ def load(filename="save.sav"):
     except IOError:
         print("error loading data :C")
     anykey()
-
-def quit(message="\nSee you!"):
-    print("\x1b[0m" + message)
-    #        ^-- ansi esc to reset terminal appearance, just in case
-    # restore terminal to the way it was 
-    termios.tcsetattr(stdinfd, termios.TCSADRAIN, oldtcattr)
-    raise SystemExit
 
 def stats(pause=True): 
     clear()
@@ -277,15 +305,6 @@ def fancyPrint(text, extraDelay):
         extraDelay += fancyPrintLineDelay
     print() # put a newline at the end
     return extraDelay
-
-class PreventBarfing:
-    # stops user from barfing on the text (by pressing keys during fancyPrint)
-    def __enter__(self):
-        newtcattr = oldtcattr[:]
-        newtcattr[3] = newtcattr[3] & ~termios.ECHO
-        termios.tcsetattr(stdinfd, termios.TCSADRAIN, newtcattr)
-    def __exit__(self, typ, value, callback):
-        termios.tcsetattr(stdinfd, termios.TCSADRAIN, oldtcattr)
 
 
 if __name__ == '__main__':
