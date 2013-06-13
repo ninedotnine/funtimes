@@ -107,13 +107,16 @@ to play this predicament, call its play() method
                     # we're in a new predicament without closing the last one.
                     # the pred file must be invalid.
                     raise BadPredicamentError(4, filename, self.name)
-                elif key == 'text':
+                elif key in ('text', 'yell'):
                     # remove only the first space if any. 
                     # leading whitespace is now allowed!
                     if value and value[0] == ' ':
                         value = value[1:]
                     # add each line of text onto the prev line of text
-                    self.text.append(value)
+                    if key == 'text':
+                        self.text.append(value)
+                    elif key == 'yell':
+                        self.text.append('\x1b[1m' + value + '\x1b[0m')
                 elif key == 'action':
                     # we only allow abcdef - 6 actions
                     if len(self.actions) < 6 and len(self.goto) < 6:
@@ -405,14 +408,15 @@ to play this predicament, call its play() method
 def doIf(fp, parameter, value, name):
     # figures out whether to read conditional stuff in pred definitions
     if parameter not in profile:
-        raise BadPredicamentError(10, parameter)
+        raise BadPredicamentError(10, fp.name, name, parameter)
     followup = getNonBlankLine(fp).lower()
 
     # comparison cases
     if value.startswith('>') or value.startswith('<'):
         if type(profile[parameter]) not in (int, float):
             # the parameter in profile isn't a comparable type
-            raise BadPredicamentError(99)
+            raise BadPredicamentError \
+                  (24, fp.name, name, parameter + ' =' + value, parameter)
         try:
             comparee = eval(value[1:])
         except NameError:
@@ -423,7 +427,8 @@ def doIf(fp, parameter, value, name):
                 # aha! we're probably comparing profile stuff
                 comparee = profile[value[1:].strip()] 
             else:
-                raise BadPredicamentError(97)
+                raise BadPredicamentError \
+             (25, fp.name, name, parameter + ' =' + value, parameter, value[1:])
         if value[1:].strip() in dir():
         #if value[1:].strip() in dir(__name__):
             # uh oh. a consequence of using eval...
@@ -433,13 +438,21 @@ def doIf(fp, parameter, value, name):
             raise BadPredicamentError(96)
         if type(comparee) not in (int, float):
             # the value isn't a comparable type
-            raise BadPredicamentError(98)
+            raise BadPredicamentError \
+            (25, fp.name, name, value, profile[parameter], comparee)
         if value.startswith('>'):
             conditionIsTrue = ( profile[parameter] >= comparee )
         if value.startswith('<'):
             conditionIsTrue = ( profile[parameter] <= comparee )
     else:
-        conditionIsTrue = ( profile[parameter] == value.strip() )
+        if type(profile[parameter]) == int:
+            try:
+                conditionIsTrue = ( profile[parameter] == int(value.strip()) )
+            except ValueError:
+                raise BadPredicamentError \
+             (25, fp.name, name, parameter + ' = ' + value, parameter, value)
+        else:
+            conditionIsTrue = ( profile[parameter] == value.strip() )
 
     if followup.startswith("then not"):
         # don't use this, it breaks if more than one statement is processed

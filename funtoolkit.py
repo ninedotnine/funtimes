@@ -70,8 +70,6 @@ else: # anything but windows
             return None
             
         def playSound(sound):
-            #if not profile['soundWorks']:
-                #return True
             if not os.path.isdir(sounddir):
                 return False
             try:
@@ -81,8 +79,6 @@ else: # anything but windows
                         stdout=DEVNULL, stderr=DEVNULL) != 0:
                     return False
                 return True
-            #except KeyboardInterrupt:
-                #quit()
             except Exception as e:
                 print('strange error playing sounds. i didnt test much\n', e)
                 quit()
@@ -120,21 +116,21 @@ else: # anything but windows
         if char == '\x03' or char == 'q':
             quit()
         if char == '\x1b':
-            # arrow keys return 3 bytes - \x1b, [, and a letter
-            # so we'll read the next 2 bytes so we know which arrow was pressed
-            char = sys.stdin.read(2)
-            # unfortunately since the 1st byte of ESC is also \x1b, this breaks
-            # the ESC key. which i don't know how to fix yet.
-            from settings import movementButtons
-            if char == '[A': # up
-                char = movementButtons[0]
-            elif char == '[B': # down
-                char = movementButtons[1]
-            elif char == '[D': # left
-                char = movementButtons[2]
-            elif char == '[C': # right
-                char = movementButtons[3]
-        return char
+            # disabling this because it breaks ESC. seems hard to fix :/
+            if False:
+                # arrow keys return 3 bytes - \x1b, [, and a letter
+                # we'll read the next 2 bytes so we know which arrow was pressed
+                char = sys.stdin.read(2)
+                from settings import movementButtons
+                if char == '[A': # up
+                    char = movementButtons[0]
+                elif char == '[B': # down
+                    char = movementButtons[1]
+                elif char == '[D': # left
+                    char = movementButtons[2]
+                elif char == '[C': # right
+                    char = movementButtons[3]
+        return char.lower() # ignore caps lock
 
 def save(filename="save.sav", pause=True):
     savedata = (profile, items, queststatus)
@@ -161,7 +157,8 @@ def load(filename="save.sav"):
     anykey()
 
 def quit(message="\nSee you!"):
-    print(message)
+    print("\x1b[0m" + message)
+    #        ^-- ansi esc to reset terminal appearance, just in case
     # restore terminal to the way it was 
     termios.tcsetattr(stdinfd, termios.TCSADRAIN, oldtcattr)
     raise SystemExit
@@ -235,12 +232,12 @@ def commonOptions(ch):
 
 def helpme():
     clear()
-    print('''Most actions in the game are performed by pressing A, B, C, or D
-to perform actions that are described on screen. In some cases, the game may
-ask for text input, after which you must press enter. At any time, you can
-'pause' with ESC to see your inventory, stats, etc. or use backspace to undo
-an action. Use S and L to save and load your progress, and Q to quit.
-Use of this game while intoxicated may be illegal in some jurisdictions.''')
+    print('''You move around the world using the WSAD keys and perform actions 
+by pressing 1-6. In some cases, the game may ask for text input, after which you
+must press enter. At any time, you can 'pause' with ESC to see your inventory,
+stats, etc. or use backspace to undo an action. Use S and L while paused to save
+and load your progress, and Q to quit. Use of this game while intoxicated may be
+illegal in some jurisdictions.''')
     anykey()
 
 # method what replaces variables' plaintext representations 

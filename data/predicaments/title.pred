@@ -17,12 +17,19 @@ end of predicament nosound
 
 new predicament = title
     type = none
-    map = title
     disable = fancytext
     disable = prompt
 
-    text =                         (hope you have fun!)
+    yell =     ####### #     # #     # ####### ### #     # #######  #####
+    yell =     #       #     # ##    #    #     #  ##   ## #       #     #
+    yell =     #       #     # # #   #    #     #  # # # # #       #
+    yell =     #####   #     # #  #  #    #     #  #  #  # #####    #####
+    yell =     #       #     # #   # #    #     #  #     # #             # 
+    yell =     #       #     # #    ##    #     #  #     # #       #     #
+    yell =     #        #####  #     #    #    ### #     # #######  #####
+    text =                        (hope you have fun!)
     text = 
+    text =                Use WSAD to move and 1-6 to do stuff.
     text =                    Press h for controls and help.
     text = 
     text =            Press any other key to create a new character!

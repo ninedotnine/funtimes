@@ -105,7 +105,7 @@ new predicament = fixCrookedPicture
     text = %friendname% at the local playground, five years ago. This was before
     text = his acne started playing up, so you guys were pretty cute.
     text = 
-    text = YOU GOT A FUCKIN WEET POINT, MOTHERFUCKER
+    yell = You got a weet point, cutie!
     
     goto = hallway
 end of predicament
@@ -145,7 +145,7 @@ new predicament = shower
         then
         text = You hop in the shower and scrub yourself clean.
         text = 
-        text = A clean %gender% is a weet %gender%, so have yourself a weet point!
+        yell = A clean %gender% is a weet %gender%, so have yourself a weet point!
         give 1 weet
         set quest hasTakenShower to done
     end if
