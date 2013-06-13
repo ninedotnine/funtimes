@@ -401,7 +401,16 @@ to play this predicament, call its play() method
                 print(self.mapname.upper())
             for line in currentMap:
                 sys.stdout.write(' ' * int((lineLength - longestLine) / 2))
-                print(line, end='')
+                try:
+                    print(line, end='')
+                except UnicodeEncodeError:
+                    # if the terminal does not support unicode,
+                    # replace fancy unicode walls with ascii walls
+                    unicodeCharacters = ['\u2550', '\u2551', '\u2554',
+                                         '\u2557', '\u255A', '\u255D']
+                    for character in unicodeCharacters:
+                        line = line.replace(character, '#')
+                    print(line, end='')
             print()
     
 
