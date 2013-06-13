@@ -386,13 +386,15 @@ to play this predicament, call its play() method
                     return self.goto[actions.index(choice)]
     
     def drawMap(self):
-        with open(mapdir + self.predmap + '.map', 'r') as currentMap:
+        with open(mapdir + self.predmap + '.map',
+                  'r', encoding='utf-8') as currentMap:
             # find out the longest line so we can centre according to it
             longestLine = 0
             for line in currentMap:
                 if len(line) > longestLine:
                     longestLine = len(line)
-        with open(mapdir + self.predmap + '.map', 'r') as currentMap:
+        with open(mapdir + self.predmap + '.map',
+                  'r', encoding='utf-8') as currentMap:
             # print the map's name over the map if it exists
             if self.mapname:
                 # centre it over the map
