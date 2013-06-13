@@ -8,10 +8,10 @@ actionButtons = '123456'
 movementButtons = 'wsad' # up, down, left, right
 #movementButtons = 'jkhl' # up, down, left, right
 
-fancyPrintSpeed = 0.015
-#fancyPrintSpeed = 0.001
-fancyPrintLineDelay = 0.500
-#fancyPrintLineDelay = 0.01
+#fancyPrintSpeed = 0.015
+fancyPrintSpeed = 0.001
+#fancyPrintLineDelay = 0.500
+fancyPrintLineDelay = 0.01
 
 historycache = 10
 defaultNonePrompt = '-->'

@@ -1,0 +1,30 @@
+-----------------------------------
+               TO-DO:
+-----------------------------------
+
+make PreventBarfing work on windows/not crash windows version
+
+make anykey() work on windows
+
+improve sound support on linux?
+
+create some way to randomize variables (dice rolling)
+
+if statements need better error messages
+
+either make it so pred ifs can't access internal variables, or give a special
+error for them so the user knows they used a reserved name. something.
+
+make disable = pause
+
+allow index in if and set statements (for items, quests)
+
+make a way to set and unset quest and item booleans
+
+make save system not use pickle and save into /data/
+
+allow user to change settings (adjust clearOn, soundOn, fancyPrint, etc)
+
+why does ^R not work after pausing...?
+
+figure out how to get esc and arrow keys both working

@@ -118,8 +118,22 @@ else: # anything but windows
             # reset 
             termios.tcsetattr(stdinfd, termios.TCSADRAIN, oldtcattr)
         if char == '\x03' or char == 'q':
-            #raise KeyboardInterrupt
             quit()
+        if char == '\x1b':
+            # arrow keys return 3 bytes - \x1b, [, and a letter
+            # so we'll read the next 2 bytes so we know which arrow was pressed
+            char = sys.stdin.read(2)
+            # unfortunately since the 1st byte of ESC is also \x1b, this breaks
+            # the ESC key. which i don't know how to fix yet.
+            from settings import movementButtons
+            if char == '[A': # up
+                char = movementButtons[0]
+            elif char == '[B': # down
+                char = movementButtons[1]
+            elif char == '[D': # left
+                char = movementButtons[2]
+            elif char == '[C': # right
+                char = movementButtons[3]
         return char
 
 def save(filename="save.sav", pause=True):
