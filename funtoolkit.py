@@ -39,7 +39,14 @@ if os.name == 'nt':
     def anykey(message=''):
         if message:
             print(message)
-        call('pause >nul',shell=True)
+        
+        from msvcrt import getch
+        # getch returns b'[character]', so we turn it into a string
+        # and strip out the b' and ' parts
+        char = str(getch())[2:-1]
+        if char == '\x03' or char == 'q':
+            quit()
+        return char
         
     def initialize():
         call('title FUNTIMES',shell=True)
