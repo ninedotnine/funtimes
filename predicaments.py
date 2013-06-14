@@ -107,16 +107,21 @@ to play this predicament, call its play() method
                     # we're in a new predicament without closing the last one.
                     # the pred file must be invalid.
                     raise BadPredicamentError(4, filename, self.name)
-                elif key in ('text', 'yell'):
+                elif key in ('text', 'yell', 'cyan'):
                     # remove only the first space if any. 
                     # leading whitespace is now allowed!
                     if value and value[0] == ' ':
                         value = value[1:]
                     # add each line of text onto the prev line of text
-                    if key == 'text':
+                    if styleCode and key != 'text':
+                        if key == 'yell':
+                            line = styleCode['bold']
+                        elif key == 'cyan':
+                            line = styleCode['cyan']
+                        line += value + styleCode['reset']
+                        self.text.append(line)
+                    else:
                         self.text.append(value)
-                    elif key == 'yell':
-                        self.text.append('\x1b[1m' + value + '\x1b[0m')
                 elif key == 'action':
                     # we only allow abcdef - 6 actions
                     if len(self.actions) < 6 and len(self.goto) < 6:
@@ -317,7 +322,7 @@ to play this predicament, call its play() method
             print(self.prompt)
             # flush terminal input so nothing gets prefixed to this value
             sys.stdout.flush()
-            termios.tcflush(sys.stdin, termios.TCIOFLUSH)
+            tcflush()
             profile[self.result] = input().strip()
             while profile[self.result] == '':
                 # print the last line of text till valid input is provided

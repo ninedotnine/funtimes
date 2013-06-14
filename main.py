@@ -6,12 +6,11 @@ from collections import deque
 from sys import argv
 
 from predicaments import Predicament
-from funtoolkit import clear, playSound, initialize, anykey, quit
+from funtoolkit import clear, playSound, anykey, quit
 from settings import historycache, soundOn
 from profiledata import profile
 
 def main(start='title'):
-    initialize()
     # if playSound doesn't work, tell them the game will be mute
     if not playSound and soundOn:
         Predicament('nosound').play()

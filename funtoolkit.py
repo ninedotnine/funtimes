@@ -16,12 +16,16 @@ sounddir = os.getcwd() + '/data/sound/'
 
 # define system-dependent features
 if os.name == 'nt':
-    import winsound
+    call('title FUNTIMES',shell=True)
+    call('color 5F',shell=True)
+    styleCode = None
+        
     def clear():
         if clearOn:
             call('cls',shell=True)
     
     if soundOn:
+        import winsound
         def playSound(sound):
             if not os.path.isdir(sounddir):
                 return False
@@ -34,8 +38,6 @@ if os.name == 'nt':
     else:
         playSound = None
 
-    # this makes testing in windows at least mildly possible for now
-    # but obviously it doesn't work for 'normal' inputs, so it's rubbish
     def anykey(message=''):
         if message:
             print(message)
@@ -43,14 +45,32 @@ if os.name == 'nt':
         from msvcrt import getch
         # getch returns b'[character]', so we turn it into a string
         # and strip out the b' and ' parts
-        char = str(getch())[2:-1]
-        if char == '\x03' or char == 'q':
+        char = getch()
+        # some inputs need to be compared using their number, for some reason
+        if ord(char) == 224:
+            # aha! an arrow key!
+            char = ord(getch())
+            if char == 72:
+                char = 'w' # up
+            elif char == 80:
+                char = 's' # down
+            elif char == 75:
+                char = 'a' # left
+            elif char == 77:
+                char = 'd' # right
+        elif ord(char) == 3:
+            char = 'q' # KeyboardInterrupt
+        elif ord(char) == 27:
+            char = 'p' # Esc
+        elif ord(char) == 8:
+            char = '\x7F' # backspace
+        elif ord(char) == 18:
+            char = '\x12' # ctrl-R
+        else:
+            char = str(char)[2:-1]
+        if char == 'q':
             quit()
-        return char
-        
-    def initialize():
-        call('title FUNTIMES',shell=True)
-        call('color 5F',shell=True)
+        return char.lower()
 
     def quit(message="\nSee you!"):
         # for some reason resetting doesn't work when you use call()?
@@ -65,13 +85,21 @@ if os.name == 'nt':
         def __exit__(self, typ, value, callback):
             barf = False
             # there we go, barfing stopped
+
+    def tcflush():
+        # irrelevant in windows! :>
+        return
     
 else: # anything but windows
-    
     import termios
     # store terminal settings for restoration on quit()
     stdinfd = sys.stdin.fileno()
     oldtcattr = termios.tcgetattr(stdinfd)
+    styleCode = {
+        'bold' : "\x1b[1m",
+        'cyan' : "\x1b[36m",
+        'reset' : "\x1b[0m",
+    }
     
     def clear():
         if clearOn:
@@ -114,10 +142,6 @@ else: # anything but windows
         playSound = makePlaySound('test')
     else:
         playSound = None
-
-    def initialize():
-        # nothing yet
-        return
 
     def quit(message="\nSee you!"):
         print("\x1b[0m" + message)
@@ -173,6 +197,9 @@ else: # anything but windows
             termios.tcsetattr(stdinfd, termios.TCSADRAIN, newtcattr)
         def __exit__(self, typ, value, callback):
             termios.tcsetattr(stdinfd, termios.TCSADRAIN, oldtcattr)
+    
+    def tcflush():
+        termios.tcflush(sys.stdin, termios.TCIOFLUSH)
 
 def save(filename="save.sav", pause=True):
     savedata = (profile, items, queststatus)
@@ -268,11 +295,11 @@ def commonOptions(ch):
 def helpme():
     clear()
     print('''You move around the world using the WSAD keys and perform actions 
-by pressing 1-6. In some cases, the game may ask for text input, after which you
-must press enter. At any time, you can 'pause' with ESC to see your inventory,
-stats, etc. or use backspace to undo an action. Use S and L while paused to save
-and load your progress, and Q to quit. Use of this game while intoxicated may be
-illegal in some jurisdictions.''')
+by pressing 1-6. In some cases, the game may ask for text input, after which
+you must press enter. At any time, you can 'pause' with ESC to see your
+inventory, stats, etc. or use backspace to undo an action. Use S and L while
+paused to save and load your progress, and Q to quit. Use of this game while
+intoxicated may be illegal in some jurisdictions.''')
     anykey()
 
 # method what replaces variables' plaintext representations 
