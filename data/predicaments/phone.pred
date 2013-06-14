@@ -7,28 +7,28 @@ new predicament = phone
     goto = nobodyToCall
 
     # mom's calling
-    if love = 4
+    if love is 4
         then
         goto = comingOut
         # i don't know what this is supposed to do when you're not gay
     end if
     
-    #if quest metDana is done
-    #    then
-    #    goto = planDate
-    #end if
+    if quest metDana is done
+        then
+        goto = planDate
+    end if
     
-    #if quest metGirl is done
-    #    then
-    #    goto = askToMeetUp
-    #end if
+    if quest metGirl is done
+        then
+        goto = askToMeetUp
+    end if
     
-    #if quest metGirl is done
-    #   and
-    #if quest youKnowGirlname is done
-    #    then
-    #    goto = askToMeetUp-afterFirstTime
-    #end if
+    if quest metGirl is done
+       and
+    if quest youKnowGirlname is done
+        then
+        goto = askToMeetUp-afterFirstTime
+    end if
 end of predicament phone
 
 new predicament = nobodyToCall
@@ -83,50 +83,50 @@ new predicament = askToMeetUp-afterFirstTime
 new predicament = askToMeetUp-hub
     type = normal
     
-    if flirt => 5
+    if flirt is > 5
         then
         set love = 1
     end if
     
     text = There's an awkward silence as %girlname% waits for you to say something.
     
-    if flirt = 0
+    if flirt is 0
         then
         action = Flirt awkwardly. -> askToMeetUp-flirt0
     end if
-    if flirt = 1
+    if flirt is 1
         then
         action = Flirt awkwardly. -> askToMeetUp-flirt1
     end if
-    if flirt = 2
+    if flirt is 2
         then
         action = Flirt awkwardly. -> askToMeetUp-flirt2
     end if
-    if flirt = 3
+    if flirt is 3
         then
         action = Flirt awkwardly. -> askToMeetUp-flirt3
     end if
-    if flirt = 4
+    if flirt is 4
         then
         action = Flirt awkwardly. -> askToMeetUp-flirt4
     end if
-    if flirt = 5
+    if flirt is 5
         then
         action = Flirt awkwardly. -> askToMeetUp-flirt5
     end if
-    if flirt = 6
+    if flirt is 6
         then
         action = Flirt awkwardly. -> askToMeetUp-flirt6
     end if
-    if flirt = 7
+    if flirt is 7
         then
         action = Flirt awkwardly. -> askToMeetUp-flirt7
     end if
-    if flirt = 8
+    if flirt is 8
         then
         action = Flirt awkwardly. -> askToMeetUp-flirt8
     end if
-    if flirt = 9
+    if flirt is 9
         then
         action = Flirt awkwardly. -> askToMeetUp-flirt9
     end if
@@ -300,7 +300,7 @@ end of predicament
 new predicament = askToMeetUp-finish
     type = none
     
-    if love = 1
+    if love is 1
         then
         text = "I'm gonna be heading to the mall later."
         text = 
@@ -314,7 +314,7 @@ new predicament = askToMeetUp-finish
         goto = askToMeetUp-finish2
     end if
     
-    if love = 0
+    if love is 0
         then
         text = You want to ask if she'll meet up with you, but you're still afraid
         text = that she doesn't like you. The words just won't come out.
@@ -335,8 +335,8 @@ new predicament = askToMeetUp-finish2
     text = 
     text = You hang up the phone.
     
-    add 1 to charisma
-    set quest plannedToMeetUp to done
+    #add 1 to charisma
+    #set quest plannedToMeetUp to done
     goto = bedroom
 end of predicament askToMeetUp-finish2
 

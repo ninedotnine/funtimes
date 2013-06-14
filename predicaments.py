@@ -87,7 +87,9 @@ to play this predicament, call its play() method
 
             # finally, we start actually assigning the data
             # line should be true (it should still be the new pred line)
+            global readingIfLevel, tempIfLevel
             readingIfLevel = 0
+            tempIfLevel = 0
             while line:
                 line = getNonBlankLine(fp)
                 if line.find("end of predicament") == 0:
@@ -98,6 +100,22 @@ to play this predicament, call its play() method
                         readingIfLevel -= 1
                         continue
                     raise BadPredicamentError(12, filename, self.name)
+                elif line.strip().startswith("if "):
+                    if doIf(fp, self.name, line):
+                        # if the condition is true, read normally
+                        readingIfLevel += 1
+                        continue
+                    # if the condition isn't true, 
+                    # discard lines until we reach end if
+                    while readingIfLevel < tempIfLevel:
+                        nextline = getNonBlankLine(fp)
+                        if nextline.startswith("end if"):
+                            tempIfLevel -= 1
+                        elif nextline.startswith("if "):
+                            tempIfLevel += 1
+                        elif nextline.find("end of predicament") == 0:
+                            raise BadPredicamentError(13, self.name)
+                    continue
                 try:
                     key, value = line.split('=')
                 except ValueError: 
@@ -174,23 +192,6 @@ to play this predicament, call its play() method
                         self.directions[2] = [label.strip(), goto.strip()]
                     elif key == 'right':
                         self.directions[3] = [label.strip(), goto.strip()]
-                elif key.startswith("if "):
-                    parameter = key.split()[1].strip()
-                    tempIfLevel = readingIfLevel + 1
-                    if doIf(fp, parameter, value.strip(), self.name):
-                        # if the condition is true, read normally
-                        readingIfLevel += 1
-                        continue
-                    # if the condition isn't true, 
-                    # discard lines until we reach end if
-                    while readingIfLevel < tempIfLevel:
-                        nextline = getNonBlankLine(fp)
-                        if nextline.startswith("end if"):
-                            tempIfLevel -= 1
-                        elif nextline.startswith("if "):
-                            tempIfLevel += 1
-                        elif nextline.find("end of predicament") == 0:
-                            raise BadPredicamentError(13, self.name)
                 else:
                     raise BadPredicamentError(14, filename, self.name, 
                                               key.strip())
@@ -421,54 +422,124 @@ to play this predicament, call its play() method
             print()
     
 
-def doIf(fp, parameter, value, name):
+def doIf(fp, name, line):
     # figures out whether to read conditional stuff in pred definitions
-    if parameter not in profile:
-        raise BadPredicamentError(10, fp.name, name, parameter)
-    followup = getNonBlankLine(fp).lower()
-
-    # comparison cases
-    if value.startswith('>') or value.startswith('<'):
-        if type(profile[parameter]) not in (int, float):
-            # the parameter in profile isn't a comparable type
-            raise BadPredicamentError \
-                  (24, fp.name, name, parameter + ' =' + value, parameter)
+    # first, parse the line itself to get dictionary, key, and value
+    
+    global tempIfLevel, readingIfLevel
+    
+    # try splitting the if on 'is' or 'has'
+    try:
+        key, value = line.split('is')
+    except ValueError:
         try:
-            comparee = eval(value[1:])
-        except NameError:
-            # it's not a comparable value.
-            # maybe it's supposed to be a profile entry? 
-            if ( value[1:].strip() in profile and 
-                 type(profile[value[1:].strip()]) in (int, float) ):
-                # aha! we're probably comparing profile stuff
-                comparee = profile[value[1:].strip()] 
-            else:
-                raise BadPredicamentError \
-             (25, fp.name, name, parameter + ' =' + value, parameter, value[1:])
-        if value[1:].strip() in dir():
-        #if value[1:].strip() in dir(__name__):
-            # uh oh. a consequence of using eval...
-            # the pred file can refer to variables in this code
-            # this doesn't even catch all of these cases 
-            # it might, if we hadn't called something else predicaments
-            raise BadPredicamentError(96)
-        if type(comparee) not in (int, float):
-            # the value isn't a comparable type
-            raise BadPredicamentError \
-            (25, fp.name, name, value, profile[parameter], comparee)
-        if value.startswith('>'):
-            conditionIsTrue = ( profile[parameter] >= comparee )
-        if value.startswith('<'):
-            conditionIsTrue = ( profile[parameter] <= comparee )
-    else:
-        if type(profile[parameter]) == int:
-            try:
-                conditionIsTrue = ( profile[parameter] == int(value.strip()) )
-            except ValueError:
-                raise BadPredicamentError \
-             (25, fp.name, name, parameter + ' = ' + value, parameter, value)
+            key, value = line.split('has')
+        except ValueError:
+            raise BadPredicamentError(26, fp.name, name, line)
+    # remove the 'if ' from the key
+    key = key[3:].strip()
+    value = value.strip()
+    tempIfLevel = readingIfLevel + 1
+    # now, try to split key to determine dictionary & real key
+    try:
+        dictionary, key = key.split()
+    except ValueError:
+        if key == 'player':
+            # 'if player has item'
+            dictionary = 'items'
+            key = value
+            value = True
+            # results in 'if items['item'] == True'
         else:
-            conditionIsTrue = ( profile[parameter] == value.strip() )
+            # if it's anything else, assume profile
+            dictionary = 'profile'
+    if dictionary == 'player' and key == 'not':
+        # 'if player not has item'
+        dictionary = 'items'
+        key = value
+        value = False
+    if dictionary == 'quest':
+        dictionary = 'quests'
+        if value == 'done':
+            value = True
+        elif value == 'not done':
+            value = False
+        else:
+            raise BadPredicamentError(27, fp.name, name, line)
+    if dictionary not in ('profile', 'quests', 'items'):
+        raise BadPredicamentError(28, fp.name, name, line, dictionary)
+    if (dictionary == 'profile' and key not in profile or
+        dictionary == 'quests' and key not in queststatus or
+        dictionary == 'items' and key not in items):
+        raise BadPredicamentError(10, fp.name, name, line, key, dictionary)
+    
+    followup = getNonBlankLine(fp).lower() # get 'then', 'and', 'or'
+
+    # profile comparison cases
+    if dictionary == 'profile':
+        if value.startswith('>') or value.startswith('<'):
+            if type(profile[key]) not in (int, float):
+                # the key in profile isn't a comparable type
+                raise BadPredicamentError(24, fp.name, name, line, key)
+            try:
+                comparee = eval(value[1:])
+            except NameError:
+                # it's not a comparable value.
+                # maybe it's supposed to be a profile entry? 
+                if ( value[1:].strip() in profile and 
+                    type(profile[value[1:].strip()]) in (int, float) ):
+                    # aha! we're probably comparing profile stuff
+                    comparee = profile[value[1:].strip()] 
+                else:
+                    raise BadPredicamentError(25, fp.name, name, line,
+                                              key, value[1:].strip())
+            if value[1:].strip() in dir():
+            #if value[1:].strip() in dir(__name__):
+                # uh oh. a consequence of using eval...
+                # the pred file can refer to variables in this code
+                # this doesn't even catch all of these cases 
+                # it might, if we hadn't called something else predicaments
+                raise BadPredicamentError(96)
+            if type(comparee) not in (int, float):
+                # the value isn't a comparable type
+                raise BadPredicamentError(25, fp.name, name, value,
+                                          profile[key], comparee)
+            if value.startswith('>'):
+                conditionIsTrue = ( profile[key] > comparee )
+            if value.startswith('<'):
+                conditionIsTrue = ( profile[key] < comparee )
+        else:
+            negate = False
+            if value.startswith('not '):
+                value = value[4:] # remove the 'not ' part
+                negate = True
+            if value.startswith('<') or value.startswith('>'):
+                # can't be arsed supporting negated comparisons
+                raise BadPredicamentError(29, fp.name, name, line)
+            if type(profile[key]) == int:
+                try:
+                    conditionIsTrue = ( profile[key] == int(value) )
+                except ValueError:
+                    if (value in profile and
+                        type(profile[value]) in (int, float)):
+                            conditionIsTrue = \
+                                         ( profile[key] == int(profile[value]) )
+                    else:
+                        raise BadPredicamentError(25, fp.name, name,
+                                                  line, key, value)
+            else:
+                if value in profile:
+                    conditionIsTrue = ( profile[key] == profile[value] )
+                else:
+                    conditionIsTrue = ( profile[key] == value )
+            if negate:
+                conditionIsTrue = not conditionIsTrue
+    
+    if dictionary == 'items':
+        conditionIsTrue = ( items[key] == value)
+    
+    if dictionary == 'quests':
+        conditionIsTrue = ( queststatus[key] == value )
 
     if followup.startswith("then not"):
         # don't use this, it breaks if more than one statement is processed
@@ -479,17 +550,15 @@ def doIf(fp, parameter, value, name):
     line = getNonBlankLine(fp)
     if not line.startswith("if "):
         raise BadPredicamentError(11, fp.name, name, "'%s'" % followup)
-    key, value = line.split('=')
-    parameter = key.split()[1].strip()
     if followup.startswith("and not"):
-        return ( not doIf(fp, parameter, value, name) and conditionIsTrue )
+        return ( not doIf(fp, name, line) and conditionIsTrue )
     elif followup.startswith("and"):
-        return ( doIf(fp, parameter, value, name) and conditionIsTrue )
+        return ( doIf(fp, name, line) and conditionIsTrue )
     elif followup.startswith("or not"):
-        return ( not doIf(fp, parameter, value, name) or conditionIsTrue )
+        return ( not doIf(fp, name, line) or conditionIsTrue )
     elif followup.startswith("or"):
-        return ( doIf(fp, parameter, value, name) or conditionIsTrue )
-    raise BadPredicamentError(11, fp.name, name, '%s = %s' % (parameter,value))
+        return ( doIf(fp, name, line) or conditionIsTrue )
+    raise BadPredicamentError(11, fp.name, name, line)
 
 def getNonBlankLine(fp):
     line = ''

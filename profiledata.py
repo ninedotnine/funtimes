@@ -31,6 +31,8 @@ profile = {
 
 items = {
         'a pack of ketchup' : True,
+        
+        # old ones
         'food' : False,
         'bolognasalad' : False,
         'pizza' : False,
@@ -88,6 +90,15 @@ items = {
 } 
 
 queststatus = {
+        'fixedCrookedPicture' : False,
+        'takenShower' : False,
+        'fixedTV' : False,
+        'bumbledBun' : False,
+        'metDana' : False,
+        'metGirl' : False,
+        'youKnowGirlname' : False,
+        
+        # old ones
         'calledgirl' : False,
         'meetgirl' : False,
         'metgirl' : False,

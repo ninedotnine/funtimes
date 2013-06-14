@@ -7,22 +7,25 @@ new predicament = bedroom
     text = behind you. To your left is a bed for you to rest in. To your right
 
     action = Go on your computer. -> computer
-
-    if love =< 3
-        or
-    if love => 6
+    
+    if love is not 4
         then
         text = is your computer. You have a cordless phone in here, too.
         action = Use the phone. -> phone
     end if
-
+    
     # mom is calling you
-    if love = 4
+    if love is 4
         then
         text = is your computer.
         text =
         text = Your cordless phone is ringing.
         action = Pick up the phone. -> phone
+    end if
+    
+    if player has a pack of ketchup
+        then
+        text = You have ketchup! :O
     end if
     
     action = Rest in your bed. -> useBed
@@ -33,7 +36,7 @@ end of predicament bedroom
 new predicament = useBed
     type = none
     
-    if energy =< 11
+    if energy is < 10
         then
         set energy = 15
         text = You pull the curtains across your bright window and lie down on your
@@ -41,7 +44,7 @@ new predicament = useBed
         prompt = Wake up.
     end if
     
-    if energy => 10
+    if energy is > 10
         then
         text = You approach the bed, intending to ruffle its feathers. Or its
         text = sheets. Whatever beds have.
@@ -88,12 +91,12 @@ new predicament = hallway
     up = Check out the bathroom. -> bathroom
     left = Enter the living room. -> livingRoom
     
-    #if quest fixedCrookedPicture is not done
-    #    then
+    if quest fixedCrookedPicture is not done
+        then
         text =
         text = A picture frame on the wall is crooked.
         action = Tilt the picture frame. -> fixCrookedPicture
-    #end if
+    end if
 end of predicament hallway
 
 new predicament = fixCrookedPicture
@@ -134,20 +137,20 @@ end of predicament
 new predicament = shower
     type = none
     
-    if quest hasTakenShower is done
+    if quest takenShower is done
         then
         text = You hop in the shower and scrub yourself clean, hoping to impress
         text = Howard Hughes. Unfortunately you don't have any bottles to pee in,
         text = so your effort is a bit futile.
     end if
     
-    if quest hasTakenShower is not done
+    if quest takenShower is not done
         then
         text = You hop in the shower and scrub yourself clean.
         text = 
         yell = A clean %gender% is a weet %gender%, so have yourself a weet point!
-        give 1 weet
-        set quest hasTakenShower to done
+        #give 1 weet
+        #set quest hasTakenShower to done
     end if
     
     goto = bathroom
@@ -159,39 +162,71 @@ new predicament = mirror
     text = You take a quick look at yourself in the mirror.
     text = 
     
-    if sexy = 0
+    if sexy is 0
         then
         text = There have been uglier %gender%s. I guess. Maybe.
         # for example, smizmars
     end if
     
-    if sexy = 1
+    if sexy is 1
         then
         text = Well, at least you know they like you for your personality...
     end if
     
-    if sexy = 2
+    if sexy is 2
         then
         text = Not too shabby...
     end if
     
-    if sexy = 3
+    if sexy is 3
         then
         text = Is that YOU looking back? You're looking good!
     end if
     
-    if sexy = 4
+    if sexy is 4
         then
         text = %firstname% %lastname%: sexiest %gender% on Earth.
     end if
     
-    if firstname = Brianna
+    if firstname is Brianna
         and
-    if lastname = Rainey
+    if lastname is Rainey
         then
         text = 
         text = Good enough.
     end if
     
     goto = bathroom
+end of predicament
+
+new predicament = livingRoom
+    type = normal
+    map = livingroom
+    name = Living Room
+    
+    up = Leave the house. -> outside
+    right = Head back into the hallway. -> hallway
+    
+    text = You're in the living room. I guess this is the room where things
+    if quest fixedTV is not done
+        then
+        text = live? There's a broken TV in front of a broken-in couch. From the
+        text = looks of its springs, someone probably slept on it every day for a
+        text = few years.
+        action = Try to fix the TV. -> fixTV
+    end if
+    if quest fixedTV is done
+        then
+        text = live? There's a crappy TV in front of the couch.
+        action = Watch some TV. -> watchTV
+    end if
+    text = 
+    text = On the far side of the room is a kitchenette.
+    
+    action = Cook some food. -> cookFood
+    
+    if quest bumbledBun is not done
+        then
+        action = Look for a bun to bumble. -> bumbleBun
+    end if
 end of predicament

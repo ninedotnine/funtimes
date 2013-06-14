@@ -163,9 +163,9 @@ new predicament = createCharacter5
     text = He turns back and winks at you.
 
     goto = createCharacter6
-    if firstname = Rupert
+    if firstname is Rupert
         and
-    if lastname = Murdoch
+    if lastname is Murdoch
         then
         goto = murdochInDaHouse
     end if
@@ -259,7 +259,7 @@ new predicament = firstMeetingGirl
     text = "%girlname% wanted me to come talk to you," she says. You look over to where she
     text = keeps glancing to look at who you assume to be %girlname%. She's actually pretty
     text = cute.
-    if gender = girl
+    if gender is girl
         then
         text = 
         text = When did you become a lesbian?
