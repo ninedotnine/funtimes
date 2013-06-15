@@ -202,6 +202,20 @@ else: # anything but windows
     def tcflush():
         termios.tcflush(sys.stdin, termios.TCIOFLUSH)
 
+# method what replaces variables' plaintext representations 
+# with the actual variable
+def replaceVariables(text):
+    if '%' not in text or '%' not in text[text.index('%')+1:]:
+        # '%' doesn't appear or doesn't appear again after appearing
+        return text
+    start = text.index('%')
+    end = text[start+1:].index('%') + start + 1
+    if text[start+1:end] not in profile:
+        print("can't find %s in profile" % text[start+1:end])
+        quit()
+    return replaceVariables(text[:start] + str(profile[text[start+1:end]]) 
+                            + text[end+1:])
+
 def save(filename="save.sav", pause=True):
     savedata = (profile, items, quests)
     print()
@@ -302,20 +316,6 @@ inventory, stats, etc. or use backspace to undo an action. Use S and L while
 paused to save and load your progress, and Q to quit. Use of this game while
 intoxicated may be illegal in some jurisdictions.''')
     anykey()
-
-# method what replaces variables' plaintext representations 
-# with the actual variable
-def replaceVariables(text):
-    if '%' not in text or '%' not in text[text.index('%')+1:]:
-        # '%' doesn't appear or doesn't appear again after appearing
-        return text
-    start = text.index('%')
-    end = text[start+1:].index('%') + start + 1
-    if text[start+1:end] not in profile:
-        print("can't find %s in profile" % text[start+1:end])
-        quit()
-    return replaceVariables(text[:start] + str(profile[text[start+1:end]]) 
-                            + text[end+1:])
 
 def fancyPrint(text, extraDelay):
     # prints lines character-by-character to be fancy

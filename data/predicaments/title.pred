@@ -42,6 +42,7 @@ new predicament = tutorial
     type = none
     sound = tada
     map = none
+    set progress = random
     
     text = According to our marketing team, purely text-based gaming
     text = is hip right now...
@@ -55,7 +56,30 @@ end of predicament tutorial
 
 new predicament = tutorial2
     type = none
-    
+
+    if progress is > 20
+        and
+    if progress is < 41
+        then
+        set girlname = Megan
+    end if
+    if progress is > 40
+        and
+    if progress is < 61
+        then
+        set girlname = Brianna
+    end if
+    if progress is > 60
+        and
+    if progress is < 81
+        then
+        set girlname = Anna
+    end if
+    if progress is > 80
+        then
+        set girlname = Laurie
+    end if
+
     text = "Only an idiot would press a button after an intro like that."
     text = 
     text = You look at your friend askance. "That's not nice," you say,
@@ -142,6 +166,17 @@ end of predicament createCharacter3
 new predicament = createCharacter4
     type = input
     result = lastname
+    
+    # don't let girls date themselves :3
+    if firstname is girlname
+        then
+        set girlname = Katie
+    end if
+    # stupid katies
+    if firstname is Katie
+        then
+        set girlname = Anna
+    end if
     
     text = "%firstname%."
     text = 

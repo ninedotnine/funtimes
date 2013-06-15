@@ -109,3 +109,21 @@ This will create nameOfVariable (if it doesn't already exist) and set it to "val
 
 4. If
 oh god what am i doing
+
+-----------------------------------
+        ORDER OF OPERATIONS
+-----------------------------------
+
+Instead of being intelligently-designed and interpreting your lines in sequential order, Funtimes interprets all your lines at once when it first creates your predicament, then parses them in a specific order:
+    1) if
+    2) set
+    3) map
+    4) name
+    5) sound
+    6) text/yell/cyan
+    7) prompt
+    8) type
+    9) up/down/left/right
+   10) goto/action
+Disable is not really a parsed line itself, since it merely changes the behaviour of other lines.
+The most important thing to take away from this is the fact that 'set' is interpreted after 'if'. This means you CAN use 'set' within a conditional statement and have it work as expected in your predicament (e.g., set the player's money to 0 if their luck is 0) but you can't perform an if on a value set during the same predicament. If you want to force a 'set' to happen before 'if' and can't spare a predicament, you can fudge it by using a 'skip' predicament with no text -- this will be invisible to the player.

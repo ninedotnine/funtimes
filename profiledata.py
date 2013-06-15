@@ -14,10 +14,10 @@ profile = {
         'love' : 0,
         'flash' : 0,
         'sexy' : 0,
-
-    # energy was defined separately, for some reason
-    # <tass> because otherwise it would catch fire to the other variables
         'energy' : 15,
+        
+    # general-purpose garbage variable
+        'progress' : 0,
 
     # stats 
         'strongth' : 10,

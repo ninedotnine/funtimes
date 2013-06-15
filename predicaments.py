@@ -225,8 +225,6 @@ to play this predicament, call its play() method
     # allows user to make a choice, returns their choice as a string
     # separated into two functions to make pre- and post- actions easier
     def play(self):
-        # don't remember what this was for
-        #global profile
         clear()
         # if there are SET statements in predicament, 
         # do those before printing text
@@ -424,7 +422,6 @@ to play this predicament, call its play() method
                         line = line.replace(character, '#')
                     print(line, end='')
             print()
-    
 
 def doIf(fp, name, line):
     # figures out whether to read conditional stuff in pred definitions
@@ -432,14 +429,18 @@ def doIf(fp, name, line):
     
     global tempIfLevel, readingIfLevel
     
-    # try splitting the if on 'is' or 'has'
+    # try splitting the if on 'is' or 'has' or '='
+    # nested trys are ugly, we could maybe do something better
     try:
         key, value = line.split('is')
     except ValueError:
         try:
             key, value = line.split('has')
         except ValueError:
-            raise BadPredicamentError(26, fp.name, name, line)
+            try:
+                key, value = line.split('=')
+            except ValueError:
+                raise BadPredicamentError(26, fp.name, name, line)
     # remove the 'if ' from the key
     key = key[3:].strip()
     value = value.strip()
