@@ -43,6 +43,7 @@ new predicament = tutorial
     sound = tada
     map = none
     set progress = random
+    give a pack of ketchup
     
     text = According to our marketing team, purely text-based gaming
     text = is hip right now...

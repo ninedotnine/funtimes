@@ -8,7 +8,7 @@ from sys import argv
 from predicaments import Predicament
 from funtoolkit import clear, playSound, anykey, quit
 from settings import historycache, soundOn
-from profiledata import profile
+from savedata import profile
 
 def main(start='title'):
     # if playSound doesn't work, tell them the game will be mute

@@ -10,7 +10,7 @@ import sys
 import random
 from subprocess import call, DEVNULL
 
-from profiledata import profile, items, quests
+from savedata import profile, items, quests
 from settings import fancyPrintSpeed, fancyPrintLineDelay, soundOn, clearOn
 
 sounddir = os.getcwd() + '/data/sound/'
