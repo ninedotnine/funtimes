@@ -89,7 +89,7 @@ items = {
         'slushie': False
 } 
 
-queststatus = {
+quests = {
         'fixedCrookedPicture' : False,
         'takenShower' : False,
         'fixedTV' : False,
@@ -123,4 +123,4 @@ queststatus = {
         'shrine' : False,
 }
 
-savedata = (profile, items, queststatus)
+savedata = (profile, items, quests)

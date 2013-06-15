@@ -160,7 +160,12 @@ to play this predicament, call its play() method
                     # parameter cannot have spaces in it
                     key, parameter = key.split() 
                     # stored as a list of tuples (variable, value)
-                    self.setvars.append((parameter.strip(), value.strip()))
+                    if (value.strip() == 'random' and
+                        type(profile[parameter.strip()]) == int):
+                        self.setvars.append((parameter.strip(),
+                                             random.randint(1,100)))
+                    else:
+                        self.setvars.append((parameter.strip(), value.strip()))
                 elif key == 'goto':
                     self.goto = value.strip()
                 elif key == 'type':
@@ -212,7 +217,6 @@ to play this predicament, call its play() method
             self.mapname = profile['latestMapname']
         profile['latestPredmap'] = self.predmap
         profile['latestMapname'] = self.mapname
-        
 
     # this isn't used anywhere, but handy for debugging
     def __str__(self):
@@ -453,10 +457,9 @@ def doIf(fp, name, line):
         else:
             # if it's anything else, assume profile
             dictionary = 'profile'
-    if dictionary == 'player' and key == 'not':
-        # 'if player not has item'
-        dictionary = 'items'
-        key = value
+    if dictionary == 'items' and key.startswith('not '):
+        # 'if player has not item'
+        key = key[4:].strip()
         value = False
     if dictionary == 'quest':
         dictionary = 'quests'
@@ -469,7 +472,7 @@ def doIf(fp, name, line):
     if dictionary not in ('profile', 'quests', 'items'):
         raise BadPredicamentError(28, fp.name, name, line, dictionary)
     if (dictionary == 'profile' and key not in profile or
-        dictionary == 'quests' and key not in queststatus or
+        dictionary == 'quests' and key not in quests or
         dictionary == 'items' and key not in items):
         raise BadPredicamentError(10, fp.name, name, line, key, dictionary)
     
@@ -539,7 +542,7 @@ def doIf(fp, name, line):
         conditionIsTrue = ( items[key] == value)
     
     if dictionary == 'quests':
-        conditionIsTrue = ( queststatus[key] == value )
+        conditionIsTrue = ( quests[key] == value )
 
     if followup.startswith("then not"):
         # don't use this, it breaks if more than one statement is processed

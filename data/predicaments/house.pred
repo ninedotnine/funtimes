@@ -7,6 +7,7 @@ new predicament = bedroom
     text = behind you. To your left is a bed for you to rest in. To your right
 
     action = Go on your computer. -> computer
+    set weet = random
     
     if love is not 4
         then
@@ -23,8 +24,10 @@ new predicament = bedroom
         action = Pick up the phone. -> phone
     end if
     
-    if player has a pack of ketchup
-        then
+    if player has not a pack of ketchup
+        then not
+        # double negate!
+        text = 
         text = You have ketchup! :O
     end if
     

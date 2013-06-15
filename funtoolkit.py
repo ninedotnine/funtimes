@@ -1,15 +1,16 @@
 #!/usr/bin/python3
 # funtoolkit.py
 # this is where common methods are declared.
-# pause, clear, load, save, help, stats, etc. 
+# pause, clear, load, save, help, stats, etc.
 
 import os
 import pickle
 import time
 import sys
+import random
 from subprocess import call, DEVNULL
 
-from profiledata import profile, items, queststatus
+from profiledata import profile, items, quests
 from settings import fancyPrintSpeed, fancyPrintLineDelay, soundOn, clearOn
 
 sounddir = os.getcwd() + '/data/sound/'
@@ -51,13 +52,13 @@ if os.name == 'nt':
             # aha! an arrow key!
             char = ord(getch())
             if char == 72:
-                char = 'w' # up
+                char = movementButtons[0] # up
             elif char == 80:
-                char = 's' # down
+                char = movementButtons[1] # down
             elif char == 75:
-                char = 'a' # left
+                char = movementButtons[2] # left
             elif char == 77:
-                char = 'd' # right
+                char = movementButtons[4] # right
         elif ord(char) == 3:
             char = 'q' # KeyboardInterrupt
         elif ord(char) == 27:
@@ -202,7 +203,7 @@ else: # anything but windows
         termios.tcflush(sys.stdin, termios.TCIOFLUSH)
 
 def save(filename="save.sav", pause=True):
-    savedata = (profile, items, queststatus)
+    savedata = (profile, items, quests)
     print()
     try: 
         with open(filename, 'wb') as savefile: 
@@ -238,7 +239,7 @@ def stats(pause=True):
     money = format(profile['money'], ",d")
     print("You have $%s in your pocket." % money)
     if profile['energy'] == 1:
-        print("You have %d energy point left." % profile['energy'])
+        print("You have 1 energy point left.")
     else:
         print("You have %d energy points left." % profile['energy'])
     if profile['strongth'] > 14:
@@ -279,8 +280,8 @@ def pause():
         save()
         return 
     elif ch == 'l':
-        global profile, items, queststatus
-        profile, items, queststatus = load()
+        global profile, items, quests
+        profile, items, quests = load()
 
 def commonOptions(ch):
     # hit 'p' or escape to pause
@@ -345,7 +346,7 @@ if __name__ == '__main__':
     savedata = load()
     profile = savedata[0]
     items = savedata[1]
-    queststatus = savedata[2]
+    quests = savedata[2]
     print(replaceVariables("name is: %firstname%."))
     #save(savedata)
     #data = load()
