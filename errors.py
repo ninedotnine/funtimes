@@ -39,4 +39,5 @@ errors = (
     "in %s, predicament %s has this line:\n%s\nsetting must be done using 'to' or '='.",
     "in %s, predicament %s has this line:\n%s\n%s is not sensible.\nquest entries must be set to 'done' or 'not done'.",
     "in %s, predicament %s\ntries to %s %s from player.\nthis item does not exist.",
+    "in %s, predicament %s\ntries to take a pack of ketchup from player.\nthe player is saving that for a rainy day.\nthey refuse to let go of it.",
 )

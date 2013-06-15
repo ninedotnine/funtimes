@@ -170,6 +170,9 @@ to play this predicament, call its play() method
                     continue
                 elif line.strip().startswith("take "):
                     item = line[5:].strip()
+                    if item == 'a pack of ketchup':
+                        # don't even THINK about it
+                        raise BadPredicamentError(34, filename, self.name)
                     if item in items:
                         self.setvars.append(('items', item, False))
                     else:
