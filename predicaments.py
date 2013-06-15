@@ -116,6 +116,66 @@ to play this predicament, call its play() method
                         elif nextline.find("end of predicament") == 0:
                             raise BadPredicamentError(13, self.name)
                     continue
+                elif line.strip().startswith("set "):
+                    try:
+                        key, value = line.split('to')
+                    except ValueError:
+                        try:
+                            key, value = line.split('=')
+                        except ValueError:
+                            raise BadPredicamentError(31, filename, self.name,
+                                                      line)
+                    # strip out the 'set ' part
+                    key = key[4:].strip()
+                    value = value.strip()
+                    try:
+                        # split on first space to get dictionary
+                        dictionary, key = key.split(' ', 1)
+                    except ValueError:
+                        # if there's no space, assume profile
+                        dictionary = 'profile'
+                    if dictionary not in ('quest', 'profile'):
+                        raise BadPredicamentError(30, filename, self.name, line,
+                                                  dictionary)
+                    if dictionary == 'quest':
+                        dictionary = 'quests'
+                        if value == 'done':
+                            value = True
+                        elif value == 'not done':
+                            value = False
+                        else:
+                            raise BadPredicamentError(32, filename, self.name,
+                                                      line, value)
+                    # store it as a list of tuples (dictionary, variable, value)
+                    if dictionary == 'profile':
+                        try:
+                            if (value == 'random' and
+                                type(profile[key.strip()]) == int):
+                                self.setvars.append(('profile', key.strip(),
+                                                     random.randint(1,100)))
+                                continue
+                        except KeyError:
+                            # nonexistant variable
+                            raise BadPredicamentError(21, self.name, dictionary,
+                                                      key.strip())
+                    self.setvars.append((dictionary, key.strip(), value))
+                    continue
+                elif line.strip().startswith("give "):
+                    item = line[5:].strip()
+                    if item in items:
+                        self.setvars.append(('items', item, True))
+                    else:
+                        raise BadPredicamentError(33, filename, self.name,
+                                                  'give', item)
+                    continue
+                elif line.strip().startswith("take "):
+                    item = line[5:].strip()
+                    if item in items:
+                        self.setvars.append(('items', item, False))
+                    else:
+                        raise BadPredicamentError(33, filename, self.name,
+                                                  'take', item)
+                    continue
                 try:
                     key, value = line.split('=')
                 except ValueError: 
@@ -155,17 +215,6 @@ to play this predicament, call its play() method
                         self.disable.append(value.strip())
                 elif key == 'sound':
                     self.sound.append(value.strip())
-                elif key.startswith("set "):
-                    # everything between 'set' and '=' is the parameter
-                    # parameter cannot have spaces in it
-                    key, parameter = key.split() 
-                    # stored as a list of tuples (variable, value)
-                    if (value.strip() == 'random' and
-                        type(profile[parameter.strip()]) == int):
-                        self.setvars.append((parameter.strip(),
-                                             random.randint(1,100)))
-                    else:
-                        self.setvars.append((parameter.strip(), value.strip()))
                 elif key == 'goto':
                     self.goto = value.strip()
                 elif key == 'type':
@@ -231,19 +280,34 @@ to play this predicament, call its play() method
         if self.setvars:
             for statement in self.setvars:
                 # make tuple readable
-                variable, value = statement[0], statement[1]
-                try:
-                    if type(profile[variable]) == int:
-                        profile[variable] = int(value)
+                dictionary, variable, value = (statement[0], statement[1],
+                                               statement[2])
+                if dictionary == 'profile':
+                    try:
+                        if type(profile[variable]) == int:
+                            profile[variable] = int(value)
+                        else:
+                            profile[variable] = value
+                    except KeyError:
+                        # nonexistent variable
+                        raise BadPredicamentError(21, self.name, dictionary,
+                                                  variable)
+                    except ValueError:
+                        # tried to set an int to a string
+                        raise BadPredicamentError(20, self.name, variable,
+                                                  value, variable)
+                if dictionary == 'quests':
+                    if variable in quests:
+                        quests[variable] = value
                     else:
-                        profile[variable] = value
-                except KeyError:
-                    # nonexistent variable
-                    raise BadPredicamentError(21, self.name, variable)
-                except ValueError:
-                    # tried to set an int to a string
-                    raise BadPredicamentError(20, self.name, variable, value,
-                                              variable)
+                        raise BadPredicamentError(21, self.name, dictionary,
+                                                  variable)
+                if dictionary == 'items':
+                    if variable in items:
+                        items[variable] = value
+                    else:
+                        raise BadPredicamentError(21, self.name, dictionary,
+                                                  variable)
         # draw the map
         if self.predmap:
             try:

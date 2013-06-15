@@ -25,7 +25,7 @@ errors = (
     "in %s, %s has no '=' on this line:\n%s\nmaybe you made a typo?",
     "%s refers to a '%s.wav'. there was an error accessing\nor playing this file. did you mistype the name?",
     "predicament %s tries to set %s to '%s'\nbut %s is supposed to be a number!", # 20
-    "predicament %s tries to set '%s' to a value\nbut that variable does not exist!",
+    "predicament %s tries to set %s['%s'] to a value\nbut that variable does not exist!",
     "predicament %s refers to %s.map,\nwhich doesn't exist in %s! >:(\nwhat kind of game are you playing at?",
     "a movement or action directive in predicament %s contains this line:\n %s\nwhich does not have a -> in it.\nmovement and action must declare the label, then ->,\nthen the name of the predicament which the labelled movement\nor action leads to. for example:\n Leave the house. -> outside",
     "in %s\npredicament %s has the following condition:\n%s\nbut %s is not of a comparable type\nif it was intended to contain a word, it will always contain a word\nsetting it to a number will not allow you to perform comparisons",
@@ -35,4 +35,8 @@ errors = (
     "in %s:\npredicament %s has this line:\n%s\nchecking the status of a quest can only be done\nby using 'done' or 'not done'.",
     "in %s:\npredicament %s has this line:\n%s\nit appears to refer to a dictionary called '%s'\nbut i don't know what that is... :/",
     "in %s:\npredicament %s has this line:\n%s\nnegating a comparison is pointless. just use the opposite.",
+    "in %s, predicament %s has this line:\n%s\nit appears to refer to a dictionary called %s\nbut that's not a valid dictionary.", #30
+    "in %s, predicament %s has this line:\n%s\nsetting must be done using 'to' or '='.",
+    "in %s, predicament %s has this line:\n%s\n%s is not sensible.\nquest entries must be set to 'done' or 'not done'.",
+    "in %s, predicament %s\ntries to %s %s from player.\nthis item does not exist.",
 )

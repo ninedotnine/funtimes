@@ -7,7 +7,6 @@ new predicament = bedroom
     text = behind you. To your left is a bed for you to rest in. To your right
 
     action = Go on your computer. -> computer
-    set weet = random
     
     if love is not 4
         then
@@ -104,14 +103,15 @@ end of predicament hallway
 
 new predicament = fixCrookedPicture
     type = none
-    #set quest fixedCrookedPicture to done
-    #give 1 weet
+    set quest fixedCrookedPicture to done
+    give pie
     
     text = You straighten the picture frame. It contains a photo of you and
     text = %friendname% at the local playground, five years ago. This was before
     text = his acne started playing up, so you guys were pretty cute.
     text = 
-    yell = You got a weet point, cutie!
+    #yell = You got a weet point, cutie!
+    yell = You got pie???
     
     goto = hallway
 end of predicament
@@ -153,7 +153,7 @@ new predicament = shower
         text = 
         yell = A clean %gender% is a weet %gender%, so have yourself a weet point!
         #give 1 weet
-        #set quest hasTakenShower to done
+        set quest takenShower to done
     end if
     
     goto = bathroom
