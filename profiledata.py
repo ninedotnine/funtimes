@@ -32,6 +32,7 @@ profile = {
 items = {
         'a pack of ketchup' : True,
         'pie' : False,
+        'alligator meat' : True,
         
         # old ones
         'food' : False,

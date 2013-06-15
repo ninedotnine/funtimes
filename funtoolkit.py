@@ -271,7 +271,7 @@ def stats(pause=True):
     elif profile['love'] == 4:
         print("You're in love with %s" % profile['girlname'])
     print("\nITEMS ON HAND:")
-    for item in items:
+    for item in sorted(items):
         if items[item] == True:
             print(item)
     # if player has >20 items, tell them they have deep pockets
