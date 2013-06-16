@@ -4,7 +4,7 @@ import os
 datadir = os.getcwd() + '/data/'
 if not os.path.isdir(datadir):
     print("\ncould not find data directory\n")
-    raise KeyboardInterrupt
+    raise SystemExit
 
 # this is temporary. find a better way to do it.
 # allow the user to set in-game, if possible...
@@ -33,9 +33,6 @@ except UnicodeEncodeError:
     arrows = '^v<>'
 
 lineLength = 69
-
-soundOn = False
-clearOn = True
 
 if __name__ == '__main__':
     for thing in dir():

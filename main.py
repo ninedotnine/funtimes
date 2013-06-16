@@ -6,13 +6,18 @@ from collections import deque
 from sys import argv
 
 from predicaments import Predicament
-from funtoolkit import clear, playSound, anykey, quit
-from settings import historycache, soundOn
-from savedata import profile
+from funtoolkit import clear, playSound, anykey, quit, load
+from settings import historycache
+from savedata import profile, prefs
 
 def main(start='title'):
+    # i'm gonna make it automatically load here, and make the title screen
+    # reflect that. ergo, you won't have to sit through nosound if you do
+    # have your soundOff pref set to true
+    # also, making a new save file probably won't overwrite your prefs
+    load()
     # if playSound doesn't work, tell them the game will be mute
-    if not playSound and soundOn:
+    if not playSound and not prefs['soundOff']:
         Predicament('nosound').play()
     currentPredicament = Predicament(start)
     # prevPredicaments is a queue. after each new predicament, append it.

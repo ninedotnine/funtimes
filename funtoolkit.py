@@ -10,8 +10,8 @@ import sys
 import random
 from subprocess import call, DEVNULL
 
-from savedata import profile, items, quests
-from settings import fancyPrintSpeed, fancyPrintLineDelay, soundOn, clearOn
+from savedata import profile, items, quests, prefs
+from settings import fancyPrintSpeed, fancyPrintLineDelay, datadir
 
 sounddir = os.getcwd() + '/data/sound/'
 
@@ -22,10 +22,11 @@ if os.name == 'nt':
     styleCode = None
         
     def clear():
-        if clearOn:
+        if not prefs['clearOff']:
             call('cls',shell=True)
     
-    if soundOn:
+    # can someone tell me why this evaluates backwards...?
+    if prefs['soundOff']:
         import winsound
         def playSound(sound):
             if not os.path.isdir(sounddir):
@@ -103,7 +104,7 @@ else: # anything but windows
     }
     
     def clear():
-        if clearOn:
+        if not prefs['clearOff']:
             call('clear',shell=True)
         
     def makePlaySound(sound, ext='.wav'):
@@ -139,14 +140,14 @@ else: # anything but windows
                 quit()
         return playSound
 
-    if soundOn:
+    # can someone tell me why this evaluates backwards...?
+    if prefs['soundOff']:
         playSound = makePlaySound('test')
     else:
         playSound = None
 
     def quit(message="\nSee you!"):
-        print("\x1b[0m" + message)
-        #        ^-- ansi esc to reset terminal appearance, just in case
+        print(styleCode['reset'] + message)
         # restore terminal to the way it was 
         termios.tcsetattr(stdinfd, termios.TCSADRAIN, oldtcattr)
         raise SystemExit
@@ -216,29 +217,66 @@ def replaceVariables(text):
     return replaceVariables(text[:start] + str(profile[text[start+1:end]]) 
                             + text[end+1:])
 
-def save(filename="save.sav", pause=True):
-    savedata = (profile, items, quests)
+def save(filename="save.dat", pause=True):
     print()
     try: 
-        with open(filename, 'wb') as savefile: 
-            pickle.dump(savedata, savefile)
+        with open(datadir + filename, 'w', encoding='utf-8') as savefile:
+            print("profile:", file=savefile)
+            for key in profile.keys():
+                print("%s=%s" % (key, profile[key]), file=savefile)
+            print("items:", file=savefile)
+            for key in items.keys():
+                if items[key] == True:
+                    print(key, file=savefile)
+            print("quests:", file=savefile)
+            for key in quests.keys():
+                if quests[key] == True:
+                    print(key, file=savefile)
+            print("prefs:", file=savefile)
+            for key in prefs.keys():
+                if prefs[key] == True:
+                    print(key, file=savefile)
         print("Your data is saved!")
     except IOError:
         print("error saving data :(")
     if pause:
         anykey()
 
-def load(filename="save.sav"):
-    print()
+def load(filename="save.dat"):
     try:
-        with open(filename, 'rb') as savefile:
-            savedata = pickle.load(savefile)
-        print("Data loaded successfully.")
-        anykey()
-        return savedata
+        with open(datadir + filename, 'r', encoding='utf-8') as savefile:
+            for line in savefile:
+                line = line.strip()
+                if line.endswith(':'):
+                    dictionary = line[:-1]
+                    pass
+                if dictionary == 'profile':
+                    try:
+                        key, value = line.split('=')
+                    except ValueError:
+                        continue
+                    if type(profile[key]) == int:
+                        try:
+                            profile[key] = int(value)
+                        except ValueError:
+                            continue
+                    else:
+                        profile[key] = value
+                if dictionary == 'items':
+                    if line in items:
+                        items[line] = True
+                if dictionary == 'quests':
+                    if line in quests:
+                        quests[line] = True
+                if dictionary == 'prefs':
+                    if line in prefs:
+                        prefs[line] = True
     except IOError:
-        print("error loading data :C")
-    anykey()
+        print("\nerror loading data :C")
+        quit()
+    except FileNotFoundError:
+        print("\ncouldn't find %s%s" % (datadir, filename))
+        quit()
 
 def stats(pause=True): 
     clear()
@@ -294,8 +332,10 @@ def pause():
         save()
         return 
     elif ch == 'l':
-        global profile, items, quests
-        profile, items, quests = load()
+        load()
+        print("\nLoaded!")
+        anykey()
+        return
 
 def commonOptions(ch):
     # hit 'p' or escape to pause

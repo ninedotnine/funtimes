@@ -8,6 +8,8 @@ def populateDictionary(dictionary):
         with open(datadir + dictionary + '.dat', 'r') as fp:
             dictionary = {}
             for line in fp:
+                if line.strip().startswith('#') or line.strip() == '':
+                    continue
                 dictionary[line.strip()] = False
     except FileNotFoundError:
         print("\ncould not find '" + dictionary + "' in data directory\n")
@@ -38,8 +40,15 @@ profile = {
         'charisma' : 10,
         'intellect' : 10,
         
-        'latestPredmap' : None,
-        'latestMapname' : None,
+        'latestPredmap' : 'none',
+        'latestMapname' : 'none',
+}
+
+# moving certain settings here so they can be saved and loaded
+# also negating them because that's consistent with the other dictionaries
+prefs = {
+    'soundOff' : False,
+    'clearOff' : False,
 }
 
 items = populateDictionary('items')

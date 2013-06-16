@@ -3,11 +3,7 @@
 # home to doIf() and getNonBlankLine()
 # also the new home of the Predicament class
 
-# these are already imported from funtoolkit anyway...
-#import os 
-#import termios
-
-from savedata import profile
+from savedata import *
 from funtoolkit import *
 from settings import *
 from errors import errors
@@ -259,16 +255,14 @@ to play this predicament, call its play() method
         elif busy:
             # should always hit error 4 before this, so it may be redundant
             raise BadPredicamentError(7, filename, self.name)
-        # if the map is 'none', make it really None so there's literally no map
+        # if the map is 'none', there's literally no map
         # if it's merely unspecified, assume it's the last map loaded
-        if self.predmap == "none":
-            self.predmap = None
-            self.mapname = None
-        elif not self.predmap:
+        if not self.predmap:
             self.predmap = profile['latestPredmap']
             self.mapname = profile['latestMapname']
-        profile['latestPredmap'] = self.predmap
-        profile['latestMapname'] = self.mapname
+        elif self.predmap != 'none':
+            profile['latestPredmap'] = self.predmap
+            profile['latestMapname'] = self.mapname
 
     # this isn't used anywhere, but handy for debugging
     def __str__(self):
@@ -312,7 +306,7 @@ to play this predicament, call its play() method
                         raise BadPredicamentError(21, self.name, dictionary,
                                                   variable)
         # draw the map
-        if self.predmap:
+        if self.predmap != 'none':
             try:
                 self.drawMap()
             except FileNotFoundError:
