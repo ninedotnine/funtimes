@@ -36,7 +36,7 @@ def main(start='title'):
                 clear()
                 anykey("No more history available.")
             continue
-        # store this predicament on the list of previous predicaments 
+        # store this predicament on the list of previous predicaments
         prevPredicaments.append(currentPredicament)
         currentPredicament = Predicament(nextPredicament)
 
@@ -46,9 +46,9 @@ if __name__ == '__main__':
             try:
                 main(predicament)
             except KeyboardInterrupt:
-                quit()
+                quit(True)
     else:
         try:
             main()
         except KeyboardInterrupt:
-            quit()
+            quit(True)

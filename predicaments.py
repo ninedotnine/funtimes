@@ -12,13 +12,13 @@ class BadPredicamentError(Exception):
     def __init__(self, code=0, *args):
         print("\nerror code:", code)
         if code != 0 and code < len(errors):
-            print(errors[code] % args) 
+            print(errors[code] % args)
         print("i can't work under these conditions. i quit.\n")
         quit()
 
 class Predicament:
     """this is a class for holding a predicament!
-when creating a Predicament, pass in a string holding the name. 
+when creating a Predicament, pass in a string holding the name.
 the constructor will try to find this pred's data in the preddir
 by checking the predicaments dictionary.
 to play this predicament, call its play() method
@@ -37,7 +37,7 @@ to play this predicament, call its play() method
         # being redrawn when the user unpauses, backspaces, etc.
         self.disable = []
         self.actions = []
-        # self.goto is a list if inputtype == 'normal', a string otherwise 
+        # self.goto is a list if inputtype == 'normal', a string otherwise
         self.goto = []
         self.inputtype = None
         self.result = None
@@ -101,7 +101,7 @@ to play this predicament, call its play() method
                         # if the condition is true, read normally
                         readingIfLevel += 1
                         continue
-                    # if the condition isn't true, 
+                    # if the condition isn't true,
                     # discard lines until we reach end if
                     while readingIfLevel < tempIfLevel:
                         nextline = getNonBlankLine(fp)
@@ -177,7 +177,7 @@ to play this predicament, call its play() method
                     continue
                 try:
                     key, value = line.split('=')
-                except ValueError: 
+                except ValueError:
                     raise BadPredicamentError(18, filename, self.name, line)
                 key = key.rstrip().lower()
                 if key == 'new predicament':
@@ -185,7 +185,7 @@ to play this predicament, call its play() method
                     # the pred file must be invalid.
                     raise BadPredicamentError(4, filename, self.name)
                 elif key in ('text', 'yell', 'cyan'):
-                    # remove only the first space if any. 
+                    # remove only the first space if any.
                     # leading whitespace is now allowed!
                     if value and value[0] == ' ':
                         value = value[1:]
@@ -218,7 +218,7 @@ to play this predicament, call its play() method
                     self.goto = value.strip()
                 elif key == 'type':
                     if value.strip() not in ('none', 'normal', 'input',
-                                             'skip', 'multiline'):
+                                             'skip', 'multiline', 'title'):
                         raise BadPredicamentError(6, filename, self.name,
                                                   value.strip())
                     self.inputtype = value.strip()
@@ -246,7 +246,7 @@ to play this predicament, call its play() method
                     elif key == 'right':
                         self.directions[3] = [label.strip(), goto.strip()]
                 else:
-                    raise BadPredicamentError(14, filename, self.name, 
+                    raise BadPredicamentError(14, filename, self.name,
                                               key.strip())
                 if not self.inputtype:
                     raise BadPredicamentError(16, filename, self.name)
@@ -260,7 +260,7 @@ to play this predicament, call its play() method
         if not self.predmap:
             self.predmap = profile['latestPredmap']
             self.mapname = profile['latestMapname']
-        elif self.predmap != 'none':
+        else:
             profile['latestPredmap'] = self.predmap
             profile['latestMapname'] = self.mapname
 
@@ -272,7 +272,9 @@ to play this predicament, call its play() method
     # separated into two functions to make pre- and post- actions easier
     def play(self):
         clear()
-        # if there are SET statements in predicament, 
+        if self.inputtype != 'title':
+            profile['predicament'] = self.name
+        # if there are SET statements in predicament,
         # do those before printing text
         if self.setvars:
             for statement in self.setvars:
@@ -317,7 +319,7 @@ to play this predicament, call its play() method
                 soundPlayed = playSound(sound)
             if not soundPlayed:
                 raise BadPredicamentError(19, self.name, sound)
-        if 'fancytext' in self.disable and 'redraw' not in self.disable:
+        if 'animation' in self.disable and 'redraw' not in self.disable:
             self.disable.append('redraw')
         # use extraDelay to give bigger blocks of text longer pauses
         self.extraDelay = 0
@@ -328,7 +330,7 @@ to play this predicament, call its play() method
                     print(replaceVariables(line))
                 else:
                     self.extraDelay = fancyPrint(line, self.extraDelay)
-            # print a newline after things which don't 
+            # print a newline after things which don't
             # have more options to print
             if self.inputtype != 'normal':
                 self.extraDelay = fancyPrint('', self.extraDelay)
@@ -342,15 +344,15 @@ to play this predicament, call its play() method
             self.prompt = ""
         elif not self.disable or "prompt" not in self.disable:
             # or, just use the default prompt depending on inputtype
-            if self.inputtype == 'none':
-                self.prompt = "[" + defaultNonePrompt + "]"
-            elif self.inputtype == 'normal':
+            if self.inputtype == 'normal':
                 self.prompt = "\n[" + defaultNormalPrompt + "]"
             elif self.inputtype == 'input':
                 self.prompt = "[" + defaultInputPrompt + "]"
             elif self.inputtype == 'multiline':
                 self.prompt = "[" + defaultMultilinePrompt + "]"
-        # once we're done fancyprinting, we don't want to redraw the 
+            else:
+                self.prompt = "[" + defaultNonePrompt + "]"
+        # once we're done fancyprinting, we don't want to redraw the
         # predicament if we return to it after unpausing, backspacing, etc
         if 'redraw' not in self.disable and self.inputtype != "normal":
             # but normal predicaments still have some fancyprinting to do
@@ -368,11 +370,15 @@ to play this predicament, call its play() method
     # allows user to make a choice, returns their choice as a string
     # this bit only handles the different inputtypes
     def getPlayerInput(self):
+        if self.disable and 'pause' in self.disable:
+            canPause = False
+        else:
+            canPause = True
         if self.inputtype == 'skip':
             return self.goto
         elif self.inputtype == 'none':
             ch = anykey(self.prompt)
-            if commonOptions(ch):
+            if commonOptions(ch, canPause):
                 return self.name
             # hit backspace or ^H to go back
             elif ch == '\x08' or ch == '\x7F':
@@ -382,6 +388,23 @@ to play this predicament, call its play() method
                 self.disable.remove('redraw')
                 return self.name
             return self.goto
+        elif self.inputtype == 'title':
+            ch = anykey(self.prompt)
+            if commonOptions(ch, canPause):
+                return self.name
+            if ch == 'n':
+                print("Are you sure you want to start a new game? [Y/N]")
+                print("This will overwrite your current save file!")
+                ch = 'x'
+                while ch not in ('y', 'n'):
+                    ch = anykey()
+                if ch == 'n':
+                    return self.name
+                if ch == 'y':
+                    save('save.dat', True) # reset save.dat to defaults
+                    load()
+                    return self.goto
+            return profile['predicament']
         elif self.inputtype == 'input':
             print(self.prompt)
             # flush terminal input so nothing gets prefixed to this value
@@ -394,7 +417,7 @@ to play this predicament, call its play() method
             return self.goto
         elif self.inputtype == 'multiline':
             print(self.prompt)
-            try: 
+            try:
                 sys.stdout.flush()
                 termios.tcflush(sys.stdin, termios.TCIOFLUSH)
                 profile[self.result] = []
@@ -428,7 +451,7 @@ to play this predicament, call its play() method
             self.disable.append('redraw')
             choice = anykey(self.prompt)
             while True:
-                if commonOptions(choice):
+                if commonOptions(choice, canPause):
                     return self.name
                 # hit backspace or ^H to go back
                 elif choice == '\x08' or choice == '\x7F':
@@ -453,7 +476,7 @@ to play this predicament, call its play() method
                     choice = anykey(self.prompt)
                 else:
                     return self.goto[actions.index(choice)]
-    
+
     def drawMap(self):
         with open(mapdir + self.predmap + '.map',
                   'r', encoding='utf-8') as currentMap:
@@ -487,9 +510,9 @@ to play this predicament, call its play() method
 def doIf(fp, name, line):
     # figures out whether to read conditional stuff in pred definitions
     # first, parse the line itself to get dictionary, key, and value
-    
+
     global tempIfLevel, readingIfLevel
-    
+
     # try splitting the if on 'is' or 'has' or '='
     # nested trys are ugly, we could maybe do something better
     try:
@@ -537,7 +560,7 @@ def doIf(fp, name, line):
         dictionary == 'quests' and key not in quests or
         dictionary == 'items' and key not in items):
         raise BadPredicamentError(10, fp.name, name, line, key, dictionary)
-    
+
     followup = getNonBlankLine(fp).lower() # get 'then', 'and', 'or'
 
     # profile comparison cases
@@ -550,11 +573,11 @@ def doIf(fp, name, line):
                 comparee = eval(value[1:])
             except NameError:
                 # it's not a comparable value.
-                # maybe it's supposed to be a profile entry? 
-                if ( value[1:].strip() in profile and 
+                # maybe it's supposed to be a profile entry?
+                if ( value[1:].strip() in profile and
                     type(profile[value[1:].strip()]) in (int, float) ):
                     # aha! we're probably comparing profile stuff
-                    comparee = profile[value[1:].strip()] 
+                    comparee = profile[value[1:].strip()]
                 else:
                     raise BadPredicamentError(25, fp.name, name, line,
                                               key, value[1:].strip())
@@ -562,7 +585,7 @@ def doIf(fp, name, line):
             #if value[1:].strip() in dir(__name__):
                 # uh oh. a consequence of using eval...
                 # the pred file can refer to variables in this code
-                # this doesn't even catch all of these cases 
+                # this doesn't even catch all of these cases
                 # it might, if we hadn't called something else predicaments
                 raise BadPredicamentError(96)
             if type(comparee) not in (int, float):
@@ -599,16 +622,16 @@ def doIf(fp, name, line):
                     conditionIsTrue = ( profile[key] == value )
             if negate:
                 conditionIsTrue = not conditionIsTrue
-    
+
     if dictionary == 'items':
         conditionIsTrue = ( items[key] == value)
-    
+
     if dictionary == 'quests':
         conditionIsTrue = ( quests[key] == value )
 
     if followup.startswith("then not"):
         # don't use this, it breaks if more than one statement is processed
-        # for the simplest statements, it's okay. 
+        # for the simplest statements, it's okay.
         return not conditionIsTrue
     elif followup.startswith("then"):
         return conditionIsTrue
@@ -630,7 +653,7 @@ def getNonBlankLine(fp):
     while line == '' or line.startswith("#"):
         line = fp.readline()
         if not line:
-            # if eof is reached, that's bad. 
+            # if eof is reached, that's bad.
             raise BadPredicamentError(17, fp.name)
         line = line.strip()
     return line

@@ -1,38 +1,42 @@
 # title screen and character creation
 
 new predicament = nosound
-    type = none
+    type = title
     map = none
-    disable = fancytext
+    disable = animation
     disable = prompt
-    
+    disable = pause
+
     text = Unfortunately, sound won't work on your computer. Please pretend
     text = that you're having a particularly quiet day, or the mute button
     text = on your remote control is broken.
-    text = 
+    text =
     text = Press any key to continue.
-    
+
     goto = title
 end of predicament nosound
 
 new predicament = title
-    type = none
-    disable = fancytext
+    type = title
+    map = none
+    disable = animation
     disable = prompt
+    disable = pause
 
     yell =     ####### #     # #     # ####### ### #     # #######  #####
     yell =     #       #     # ##    #    #     #  ##   ## #       #     #
     yell =     #       #     # # #   #    #     #  # # # # #       #
     yell =     #####   #     # #  #  #    #     #  #  #  # #####    #####
-    yell =     #       #     # #   # #    #     #  #     # #             # 
+    yell =     #       #     # #   # #    #     #  #     # #             #
     yell =     #       #     # #    ##    #     #  #     # #       #     #
     yell =     #        #####  #     #    #    ### #     # #######  #####
     text =                        (hope you have fun!)
-    text = 
+    text =
     text =                Use WSAD to move and 1-6 to do stuff.
     text =                    Press h for controls and help.
-    text = 
-    text =            Press any other key to create a new character!
+    text =
+    text =            Press any key to continue from your last save
+    text =                       or N to start a new game.
 
     goto = tutorial
 end of predicament title
@@ -42,14 +46,15 @@ new predicament = tutorial
     type = none
     sound = tada
     map = none
-    set progress = random
+    disable = pause
+    set progress to random
     give a pack of ketchup
-    
+
     text = According to our marketing team, purely text-based gaming
     text = is hip right now...
-    text = 
+    text =
     text =                So welcome to FUNTIMES!
-    text = 
+    text =
     text = When you see the [-->], press any button to continue!
 
     goto = tutorial2
@@ -57,6 +62,7 @@ end of predicament tutorial
 
 new predicament = tutorial2
     type = none
+    disable = pause
 
     if progress is > 20
         and
@@ -82,44 +88,46 @@ new predicament = tutorial2
     end if
 
     text = "Only an idiot would press a button after an intro like that."
-    text = 
+    text =
     text = You look at your friend askance. "That's not nice," you say,
     text = insincerely dropping the controls of the arcade cabinet.
-    text = 
+    text =
     text = "What, you think the marketing team is going to hear me?"
-    text = 
+    text =
     text = You frown.
-    
+
     goto = tutorial3
 end of predicament tutorial2
 
 new predicament = tutorial3
     type = none
-    
+    disable = pause
+
     text = "Actually, maybe you have a point. The sort of marketing team
     text = that would call something 'Funtimes' probably DOES work here."
     text = He points at a passing janitor, on their way to Pizza Pizza.
-    text = 
+    text =
     text = "Stop that."
-    text = 
+    text =
     text = "Look," he continues, "all I'm saying is that even I could name
     text = something better than that."
-    text = 
+    text =
     text = "Did you remember to feed Dog this morning?"
-    text = 
+    text =
     text = "Don't change the subject."
-    
+
     goto = createCharacter
 end of predicament tutorial3
 
 new predicament = createCharacter
     type = none
+    disable = pause
 
     text = The day continues, and you do as you always do on lazy days
     text = like this:
-    text = 
+    text =
     text = Nothing.
-    text = 
+    text =
     text = Before you can get too introspective about your lack of
     text = motivation and forward momentum in life, your friend interrupts:
     text = "Let's get pizza!"
@@ -131,16 +139,17 @@ end of predicament createCharacter
 
 new predicament = createCharacter2
     type = none
+    disable = pause
 
     text = Your best friend sits across from you at Pizza Pizza, picking
     text = at his teeth idly. He glances up at the spotty clerk behind the
     text = counter.
-    text = 
+    text =
     text = "Alright," he says. "You gonna go order, or should I?"
-    text = 
+    text =
     text = You've been here for 15 minutes. This is the third time he's
     text = asked you this.
-    text = 
+    text =
     text = Making sure to roll your eyes as visibly as possible, you stand
     text = up from your table and walk to the counter.
 
@@ -149,14 +158,15 @@ end of predicament createCharacter2
 
 new predicament = createCharacter3
     type = input
+    disable = pause
     result = firstname
 
     text = "Medium pepperoni."
-    text = 
+    text =
     text = The spotty clerk takes your money. "Name?" he asks.
-    text = 
+    text =
     text = "What do you need that for?"
-    text = 
+    text =
     text = "We don't do numbers anymore," he says dully. "I'll call you up to
     text = the counter when your pizza is ready."
     prompt = What is your name?
@@ -166,8 +176,9 @@ end of predicament createCharacter3
 
 new predicament = createCharacter4
     type = input
+    disable = pause
     result = lastname
-    
+
     # don't let girls date themselves :3
     if firstname is girlname
         then
@@ -178,9 +189,9 @@ new predicament = createCharacter4
         then
         set girlname = Anna
     end if
-    
+
     text = "%firstname%."
-    text = 
+    text =
     text = The spotty clerk just rolls his eyes.
     text = "LAST name?"
     prompt = What is your LAST name?
@@ -190,12 +201,13 @@ end of predicament createCharacter4
 
 new predicament = createCharacter5
     type = none
+    disable = pause
     text = "%lastname%."
-    text = 
+    text =
     text = "Thank you," he says. He turns over his shoulder and yells to someone
     text = in the back, "%firstname% %lastname% is in dire need of a pepperoni!
     text = Thick and juicy if possible! Thank you."
-    text = 
+    text =
     text = He turns back and winks at you.
 
     goto = createCharacter6
@@ -210,25 +222,27 @@ end of predicament createCharacter5
 # if the player is rupert murdoch, give em mad dollaz
 new predicament = murdochInDaHouse
     type = none
+    disable = pause
     set money = 10000000000
     set gender = boy
     sound = cash
-    
+
     text = The spotty clerk's sudden advance turns your stomach. As the Right
     text = Honourable Rupert Murdoch, you should not have to stand for this
     text = treatment!
-    text = 
+    text =
     text = He is kind of cute though, so you decide to tweet about gay marriage
     text = instead. Damn corrupting gays with their supple, kissable bums
     text = and dexterous skill with male anatomy!
-    text = 
+    text =
     text = You feel your bile rising...
-    
+
     goto = mans
 end of predicament murdochInDaHouse
 
 new predicament = createCharacter6
     type = normal
+    disable = pause
 
     text = The spotty clerk's sudden advance turns your stomach. Before heading
     text = back to your table, you make a detour to the washrooms.
@@ -239,16 +253,17 @@ end of predicament createCharacter6
 
 new predicament = womans
     type = none
+    disable = pause
     set gender = girl
 
     text = You stumble into the washroom, trying to hold in the puke. The first
     text = stall is occupied, so you run into the second one. Unfortunately, this
     text = slight delay causes you to miss the toilet entirely and throw up all over
     text = the already-filthy tiled floor.
-    text = 
+    text =
     text = "Ugh," you mutter, wiping your mouth with some toilet paper. "What a way
     text = to start the game!"
-    text = 
+    text =
     text = On your way out of the bathroom, you see a janitor come out of the first stall.
     text = A single tear runs down her cheek when she sees the mess you made.
 
@@ -257,14 +272,15 @@ end of predicament womans
 
 new predicament = mans
     type = none
+    disable = pause
     set gender = boy
 
     text = You stumble into the washroom, trying to hold in the puke. The only
     text = stall is occupied, so you throw up in the nearest urinal instead.
-    text = 
+    text =
     text = "Ugh," you mutter, wiping your mouth with some paper towel. "What a
     text = way to start the game!"
-    text = 
+    text =
     text = Before you can wash your hands, the stall opens. Out comes the imposing
     text = figure of a Pizza Pizza janitor! He takes one look at the urinal you
     text = desecrated. A single tear runs down his cheek as you hastily make your
@@ -275,11 +291,12 @@ end of predicament mans
 
 new predicament = leavingWashroom
     type = none
+    disable = pause
 
     text = You're feeling a bit better now, soothed by the hideous fluorescent lighting
     text = of Pizza Pizza, and the fact that you can breathe out of your nose again.
     text = You're about to go back to your table when a girl walks up to you.
-    text = 
+    text =
     text = She looks endlessly embarrassed, biting her lip between every other word and
     text = glancing back at a table on the other side of the room before she clears her
     text = throat in your general direction.
@@ -289,15 +306,16 @@ end of predicament leavingWashroom
 
 new predicament = firstMeetingGirl
     type = none
+    disable = pause
 
     text = "Hey," she says awkwardly. You return the greeting.
-    text = 
+    text =
     text = "%girlname% wanted me to come talk to you," she says. You look over to where she
     text = keeps glancing to look at who you assume to be %girlname%. She's actually pretty
     text = cute.
     if gender is girl
         then
-        text = 
+        text =
         text = When did you become a lesbian?
     end if
 
@@ -306,17 +324,18 @@ end of predicament firstMeetingGirl2
 
 new predicament = setFriendsName
     type = input
+    disable = pause
     result = friendname
 
     text = %girlname%'s friend bites her lip. "Is that your friend?"
-    text = 
+    text =
     text = You stop looking at %girlname% to look back at your friend, to whom the girl is
     text = pointing. He picks his nose idly.
-    text = 
+    text =
     text = "Yeah, I guess," you say.
-    text = 
+    text =
     text = "What his name?" she asks, trying to sound casual.
-    text = 
+    text =
     text = What IS his name?
     prompt = Your poor memory says that it is...
 
@@ -325,14 +344,15 @@ end of predicament setFriendsName
 
 new predicament = endOfCreateCharacter
     type = none
+    disable = pause
 
     text = "%friendname%," you answer. %girlname%'s friend nods.
-    text = 
+    text =
     text = Before the conversation can get any more awkward, the spotty clerk calls
     text = your name. The girl in front of you starts to walk back to her table.
-    text = 
+    text =
     text = "See you later," she says.
-    text = 
+    text =
     text = Somehow, you feel like there was more to that than knowing the name of your
     text = best friend. But a missed opportunity is better than no opportunity, right?
 
@@ -341,6 +361,7 @@ end of predicament endOfCreateCharacter
 
 new predicament = endOfCreateCharacter2
     type = none
+    disable = pause
 
     text = The rest of the day goes by as normal. You and %friendname% split up and you
     text = head back home for an early night. It's a good thing, too, because tomorrow

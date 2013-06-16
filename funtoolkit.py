@@ -4,7 +4,6 @@
 # pause, clear, load, save, help, stats, etc.
 
 import os
-import pickle
 import time
 import sys
 import random
@@ -20,12 +19,11 @@ if os.name == 'nt':
     call('title FUNTIMES',shell=True)
     call('color 5F',shell=True)
     styleCode = None
-        
+
     def clear():
         if not prefs['clearOff']:
             call('cls',shell=True)
-    
-    # can someone tell me why this evaluates backwards...?
+
     if prefs['soundOff']:
         import winsound
         def playSound(sound):
@@ -43,7 +41,7 @@ if os.name == 'nt':
     def anykey(message=''):
         if message:
             print(message)
-        
+
         from msvcrt import getch
         # getch returns b'[character]', so we turn it into a string
         # and strip out the b' and ' parts
@@ -71,14 +69,21 @@ if os.name == 'nt':
         else:
             char = str(char)[2:-1]
         if char == 'q':
-            quit()
+            quit(True)
         return char.lower()
 
-    def quit(message="\nSee you!"):
+    def quit(askToSave=False, message="See you!"):
         # for some reason resetting doesn't work when you use call()?
         # so for now we'll just assume they're using the default 07
         call('color 07',shell=True)
-        print(message)
+        if askToSave:
+            print("\nDo you want to save before quitting? [Y/N]")
+            ch = 'x'
+            while ch not in ('y','n'):
+                ch = anykey()
+            if ch == 'y':
+                save()
+        print("\n" + message)
         raise SystemExit
 
     class PreventBarfing:
@@ -91,7 +96,7 @@ if os.name == 'nt':
     def tcflush():
         # irrelevant in windows! :>
         return
-    
+
 else: # anything but windows
     import termios
     # store terminal settings for restoration on quit()
@@ -102,11 +107,11 @@ else: # anything but windows
         'cyan' : "\x1b[36m",
         'reset' : "\x1b[0m",
     }
-    
+
     def clear():
         if not prefs['clearOff']:
             call('clear',shell=True)
-        
+
     def makePlaySound(sound, ext='.wav'):
         print("Configuring sounds...")
         # find a good way to find available sound-playing commands
@@ -124,14 +129,14 @@ else: # anything but windows
                 break
         else:
             return None
-            
+
         def playSound(sound):
             if not os.path.isdir(sounddir):
                 return False
             try:
                 # making this explicit since shell exits
                 # go opposite of typical python booleans
-                if call([playa, sounddir + sound + ext], 
+                if call([playa, sounddir + sound + ext],
                         stdout=DEVNULL, stderr=DEVNULL) != 0:
                     return False
                 return True
@@ -140,15 +145,22 @@ else: # anything but windows
                 quit()
         return playSound
 
-    # can someone tell me why this evaluates backwards...?
+    # gotta restructure this to happen after load()
     if prefs['soundOff']:
         playSound = makePlaySound('test')
     else:
         playSound = None
 
-    def quit(message="\nSee you!"):
-        print(styleCode['reset'] + message)
-        # restore terminal to the way it was 
+    def quit(askToSave=False, message="See you!"):
+        if askToSave:
+            print("\nDo you want to save before quitting? [Y/N]")
+            ch = 'x'
+            while ch not in ('y','n'):
+                ch = anykey()
+            if ch == 'y':
+                save()
+        print("\n" + styleCode['reset'] + message)
+        # restore terminal to the way it was
         termios.tcsetattr(stdinfd, termios.TCSADRAIN, oldtcattr)
         raise SystemExit
 
@@ -158,22 +170,22 @@ else: # anything but windows
     def anykey(*messages):
         # a lot of this is already taken care of elsewhere
         # store stdin's file descriptor
-        #stdinFileDesc = sys.stdin.fileno() 
+        #stdinFileDesc = sys.stdin.fileno()
         # save stdin's tty attributes so I can reset it later
-        #oldStdinTtyAttr = termios.tcgetattr(stdinFileDesc) 
+        #oldStdinTtyAttr = termios.tcgetattr(stdinFileDesc)
         for message in messages:
             print(message)
         try:
-            # set the input mode of stdin so that it gets added to 
+            # set the input mode of stdin so that it gets added to
             # char by char rather than line by line
             tty.setraw(stdinfd)
             # read 1 byte from stdin (indicating that a key has been pressed)
             char = sys.stdin.read(1)
         finally:
-            # reset 
+            # reset
             termios.tcsetattr(stdinfd, termios.TCSADRAIN, oldtcattr)
         if char == '\x03' or char == 'q':
-            quit()
+            quit(True)
         if char == '\x1b':
             # disabling this because it breaks ESC. seems hard to fix :/
             if False:
@@ -199,11 +211,11 @@ else: # anything but windows
             termios.tcsetattr(stdinfd, termios.TCSADRAIN, newtcattr)
         def __exit__(self, typ, value, callback):
             termios.tcsetattr(stdinfd, termios.TCSADRAIN, oldtcattr)
-    
+
     def tcflush():
         termios.tcflush(sys.stdin, termios.TCIOFLUSH)
 
-# method what replaces variables' plaintext representations 
+# method what replaces variables' plaintext representations
 # with the actual variable
 def replaceVariables(text):
     if '%' not in text or '%' not in text[text.index('%')+1:]:
@@ -214,37 +226,53 @@ def replaceVariables(text):
     if text[start+1:end] not in profile:
         print("can't find %s in profile" % text[start+1:end])
         quit()
-    return replaceVariables(text[:start] + str(profile[text[start+1:end]]) 
+    return replaceVariables(text[:start] + str(profile[text[start+1:end]])
                             + text[end+1:])
 
-def save(filename="save.dat", pause=True):
-    print()
-    try: 
-        with open(datadir + filename, 'w', encoding='utf-8') as savefile:
-            print("profile:", file=savefile)
-            for key in profile.keys():
-                print("%s=%s" % (key, profile[key]), file=savefile)
-            print("items:", file=savefile)
-            for key in items.keys():
-                if items[key] == True:
-                    print(key, file=savefile)
-            print("quests:", file=savefile)
-            for key in quests.keys():
-                if quests[key] == True:
-                    print(key, file=savefile)
-            print("prefs:", file=savefile)
-            for key in prefs.keys():
-                if prefs[key] == True:
-                    print(key, file=savefile)
-        print("Your data is saved!")
+def save(filename="save.dat", defaults=False):
+    try:
+        if not defaults:
+            print()
+            with open(datadir + filename, 'w', encoding='utf-8') as savefile:
+                print("profile:", file=savefile)
+                for key in profile.keys():
+                    print("%s=%s" % (key, profile[key]), file=savefile)
+                print("items:", file=savefile)
+                for key in items.keys():
+                    if items[key] == True:
+                        print(key, file=savefile)
+                print("quests:", file=savefile)
+                for key in quests.keys():
+                    if quests[key] == True:
+                        print(key, file=savefile)
+                print("prefs:", file=savefile)
+                for key in prefs.keys():
+                    if prefs[key] == True:
+                        print(key, file=savefile)
+        else:
+            with open(datadir + filename, 'w', encoding='utf-8') as savefile:
+                with open(datadir + 'profile.dat', 'r', encoding='utf-8') as fp:
+                    for line in fp:
+                        print(line, file=savefile, end='')
     except IOError:
         print("error saving data :(")
-    if pause:
-        anykey()
+        quit()
 
 def load(filename="save.dat"):
     try:
         with open(datadir + filename, 'r', encoding='utf-8') as savefile:
+            # unset any true booleans
+            global items, quests, prefs
+            for key in items:
+                if items[key] == True:
+                    items[key] = False
+            for key in quests:
+                if quests[key] == True:
+                    quests[key] = False
+            for key in prefs:
+                if prefs[key] == True:
+                    prefs[key] = False
+            # reset the ones we actually want
             for line in savefile:
                 line = line.strip()
                 if line.endswith(':'):
@@ -271,17 +299,13 @@ def load(filename="save.dat"):
                 if dictionary == 'prefs':
                     if line in prefs:
                         prefs[line] = True
-    except IOError:
-        print("\nerror loading data :C")
-        quit()
-    except FileNotFoundError:
-        print("\ncouldn't find %s%s" % (datadir, filename))
-        quit()
+    except:
+        save('save.dat', True)
 
-def stats(pause=True): 
+def stats(pause=True):
     clear()
     print("CHARACTER STATS:")
-    print("You are a %s named %s %s." % (profile['gender'], 
+    print("You are a %s named %s %s." % (profile['gender'],
           profile['firstname'], profile['lastname']))
     if profile['weet'] == 1:
         print("You currently have 1 weet point.")
@@ -320,7 +344,7 @@ def stats(pause=True):
 
 def pause():
     stats(pause=False)
-    print("\nMash 's' to save, 'l' to load, " + 
+    print("\nMash 's' to save, 'l' to load, " +
           "'q' to quaff potion--er, I mean quit")
     ch = anykey()
     # hit 'p' or escape to unpause
@@ -330,26 +354,29 @@ def pause():
         return
     elif ch == 's':
         save()
-        return 
+        print("Your data is saved!")
+        anykey()
+        return
     elif ch == 'l':
         load()
         print("\nLoaded!")
         anykey()
         return
 
-def commonOptions(ch):
-    # hit 'p' or escape to pause
-    if ch == 'p' or ch == '\x1B':
-        pause()
-        return True
-    elif ch == 'h':
+def commonOptions(ch, canPause=True):
+    if canPause:
+        # hit 'p' or escape to pause
+        if ch == 'p' or ch == '\x1B':
+            pause()
+            return True
+    if ch == 'h':
         helpme()
         return True
     return False
 
 def helpme():
     clear()
-    print('''You move around the world using the WSAD keys and perform actions 
+    print('''You move around the world using the WSAD keys and perform actions
 by pressing 1-6. In some cases, the game may ask for text input, after which
 you must press enter. At any time, you can 'pause' with ESC to see your
 inventory, stats, etc. or use backspace to undo an action. Use S and L while

@@ -2,18 +2,19 @@ new predicament = bedroom
     type = normal
     map = bedroom
     name = Bedroom
+    take pie
 
     text = You are standing in your bedroom. Sun streams through the window
     text = behind you. To your left is a bed for you to rest in. To your right
 
     action = Go on your computer. -> computer
-    
+
     if love is not 4
         then
         text = is your computer. You have a cordless phone in here, too.
         action = Use the phone. -> phone
     end if
-    
+
     # mom is calling you
     if love is 4
         then
@@ -22,14 +23,14 @@ new predicament = bedroom
         text = Your cordless phone is ringing.
         action = Pick up the phone. -> phone
     end if
-    
+
     if player has not a pack of ketchup
         then not
         # double negate!
-        text = 
+        text =
         text = You have ketchup! :O
     end if
-    
+
     action = Rest in your bed. -> useBed
     up = Leave the bedroom. -> hallway
     action = [Debug] Drink anti-energy drink. -> antienergy
@@ -37,7 +38,7 @@ end of predicament bedroom
 
 new predicament = useBed
     type = none
-    
+
     if energy is < 10
         then
         set energy = 15
@@ -45,38 +46,38 @@ new predicament = useBed
         text = bed. Just a quick nap to get your energy levels up...
         prompt = Wake up.
     end if
-    
+
     if energy is > 10
         then
         text = You approach the bed, intending to ruffle its feathers. Or its
         text = sheets. Whatever beds have.
-        text = 
+        text =
         text = Suddenly you are struck with the overwhelming feeling that an
         text = external force is making you do this -- possibly some sort of bored
         text = nerd from another dimension dicking about in a text adventure.
-        text = 
+        text =
         text = You aren't even tired! If that nerd does exist, they should stop
         text = trying to find out what happens when illogical actions are performed.
-        text = 
+        text =
         text = Also, maybe contemplate free will and the ethicality of what they
         text = are forcing you to do.
     end if
-    
+
     goto = bedroom
 end of predicament useBed
 
 new predicament = antienergy
     type = none
     set energy = 0
-    
+
     text = These new anti-energy drinks are all the rage amongst straight-edge kids
     text = nowadays. It's like all the lethargy of smoking pot, but without the fun
     text = parts.
-    text = 
+    text =
     text = Your lawyer informs you never to think that again.
     text =
     text = YOU ARE NOW TIRED.
-    
+
     goto = bedroom
 end of predicament antienergy
 
@@ -84,15 +85,15 @@ new predicament = hallway
     type = normal
     map = hallway
     name = Hallway
-    
+
     text = You are standing in the hallway. The hardwood floor is cold on your feet.
     text = The living room is just over there. Your bedroom is right behind you.
     text = There's also a bathroom.
-    
+
     down = Go into your bedroom. -> bedroom
     up = Check out the bathroom. -> bathroom
     left = Enter the living room. -> livingRoom
-    
+
     if quest fixedCrookedPicture is not done
         then
         text =
@@ -105,22 +106,22 @@ new predicament = fixCrookedPicture
     type = none
     set quest fixedCrookedPicture to done
     give pie
-    
+
     text = You straighten the picture frame. It contains a photo of you and
     text = %friendname% at the local playground, five years ago. This was before
     text = his acne started playing up, so you guys were pretty cute.
-    text = 
+    text =
     #yell = You got a weet point, cutie!
     yell = You got pie???
-    
+
     goto = hallway
 end of predicament
 
 new predicament = computer
     type = none
-    
+
     text = You go to use your computer, but it's a Mac so you're like "Fuck dat."
-    
+
     goto = bedroom
 end of predicament
 
@@ -128,10 +129,10 @@ new predicament = bathroom
     type = normal
     map = bathroom
     name = Bathroom
-    
+
     text = You're in the bathroom. There's not much to do in here. You could
     text = take a shower, I guess?
-    
+
     down = Leave the bathroom. -> hallway
     action = Take a shower, you guess. -> shower
     action = Check yourself out in the mirror. -> mirror
@@ -139,66 +140,66 @@ end of predicament
 
 new predicament = shower
     type = none
-    
+
     if quest takenShower is done
         then
         text = You hop in the shower and scrub yourself clean, hoping to impress
         text = Howard Hughes. Unfortunately you don't have any bottles to pee in,
         text = so your effort is a bit futile.
     end if
-    
+
     if quest takenShower is not done
         then
         text = You hop in the shower and scrub yourself clean.
-        text = 
+        text =
         yell = A clean %gender% is a weet %gender%, so have yourself a weet point!
         #give 1 weet
         set quest takenShower to done
     end if
-    
+
     goto = bathroom
 end of predicament shower
 
 new predicament = mirror
     type = none
-    
+
     text = You take a quick look at yourself in the mirror.
-    text = 
-    
+    text =
+
     if sexy is 0
         then
         text = There have been uglier %gender%s. I guess. Maybe.
         # for example, smizmars
     end if
-    
+
     if sexy is 1
         then
         text = Well, at least you know they like you for your personality...
     end if
-    
+
     if sexy is 2
         then
         text = Not too shabby...
     end if
-    
+
     if sexy is 3
         then
         text = Is that YOU looking back? You're looking good!
     end if
-    
+
     if sexy is 4
         then
         text = %firstname% %lastname%: sexiest %gender% on Earth.
     end if
-    
+
     if firstname is Brianna
         and
     if lastname is Rainey
         then
-        text = 
+        text =
         text = Good enough.
     end if
-    
+
     goto = bathroom
 end of predicament
 
@@ -206,10 +207,10 @@ new predicament = livingRoom
     type = normal
     map = livingroom
     name = Living Room
-    
+
     up = Leave the house. -> outside
     right = Head back into the hallway. -> hallway
-    
+
     text = You're in the living room. I guess this is the room where things
     if quest fixedTV is not done
         then
@@ -223,11 +224,11 @@ new predicament = livingRoom
         text = live? There's a crappy TV in front of the couch.
         action = Watch some TV. -> watchTV
     end if
-    text = 
+    text =
     text = On the far side of the room is a kitchenette.
-    
+
     action = Cook some food. -> cookFood
-    
+
     if quest bumbledBun is not done
         then
         action = Look for a bun to bumble. -> bumbleBun

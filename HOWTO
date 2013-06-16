@@ -94,7 +94,7 @@ Funtimes has a set of common things that you want in 99% of predicaments. In the
     disable = [keyword]
 The keywords are thus:
     prompt: Removes the square-bracketed prompt (e.g., "What do you want to do?")
-    fancytext: Makes the predicament pop immediately into existence, instead of animating.
+    animation: Makes the predicament pop immediately into existence, instead of animating.
     pause: Makes ESC and P not work -- this also disallows saving and loading.
 
 2. Sound

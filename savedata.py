@@ -30,26 +30,25 @@ profile = {
         'flash' : 0,
         'sexy' : 0,
         'energy' : 15,
-        
+
     # general-purpose garbage variable
         'progress' : 0,
 
-    # stats 
+    # stats
         'strongth' : 10,
         'dexterity' : 10,
         'charisma' : 10,
         'intellect' : 10,
-        
+
+        'predicament' : 'tutorial',
         'latestPredmap' : 'none',
         'latestMapname' : 'none',
 }
 
 # moving certain settings here so they can be saved and loaded
 # also negating them because that's consistent with the other dictionaries
-prefs = {
-    'soundOff' : False,
-    'clearOff' : False,
-}
+#prefs = populateDictionary('prefs')
+prefs = populateDictionary('prefs')
 
 items = populateDictionary('items')
 
