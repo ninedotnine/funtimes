@@ -218,7 +218,7 @@ to play this predicament, call its play() method
                     self.goto = value.strip()
                 elif key == 'type':
                     if value.strip() not in ('none', 'normal', 'input',
-                                             'skip', 'multiline', 'title'):
+                                             'skip', 'multiline', 'technical'):
                         raise BadPredicamentError(6, filename, self.name,
                                                   value.strip())
                     self.inputtype = value.strip()
@@ -272,7 +272,7 @@ to play this predicament, call its play() method
     # separated into two functions to make pre- and post- actions easier
     def play(self):
         clear()
-        if self.inputtype != 'title':
+        if self.inputtype != 'technical':
             profile['predicament'] = self.name
         # if there are SET statements in predicament,
         # do those before printing text
@@ -388,7 +388,7 @@ to play this predicament, call its play() method
                 self.disable.remove('redraw')
                 return self.name
             return self.goto
-        elif self.inputtype == 'title':
+        elif self.inputtype == 'technical':
             ch = anykey(self.prompt)
             if commonOptions(ch, canPause):
                 return self.name
@@ -401,7 +401,7 @@ to play this predicament, call its play() method
                 if ch == 'n':
                     return self.name
                 if ch == 'y':
-                    save('save.dat', True) # reset save.dat to defaults
+                    save(True) # reset save.dat to defaults
                     load()
                     return self.goto
             return profile['predicament']

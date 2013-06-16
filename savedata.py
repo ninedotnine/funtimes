@@ -47,7 +47,6 @@ profile = {
 
 # moving certain settings here so they can be saved and loaded
 # also negating them because that's consistent with the other dictionaries
-#prefs = populateDictionary('prefs')
 prefs = populateDictionary('prefs')
 
 items = populateDictionary('items')

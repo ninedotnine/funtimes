@@ -11,10 +11,6 @@ from settings import historycache
 from savedata import profile, prefs
 
 def main(start='title'):
-    # i'm gonna make it automatically load here, and make the title screen
-    # reflect that. ergo, you won't have to sit through nosound if you do
-    # have your soundOff pref set to true
-    # also, making a new save file probably won't overwrite your prefs
     load()
     # if playSound doesn't work, tell them the game will be mute
     if not playSound and not prefs['soundOff']:

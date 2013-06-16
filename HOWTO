@@ -47,6 +47,7 @@ Just like with actions, this will make Funtimes print "v - Go Down." and pressin
 4. The ending
 Every predicament needs to end with the following line:
     end of predicament
+It is good practice to put the name of the predicament you just ended at this end of this line, for extra readability in long pred files. Anything after "end of predicament" (on the same line) will be ignored, so it is not mandatory.
 
 Those are the basics.
 
@@ -95,7 +96,7 @@ Funtimes has a set of common things that you want in 99% of predicaments. In the
 The keywords are thus:
     prompt: Removes the square-bracketed prompt (e.g., "What do you want to do?")
     animation: Makes the predicament pop immediately into existence, instead of animating.
-    pause: Makes ESC and P not work -- this also disallows saving and loading.
+    pause: Makes ESC and P not work -- this also disallows loading, which can only be done via pausing.
 
 2. Sound
 Makes Funtimes play a wav file out of /data/sounds

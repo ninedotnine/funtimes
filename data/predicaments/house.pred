@@ -2,7 +2,6 @@ new predicament = bedroom
     type = normal
     map = bedroom
     name = Bedroom
-    take pie
 
     text = You are standing in your bedroom. Sun streams through the window
     text = behind you. To your left is a bed for you to rest in. To your right
@@ -22,13 +21,6 @@ new predicament = bedroom
         text =
         text = Your cordless phone is ringing.
         action = Pick up the phone. -> phone
-    end if
-
-    if player has not a pack of ketchup
-        then not
-        # double negate!
-        text =
-        text = You have ketchup! :O
     end if
 
     action = Rest in your bed. -> useBed
@@ -115,7 +107,7 @@ new predicament = fixCrookedPicture
     yell = You got pie???
 
     goto = hallway
-end of predicament
+end of predicament fixCrookedPicture
 
 new predicament = computer
     type = none
@@ -123,7 +115,7 @@ new predicament = computer
     text = You go to use your computer, but it's a Mac so you're like "Fuck dat."
 
     goto = bedroom
-end of predicament
+end of predicament computer
 
 new predicament = bathroom
     type = normal
@@ -136,7 +128,7 @@ new predicament = bathroom
     down = Leave the bathroom. -> hallway
     action = Take a shower, you guess. -> shower
     action = Check yourself out in the mirror. -> mirror
-end of predicament
+end of predicament bathroom
 
 new predicament = shower
     type = none
@@ -201,7 +193,7 @@ new predicament = mirror
     end if
 
     goto = bathroom
-end of predicament
+end of predicament mirror
 
 new predicament = livingRoom
     type = normal
@@ -233,4 +225,85 @@ new predicament = livingRoom
         then
         action = Look for a bun to bumble. -> bumbleBun
     end if
-end of predicament
+end of predicament livingRoom
+
+new predicament = fixTV
+    type = none
+
+    text = You don't know how to fix the TV.
+
+    goto = livingRoom
+end of predicament fixTV
+
+new predicament = watchTV
+    type = none
+
+    if energy is > 15
+        then
+        text = That's a TV, not a computer. You can't spend all day on it. Even
+        text = if you could, they're playing Quantum of Solace.
+    end if
+
+    if quest watchedTV is not done
+        and
+    if energy is < 16
+        then
+        # you're welcome, dan
+        text = You lean back on the couch, intending to watch just one measly
+        text = Buffy marathon...
+        text =
+        text = You wake up hours later, with entirely too much energy.
+        text =
+        text = You're about to ask yourself how it could possibly still be light
+        text = outside, when you're stuck by a more pressing question: How the
+        text = absolute hell did you sleep through Buffy??
+        set energy to 30
+        set quest watchedTV to done
+    end if
+
+    if quest watchedTV is done
+        and
+    if energy is < 16
+        then
+        text = You rest on the couch for a few hours. Somehow it's still the same
+        text = day after that.
+        text =
+        yell = You are refreshed!
+        set energy to 30
+    end if
+
+    goto = livingRoom
+end of predicament watchTV
+
+new predicament = cookFood
+    type = none
+
+    if gender is boy
+        then
+        text = You'd probably set the house on fire. Better not.
+    end if
+
+    if gender is girl
+        then
+        text = A straw feminist out of a Fox News wet dream is blocking your entry
+        text = to the kitchen. You'll have to burn your bra before she'll let you
+        text = pass.
+        text =
+        text = Unfortunately, you don't have a lighter.
+    end if
+
+    goto = livingRoom
+end of predicament cookFood
+
+new predicament = bumbleBun
+    type = none
+
+    text = After searching through cupboards for a bit, you finally locate a bun.
+    text = It grins as you bumble it vigourly.
+    text =
+    yell = For this act of kindness, you've received a weet point!
+    # add 1 to weet
+    set quest bumbledBun to done
+
+    goto = livingRoom
+end of predicament bumbleBun

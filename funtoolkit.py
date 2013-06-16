@@ -229,7 +229,7 @@ def replaceVariables(text):
     return replaceVariables(text[:start] + str(profile[text[start+1:end]])
                             + text[end+1:])
 
-def save(filename="save.dat", defaults=False):
+def save(defaults=False, filename="save.dat"):
     try:
         if not defaults:
             print()
@@ -300,7 +300,8 @@ def load(filename="save.dat"):
                     if line in prefs:
                         prefs[line] = True
     except:
-        save('save.dat', True)
+        # if save.dat is corrupt, invalid, or nonexistent, recreate it
+        save(True)
 
 def stats(pause=True):
     clear()

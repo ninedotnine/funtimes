@@ -1,7 +1,7 @@
 # title screen and character creation
 
 new predicament = nosound
-    type = title
+    type = technical
     map = none
     disable = animation
     disable = prompt
@@ -17,7 +17,7 @@ new predicament = nosound
 end of predicament nosound
 
 new predicament = title
-    type = title
+    type = technical
     map = none
     disable = animation
     disable = prompt
@@ -334,7 +334,7 @@ new predicament = setFriendsName
     text =
     text = "Yeah, I guess," you say.
     text =
-    text = "What his name?" she asks, trying to sound casual.
+    text = "What's his name?" she asks, trying to sound casual.
     text =
     text = What IS his name?
     prompt = Your poor memory says that it is...
