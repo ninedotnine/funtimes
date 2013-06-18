@@ -145,7 +145,7 @@ new predicament = shower
         text = You hop in the shower and scrub yourself clean.
         text =
         yell = A clean %gender% is a weet %gender%, so have yourself a weet point!
-        #give 1 weet
+        add 1 to weet
         set quest takenShower to done
     end if
 
@@ -200,7 +200,7 @@ new predicament = livingRoom
     map = livingroom
     name = Living Room
 
-    up = Leave the house. -> outside
+    up = Leave the house. -> outsideHouse
     right = Head back into the hallway. -> hallway
 
     text = You're in the living room. I guess this is the room where things
@@ -302,7 +302,7 @@ new predicament = bumbleBun
     text = It grins as you bumble it vigourly.
     text =
     yell = For this act of kindness, you've received a weet point!
-    # add 1 to weet
+    add 1 to weet
     set quest bumbledBun to done
 
     goto = livingRoom

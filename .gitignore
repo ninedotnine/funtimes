@@ -4,3 +4,5 @@ __pycache__
 *.sav
 funtimes.out
 data/save.dat
+plans.txt
+data/maps/*-ascii.map

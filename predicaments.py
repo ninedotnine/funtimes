@@ -88,6 +88,7 @@ to play this predicament, call its play() method
             tempIfLevel = 0
             while line:
                 line = getNonBlankLine(fp)
+                # STUFF WITHOUT = IN IT
                 if line.find("end of predicament") == 0:
                     busy = False
                     break
@@ -175,6 +176,61 @@ to play this predicament, call its play() method
                         raise BadPredicamentError(33, filename, self.name,
                                                   'take', item)
                     continue
+                elif line.strip().startswith("add "):
+                    try:
+                        # literally backwards, because that's more fun
+                        value, key = line[4:].split('to')
+                        value = value.strip()
+                        key = key.strip()
+                    except ValueError:
+                        raise BadPredicamentError(35, filename, self.name, line)
+                    if key not in profile:
+                        raise BadPredicamentError(10, filename, self.name, line,
+                                                  key, 'profile')
+                    try:
+                        value = int(value)
+                    except ValueError:
+                        # maybe it's a profile entry?
+                        if value in profile and type(profile[value]) == int:
+                            value = profile[value]
+                        else:
+                            raise BadPredicamentError(37, filename, self.name,
+                                                      line, value)
+                    if type(profile[key]) == int:
+                        # should probably use setvars instead, but eh
+                        profile[key] += value
+                    else:
+                        raise BadPredicamentError(38, filename, self.name, line,
+                                                  key, 'add to')
+                    continue
+                elif line.strip().startswith("subtract "):
+                    try:
+                        # literally backwards, because that's more fun
+                        value, key = line[9:].split('from')
+                        value = value.strip()
+                        key = key.strip()
+                    except ValueError:
+                        raise BadPredicamentError(36, filename, self.name, line)
+                    if key not in profile:
+                        raise BadPredicamentError(10, filename, self.name, line,
+                                                  key, 'profile')
+                    try:
+                        value = int(value)
+                    except ValueError:
+                        # maybe it's a profile entry?
+                        if value in profile and type(profile[value]) == int:
+                            value = profile[value]
+                        else:
+                            raise BadPredicamentError(37, filename, self.name,
+                                                      line, value)
+                    if type(profile[key]) == int:
+                        # should probably use setvars instead, but eh
+                        profile[key] -= value
+                    else:
+                        raise BadPredicamentError(38, filename, self.name, line,
+                                                  key, 'subtract from')
+                    continue
+                # NORMAL STUFF
                 try:
                     key, value = line.split('=')
                 except ValueError:
@@ -230,6 +286,9 @@ to play this predicament, call its play() method
                     self.write = value.strip()
                 elif key == 'map':
                     self.predmap = value.strip()
+                    # use generated ascii map if it exists
+                    if os.path.isfile(mapdir + self.predmap + '-ascii.map'):
+                        self.predmap += '-ascii'
                 elif key == 'name':
                     self.mapname = value.strip()
                 elif key in ('up', 'down', 'left', 'right'):
@@ -498,14 +557,46 @@ to play this predicament, call its play() method
                 try:
                     print(line, end='')
                 except UnicodeEncodeError:
-                    # if the terminal does not support unicode,
-                    # replace fancy unicode walls with ascii walls
-                    unicodeCharacters = ['\u2550', '\u2551', '\u2554',
-                                         '\u2557', '\u255A', '\u255D']
-                    for character in unicodeCharacters:
-                        line = line.replace(character, '#')
+                    if not os.path.isfile(mapdir + self.predmap + '-ascii.map'):
+                        createAsciiMap(self.predmap)
+                    line = createAsciiLine(line)
                     print(line, end='')
             print()
+
+def createAsciiMap(predmap):
+    # generates an ascii version of the map file, so it doesn't need to
+    # do a million replace()s every time we come back to the same map
+    try:
+        with open(mapdir + predmap + '.map',
+              'r', encoding='utf-8') as unicodeMap:
+            with open(mapdir + predmap + '-ascii.map',
+                      'w', encoding='utf-8') as asciiMap:
+                for line in unicodeMap:
+                    print(createAsciiLine(line), file=asciiMap, end='')
+    except IOError:
+        print("\nproblem creating or accessing:\n" + mapdir + predmap +
+              "-ascii.map\nthis is a p. big deal, tbh")
+        anykey()
+        quit()
+
+def createAsciiLine(line):
+    unicodeWalls = ['\u2550', '\u2551', '\u2554',
+                    '\u2557', '\u255A', '\u255D'] # '#'
+    unicodeVertLines = ['\u2502'] # '|'
+    unicodeHoriLines = ['\u2500'] # '_'
+    unicodeDashes = ['\u254E', '\u254C'] # '.'
+    unicodeCorners = ['\u250C', '\u2518', '\u2514', '\u2510'] # removed
+    for character in unicodeWalls:
+        line = line.replace(character, '#')
+    for character in unicodeVertLines:
+        line = line.replace(character, '|')
+    for character in unicodeHoriLines:
+        line = line.replace(character, '_')
+    for character in unicodeDashes:
+        line = line.replace(character, '.')
+    for character in unicodeCorners:
+        line = line.replace(character, ' ')
+    return line
 
 def doIf(fp, name, line):
     # figures out whether to read conditional stuff in pred definitions

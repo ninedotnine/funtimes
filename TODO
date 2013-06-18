@@ -9,11 +9,7 @@ if statements need better error messages
 either make it so pred ifs can't access internal variables, or give a special
 error for them so the user knows they used a reserved name. something.
 
-make disable = pause
-
 maybe allow arbitrary dictionaries in if and set statements?
-
-allow adding and subtracting
 
 allow user to change settings (adjust clearOn, soundOn, fancyPrint, etc)
 

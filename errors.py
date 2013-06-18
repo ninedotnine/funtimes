@@ -40,4 +40,8 @@ errors = (
     "in %s, predicament %s has this line:\n%s\n%s is not sensible.\nquest entries must be set to 'done' or 'not done'.",
     "in %s, predicament %s\ntries to %s %s from player.\nthis item does not exist.",
     "in %s, predicament %s\ntries to take a pack of ketchup from player.\nthe player is saving that for a rainy day.\nthey refuse to let go of it.",
+    "in %s, predicament %s\ndoes not have a 'to' on this line:\n%s\nyou must add TO a variable, using the word TO.", #35
+    "in %s, predicament %s\ndoes not have a 'from' on this line:\n%s\nyou must subtract FROM a variable, using the word FROM.",
+    "in %s, predicament %s\nhas this invalid line:\n%s\n'%s' is not an integer. you must use a whole number\nor a profile entry that contains a whole number.",
+    "in %s, predicament %s\nhas this invalid line:\n%s\n'%s' does not refer to a number. you can't %s it.",
 )

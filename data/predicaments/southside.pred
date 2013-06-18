@@ -1,0 +1,10 @@
+new predicament = outsideHouse
+    type = normal
+    map = southside10x00
+    name = Outside Your House
+
+    text = You're outside.
+    subtract 1 from weet
+
+    down = Go into your house. -> livingRoom
+end of predicament

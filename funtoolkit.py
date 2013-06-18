@@ -10,7 +10,7 @@ import random
 from subprocess import call, DEVNULL
 
 from savedata import profile, items, quests, prefs
-from settings import fancyPrintSpeed, fancyPrintLineDelay, datadir
+from settings import fancyPrintSpeed, fancyPrintLineDelay, datadir, movementButtons
 
 sounddir = os.getcwd() + '/data/sound/'
 
@@ -73,9 +73,6 @@ if os.name == 'nt':
         return char.lower()
 
     def quit(askToSave=False, message="See you!"):
-        # for some reason resetting doesn't work when you use call()?
-        # so for now we'll just assume they're using the default 07
-        call('color 07',shell=True)
         if askToSave:
             print("\nDo you want to save before quitting? [Y/N]")
             ch = 'x'
@@ -83,6 +80,9 @@ if os.name == 'nt':
                 ch = anykey()
             if ch == 'y':
                 save()
+        # for some reason resetting doesn't work when you use call()?
+        # so for now we'll just assume they're using the default 07
+        call('color 07',shell=True)
         print("\n" + message)
         raise SystemExit
 
@@ -192,7 +192,6 @@ else: # anything but windows
                 # arrow keys return 3 bytes - \x1b, [, and a letter
                 # we'll read the next 2 bytes so we know which arrow was pressed
                 char = sys.stdin.read(2)
-                from settings import movementButtons
                 if char == '[A': # up
                     char = movementButtons[0]
                 elif char == '[B': # down
