@@ -231,7 +231,6 @@ def replaceVariables(text):
 def save(defaults=False, filename="save.dat"):
     try:
         if not defaults:
-            print()
             with open(datadir + filename, 'w', encoding='utf-8') as savefile:
                 print("profile:", file=savefile)
                 for key in profile.keys():

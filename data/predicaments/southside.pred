@@ -6,5 +6,52 @@ new predicament = outsideHouse
     text = You're outside.
     subtract 1 from weet
 
+    up = Head north, towards the mall. -> southside10x01
     down = Go into your house. -> livingRoom
-end of predicament
+    left = Go west, towards %friendname%'s house. -> southside09x00
+end of predicament outsideHouse
+
+new predicament = southside09x00
+    type = normal
+    map = southside09x00
+    name = Outside
+
+    text = You're outside.
+
+    right = Go east, back towards your house. -> outsideHouse
+    left = Go west, towards %friendname%'s house. -> friendsHood
+end of predicament southside09x00
+
+new predicament = friendsHood
+    type = normal
+    map = southside08x00
+    name = Near %friendname%'s House
+
+    text = You are near %friendname%'s house. To the west, you can see the spot-
+    if player has not bike
+        then
+        text = lights of a casino in the distance. It's far enough that you wouldn't
+        text = want to make the journey on foot.
+    end if
+    if player has bike
+        then
+        text = lights of a casino in the distance.
+        left = Bike to the casino. -> outsideCasino
+    end if
+
+    up = Enter the convenience store. -> cornerStore
+    down = Visit %friendname%. -> friendsHouse
+    right = Go east, towards your house. -> southside09x00
+end of predicament friendsHood
+
+new predicament = southside10x01
+    type = normal
+    map = southside10x01
+    name = Outside
+
+    text = Look both ways before you cross dat street.
+
+    down = Head back south, towards your house. -> outsideHouse
+    right = Go east down the side street. -> southside11x01
+    up = Go north to the mall parking lot. -> mallCarPark
+end of predicament southside10x01

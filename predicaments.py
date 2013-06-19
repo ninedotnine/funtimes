@@ -495,13 +495,13 @@ to play this predicament, call its play() method
                 for direction in self.directions:
                     if type(direction) == list:
                         string = (' ' + arrows[self.directions.index(direction)]
-                                  + '  - ' + direction[0])
+                                  + ' - ' + replaceVariables(direction[0]))
                         if 'redraw' in self.disable:
                             print(string)
                         else:
                             fancyPrint(string, -1)
                 for action in self.actions:
-                    string = ' ' + next(iteractions) + '  - ' + action
+                    string = ' ' + next(iteractions) + ' - ' + replaceVariables(action)
                     if 'redraw' in self.disable:
                         print(string)
                     else:
@@ -548,10 +548,11 @@ to play this predicament, call its play() method
                   'r', encoding='utf-8') as currentMap:
             # print the map's name over the map if it exists
             if self.mapname:
+                self.mapname = replaceVariables(self.mapname).upper()
                 # centre it over the map
                 sys.stdout.write \
                 (' ' * int((lineLength - len(self.mapname) - 1) / 2))
-                print(self.mapname.upper())
+                print(self.mapname)
             for line in currentMap:
                 sys.stdout.write(' ' * int((lineLength - longestLine) / 2))
                 try:
