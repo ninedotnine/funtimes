@@ -1,0 +1,9 @@
+new predicament = mallCarPark
+    type = normal
+    map = mallcarpark
+    name = Mall Parking Lot
+
+    text = I'll do the mall later.
+
+    down = Head south, back towards your house. -> southside10x01
+end of predicament mallCarPark

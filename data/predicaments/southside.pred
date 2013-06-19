@@ -55,3 +55,43 @@ new predicament = southside10x01
     right = Go east down the side street. -> southside11x01
     up = Go north to the mall parking lot. -> mallCarPark
 end of predicament southside10x01
+
+new predicament = southside11x01
+    type = normal
+    map = southside11x01
+    name = On a side street
+
+    text = You are in a maze of twisty little streets, all alike.
+
+    left = Go west, out of the side street. -> southside10x01
+    right = Continue east down the side street. -> southside12x01
+end of predicament southside11x01
+
+new predicament = southside12x01
+    type = normal
+    map = southside12x01
+    name = On a side street
+
+    text = Lookit the stuff!
+
+    left = Go west, to the pointless part of the road. -> southside11x01
+    right = Continue east down the side street. -> southside13x01
+    up = Enter the triplicate pizza parlour. -> pizza3
+    down = Visit the... *yawn*... candle shop. -> candleshop
+end of predicament southside 12x01
+
+new predicament = southside13x01
+    type = normal
+    map = southside13x01
+    name = On a side street
+
+    text = Gregarious serendipity sez LOL
+
+    up = Go to the construction yard. -> cyard
+    left = Back west, towards the candle shop. -> southside12x01
+    right = Check out the playground. -> playground
+    if love is > 2
+        then
+        down = See if %girlname% is home. -> girlHouse
+    end if
+end of predicament southside 13x01
