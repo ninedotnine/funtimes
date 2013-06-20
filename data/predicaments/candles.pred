@@ -1,0 +1,191 @@
+new predicament = candleshop
+    type = normal
+    map = candleshop
+    name = Candle Shop
+
+    text = You are in the candle shop. A nose-cringingly strong potpourri smell
+    text = pervades the air -- since you don't have a gas mask handy, you'll need
+    text = to limit how much time you spend in here.
+
+    if quest candleQuestStarted is not done
+        and
+    if quest talkedToCandleShopOwner is not done
+        then
+        text =
+        text = The shop owner is talking on the phone. She seems worried. You wonder
+        text = what could be going on...
+        action = Talk to the shop owner. -> talkToCandleShopOwner
+    end if
+    if quest candleQuestStarted is not done
+        and
+    if quest talkedToCandleShopOwner is done
+        then
+        text =
+        text = The shop owner is rifling through an address book, probably looking
+        text = for someone else to help her out. Maybe you shouldn't have turned her
+        text = down.
+        action = Reconsider the shop owner's plight. -> talkToCandleShopOwnerAgain
+    end if
+
+    up = Leave the shop in search of fresh air. -> southside12x01
+end of predicament candleshop
+
+new predicament = talkToCandleShopOwner
+    type = none
+    map = none
+
+    text = The shop owner hangs up the phone just as you approach her. She sighs.
+    text =
+    text = "What's the matter?" you ask.
+    text =
+    text = "Oh, %firstname%. What are you doing here? I didn't think you were
+    text = interested in the artistry of candle scents."
+    text =
+    text = "Wait..." you say. "Have we met before?"
+    text =
+    text = "Not really," she says sadly. "I just know everyone in this town. When
+    text = you've been around as long as I have, you get a feel for things."
+
+    goto = talkToCandleShopOwner2
+end of predicament talkToCandleShopOwner
+
+new predicament = talkToCandleShopOwner2
+    type = none
+
+    text = "Er, right," you say, confused.
+    text =
+    text = "But," she continues, "my senses have failed me today. That new hire
+    text = I got last week is already calling in sick so he can stay at home and
+    text = play Skyrim." She sighs. "I should have known..."
+    text =
+    text = "That sucks," you say blankly. "Well, if there's nothing I can help with,
+    text = I'll just get--"
+    text =
+    text = "And I had such an important delivery to make today! A limited-edition
+    text = forty-dollar candle!"
+    text =
+    text = You can already tell where this is going...
+    prompt = Then again, you DID ask.
+
+    goto = talkToCandleShopOwner3
+end of predicament talkToCandleShopOwner2
+
+new predicament = talkToCandleShopOwner3
+    type = normal
+
+    text = "Say, how would you feel about making the delivery for me?" the shop
+    text = owner asks. "I would do it myself, of course, but... um... I'm not
+    text = wearing my walking shoes today."
+    text =
+    text = You glance down at her stylin' kicks. You suppose she does have a point.
+
+    action = Offer to help deliver the candle. -> acceptCandleQuest
+    action = Tell her to get more practical kicks. -> denyCandleQuest
+end of predicament talkToCandleShopOwner3
+
+new predicament = talkToCandleShopOwnerAgain
+    type = none
+    map = none
+
+    text = You walk up to the shop owner and clear your throat.
+    text =
+    if gender is girl
+        and
+    if firstname is not Penelope
+        then
+        text = "Oh, it's you," she says. "Penelope, right?"
+    end if
+    if gender is girl
+        and
+    if firstname is Penelope
+        then
+        text = "Oh, it's you," she says. "Brianna, right?"
+    end if
+    if gender is boy
+        and
+    if firstname is not Chris
+        then
+        text = "Oh, it's you," she says. "Chris, right?"
+    end if
+    if gender is boy
+        and
+    if firstname is Chris
+        then
+        text = "Oh, it's you," she says. "Dan, right?"
+    end if
+    # yes, i really do need to be this anal
+    text =
+    text = You cringe. "Alright, I'm sorry. I want to help deliver your candle."
+    text =
+    text = Her face brightens. "Thank you so much, %firstname%!"
+
+    goto = acceptCandleQuest2
+end of predicament talkToCandleShopOwnerAgain
+
+new predicament = acceptCandleQuest
+    type = none
+
+    text = "Okay," you say. "Your kicks do look unsuited to walking. I'll help
+    text = you out."
+    text =
+    text = "My kicks...? Well, yes. Thanks for the offer, %firstname%. You wouldn't
+    text = believe how much this means to me. If I don't get this candle delivered
+    text = in a timely fashion, I could lose this customer's future business. And
+    text = I'd like to maintain relationships with someone who's willing to spend
+    text = $40 on a smelly candle."
+    text =
+    text = She pauses for a second.
+    text =
+    text = "I mean a SCENTED candle. Make sure to call it that."
+
+    goto = acceptCandleQuest2
+end of predicament acceptCandleQuest
+
+new predicament = acceptCandleQuest2
+    type = none
+
+    text = Without further fuss, she digs into her desk and pulls out a wrapped
+    text = candle. She hands it to you.
+    give scented candle
+    text =
+    text = "I don't suppose this paper is scent-proofed?" you say.
+    text =
+    text = She laughs. "Of course it is. I wouldn't have it in my desk otherwise."
+    text = Her expression suddenly turns very serious. "Do NOT, under any
+    text = circumstances, unwrap that candle. The smell is VERY potent."
+    prompt = Um, okay...
+
+    goto = acceptCandleQuest3
+end of predicament acceptCandleQuest2
+
+new predicament = acceptCandleQuest3
+    type = none
+
+    text = "The person you're delivering this to is named Theresa. She should be at
+    text = the mall today. Here's a picture of her."
+    text =
+    text = You take the picture of Theresa. You decide not to put it on the inventory
+    text = screen, because this game has no graphics and that would be pointless.
+    text =
+    text = "How do you know she's at the mall?"
+    text =
+    text = "I just know these things, alright?" she says exasperatedly. "Now go."
+    set quest lookingForTheresa to done
+    set quest candleQuestStarted to done
+
+    goto = candleshop
+end of predicament acceptCandleQuest3
+
+new predicament = denyCandleQuest
+    type = none
+
+    text = You're about to insult the practicality of the shop owner's kicks, when
+    text = your conscience gets the better of you. You resort to the nicer option.
+    text =
+    text = "Nah."
+    text =
+    text = The shop owner's face falls as you walk away. She looks genuinely hurt.
+    set quest talkedToCandleShopOwner to done
+
+    goto = candleshop
+end of predicament denyCandleQuest

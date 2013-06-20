@@ -608,24 +608,14 @@ def doIf(fp, name, line):
     # try splitting the if on 'is' or 'has' or '='
     # nested trys are ugly, we could maybe do something better
     # try this
-    for splitter in ('is', 'has', '='):
-        try: 
+    for splitter in (' is ', ' has ', '='):
+        try:
             key, value = line.split(splitter)
         except ValueError:
             continue
         break
     else:
         raise BadPredicamentError(26, fp.name, name, line)
-    #try:
-        #key, value = line.split('is')
-    #except ValueError:
-        #try:
-            #key, value = line.split('has')
-        #except ValueError:
-            #try:
-                #key, value = line.split('=')
-            #except ValueError:
-                #raise BadPredicamentError(26, fp.name, name, line)
     # remove the 'if ' from the key
     key = key[3:].strip()
     value = value.strip()

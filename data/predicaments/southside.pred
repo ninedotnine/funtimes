@@ -27,15 +27,15 @@ new predicament = friendsHood
     map = southside08x00
     name = Near %friendname%'s House
 
-    text = You are near %friendname%'s house. To the west, you can see the spot-
+    text = You are near %friendname%'s house. To the west, you can see the spotlights
     if player has not bike
         then
-        text = lights of a casino in the distance. It's far enough that you wouldn't
-        text = want to make the journey on foot.
+        text = of a casino in the distance. It's far enough that you wouldn't want to
+        text = make the journey on foot.
     end if
     if player has bike
         then
-        text = lights of a casino in the distance.
+        text = of a casino in the distance.
         left = Bike to the casino. -> outsideCasino
     end if
 

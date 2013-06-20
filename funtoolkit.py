@@ -45,7 +45,8 @@ if os.name == 'nt':
         from msvcrt import getch
         # getch returns b'[character]', so we turn it into a string
         # and strip out the b' and ' parts
-        char = getch()
+        while msvcrt.kbhit():
+            char = getch()
         # some inputs need to be compared using their number, for some reason
         if ord(char) == 224:
             # aha! an arrow key!
@@ -57,7 +58,7 @@ if os.name == 'nt':
             elif char == 75:
                 char = movementButtons[2] # left
             elif char == 77:
-                char = movementButtons[4] # right
+                char = movementButtons[3] # right
         elif ord(char) == 3:
             char = 'q' # KeyboardInterrupt
         elif ord(char) == 27:
