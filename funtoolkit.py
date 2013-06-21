@@ -31,7 +31,7 @@ if os.name == 'nt':
                 return False
             try:
                 error = winsound.PlaySound(sounddir + sound + '.wav',
-                                           winsound.SND_FILENAME)
+                        winsound.SND_FILENAME)
             except:
                 return False
             return True
@@ -78,7 +78,7 @@ if os.name == 'nt':
             print("\nDo you want to save before quitting? [Y/N]")
             ch = 'x'
             while ch not in ('y','n'):
-                ch = anykey()
+                ch = anykey().lower()
             if ch == 'y':
                 save()
         # for some reason resetting doesn't work when you use call()?
@@ -156,7 +156,7 @@ else: # anything but windows
         if askToSave:
             print("\nDo you want to save before quitting? [Y/N]")
             ch = 'x'
-            while ch not in ('y','n'):
+            while ch not in ('y','n', '\x03'):
                 ch = anykey()
             if ch == 'y':
                 save()
@@ -186,7 +186,10 @@ else: # anything but windows
             # reset
             termios.tcsetattr(stdinfd, termios.TCSADRAIN, oldtcattr)
         if char == '\x03' or char == 'q':
-            quit(True)
+            #quit(True)
+            # i keep trying to quit by hitting ^C twice
+            # now i can! not pretty though HEH
+            raise KeyboardInterrupt
         if char == '\x1b':
             # disabling this because it breaks ESC. seems hard to fix :/
             if False:
@@ -262,15 +265,21 @@ def load(filename="save.dat"):
         with open(datadir + filename, 'r', encoding='utf-8') as savefile:
             # unset any true booleans
             global items, quests, prefs
-            for key in items:
-                if items[key] == True:
-                    items[key] = False
-            for key in quests:
-                if quests[key] == True:
-                    quests[key] = False
-            for key in prefs:
-                if prefs[key] == True:
-                    prefs[key] = False
+##################################################################
+            # i stopped here because my batt was low.
+            for dic in (items, quests, prefs):
+                for key in dic:
+                    if dic[key] == True:
+                        dic[key] = False
+            #for key in items:
+                #if items[key] == True:
+                    #items[key] = False
+            #for key in quests:
+                #if quests[key] == True:
+                    #quests[key] = False
+            #for key in prefs:
+                #if prefs[key] == True:
+                    #prefs[key] = False
             # reset the ones we actually want
             for line in savefile:
                 line = line.strip()

@@ -56,6 +56,7 @@ to play this predicament, call its play() method
             open(preddir + filename, 'r')
         except KeyError:
             # if the predicament isn't in our master dictionary...
+            print("PREBLEM HERE")
             raise BadPredicamentError(3, self.name)
         except:
             # if the file can't be opened...
@@ -132,8 +133,8 @@ to play this predicament, call its play() method
                         # if there's no space, assume profile
                         dictionary = 'profile'
                     if dictionary not in ('quest', 'profile'):
-                        raise BadPredicamentError(30, filename, self.name, line,
-                                                  dictionary)
+                        raise BadPredicamentError(30, filename, self.name,
+                                                  line, dictionary)
                     if dictionary == 'quest':
                         dictionary = 'quests'
                         if value == 'done':
@@ -143,7 +144,8 @@ to play this predicament, call its play() method
                         else:
                             raise BadPredicamentError(32, filename, self.name,
                                                       line, value)
-                    # store it as a list of tuples (dictionary, variable, value)
+                    # store it as a list of tuples (dictionary, variable,
+                    #                               value)
                     if dictionary == 'profile':
                         try:
                             if (value == 'random' and
@@ -153,8 +155,8 @@ to play this predicament, call its play() method
                                 continue
                         except KeyError:
                             # nonexistant variable
-                            raise BadPredicamentError(21, self.name, dictionary,
-                                                      key.strip())
+                            raise BadPredicamentError(21, self.name,
+                                                      dictionary, key.strip())
                     self.setvars.append((dictionary, key.strip(), value))
                     continue
                 elif line.strip().startswith("give "):
@@ -183,10 +185,11 @@ to play this predicament, call its play() method
                         value = value.strip()
                         key = key.strip()
                     except ValueError:
-                        raise BadPredicamentError(35, filename, self.name, line)
+                        raise BadPredicamentError(35, filename, 
+                                                  self.name, line)
                     if key not in profile:
-                        raise BadPredicamentError(10, filename, self.name, line,
-                                                  key, 'profile')
+                        raise BadPredicamentError(10, filename, self.name,
+                                                  line, key, 'profile')
                     try:
                         value = int(value)
                     except ValueError:
@@ -200,8 +203,8 @@ to play this predicament, call its play() method
                         # should probably use setvars instead, but eh
                         profile[key] += value
                     else:
-                        raise BadPredicamentError(38, filename, self.name, line,
-                                                  key, 'add to')
+                        raise BadPredicamentError(38, filename, self.name,
+                                                  line, key, 'add to')
                     continue
                 elif line.strip().startswith("subtract "):
                     try:
@@ -210,10 +213,11 @@ to play this predicament, call its play() method
                         value = value.strip()
                         key = key.strip()
                     except ValueError:
-                        raise BadPredicamentError(36, filename, self.name, line)
+                        raise BadPredicamentError(36, filename, self.name, 
+                                                  line)
                     if key not in profile:
-                        raise BadPredicamentError(10, filename, self.name, line,
-                                                  key, 'profile')
+                        raise BadPredicamentError(10, filename, self.name,
+                                                  line, key, 'profile')
                     try:
                         value = int(value)
                     except ValueError:
@@ -227,8 +231,8 @@ to play this predicament, call its play() method
                         # should probably use setvars instead, but eh
                         profile[key] -= value
                     else:
-                        raise BadPredicamentError(38, filename, self.name, line,
-                                                  key, 'subtract from')
+                        raise BadPredicamentError(38, filename, self.name,
+                                                  line, key, 'subtract from')
                     continue
                 # NORMAL STUFF
                 try:
@@ -296,14 +300,18 @@ to play this predicament, call its play() method
                         label, goto = value.split('->')
                     except ValueError:
                         raise BadPredicamentError(23, self.name, line)
-                    if key == 'up':
-                        self.directions[0] = [label.strip(), goto.strip()]
-                    elif key == 'down':
-                        self.directions[1] = [label.strip(), goto.strip()]
-                    elif key == 'left':
-                        self.directions[2] = [label.strip(), goto.strip()]
-                    elif key == 'right':
-                        self.directions[3] = [label.strip(), goto.strip()]
+                    for i, d in enumerate(('up', 'down', 'left', 'right')):
+                        if key == d:
+                            self.directions[i] = [label.strip(), goto.strip()]
+                            break
+                    #if key == 'up':
+                        #self.directions[0] = [label.strip(), goto.strip()]
+                    #elif key == 'down':
+                        #self.directions[1] = [label.strip(), goto.strip()]
+                    #elif key == 'left':
+                        #self.directions[2] = [label.strip(), goto.strip()]
+                    #elif key == 'right':
+                        #self.directions[3] = [label.strip(), goto.strip()]
                 else:
                     raise BadPredicamentError(14, filename, self.name,
                                               key.strip())
@@ -338,34 +346,59 @@ to play this predicament, call its play() method
         if self.setvars:
             for statement in self.setvars:
                 # make tuple readable
-                dictionary, variable, value = (statement[0], statement[1],
-                                               statement[2])
-                if dictionary == 'profile':
-                    try:
-                        if type(profile[variable]) == int:
-                            profile[variable] = int(value)
-                        else:
-                            profile[variable] = value
-                    except KeyError:
-                        # nonexistent variable
-                        raise BadPredicamentError(21, self.name, dictionary,
-                                                  variable)
-                    except ValueError:
-                        # tried to set an int to a string
-                        raise BadPredicamentError(20, self.name, variable,
-                                                  value, variable)
-                if dictionary == 'quests':
-                    if variable in quests:
-                        quests[variable] = value
+                #dictionary, variable, value = (statement[0], statement[1],
+                                               #statement[2])
+                # this is neater but breaks if len(statement) != 3
+                # luckily, the length of statement should be 3 anyway
+                # right???
+                if len(statement) != 3:
+                    raise BadPredicamentError(887)
+                dictionary, variable, value = statement
+
+                if dictionary not in ('profile', 'quests', 'items'):
+                    raise BadPredicamentError(888)
+                dictionary = eval(dictionary)
+                try:
+                    if type(dictionary[variable]) == int:
+                        dictionary[variable] = int(value)
                     else:
-                        raise BadPredicamentError(21, self.name, dictionary,
-                                                  variable)
-                if dictionary == 'items':
-                    if variable in items:
-                        items[variable] = value
-                    else:
-                        raise BadPredicamentError(21, self.name, dictionary,
-                                                  variable)
+                        dictionary[variable] = value
+                except KeyError:
+                    # nonexistent variable
+                    raise BadPredicamentError(21, self.name, dictionary,
+                                              variable)
+                except ValueError:
+                    # tried to set an int to a string
+                    raise BadPredicamentError(20, self.name, variable,
+                                              value, variable)
+                #if dictionary == 'profile':
+                    #try:
+                        #if type(profile[variable]) == int:
+                            #profile[variable] = int(value)
+                        #else:
+                            #profile[variable] = value
+                    #except KeyError:
+                        ## nonexistent variable
+                        #raise BadPredicamentError(21, self.name, dictionary,
+                                                  #variable)
+                    #except ValueError:
+                        ## tried to set an int to a string
+                        #raise BadPredicamentError(20, self.name, variable,
+                                                  #value, variable)
+                #if dictionary == 'quests':
+                    #if variable in quests:
+                        #quests[variable] = value
+                    #else:
+                        #raise BadPredicamentError(21, self.name, dictionary,
+                                                  #variable)
+                #if dictionary == 'items':
+                    #if variable in items:
+                        #items[variable] = value
+                    #else:
+                        #raise BadPredicamentError(21, self.name, dictionary,
+                                                  #variable)
+                # END OF LONGTHY COMMENTS
+
         # draw the map
         if self.predmap != 'none':
             try:
@@ -494,14 +527,15 @@ to play this predicament, call its play() method
                 fancyPrint('', self.extraDelay)
                 for direction in self.directions:
                     if type(direction) == list:
-                        string = (' ' + arrows[self.directions.index(direction)]
+                        string = (' ' +arrows[self.directions.index(direction)]
                                   + ' - ' + replaceVariables(direction[0]))
                         if 'redraw' in self.disable:
                             print(string)
                         else:
                             fancyPrint(string, -1)
                 for action in self.actions:
-                    string = ' ' + next(iteractions) + ' - ' + replaceVariables(action)
+                    string = ' ' + next(iteractions) + ' - ' + \
+                             replaceVariables(action)
                     if 'redraw' in self.disable:
                         print(string)
                     else:
@@ -521,14 +555,18 @@ to play this predicament, call its play() method
                     return self.name
                 elif choice in movementButtons:
                     # if the corresponding direction exists, return it
-                    if self.directions[0] and choice == movementButtons[0]:
-                        return self.directions[0][1]
-                    elif self.directions[1] and choice == movementButtons[1]:
-                        return self.directions[1][1]
-                    elif self.directions[2] and choice == movementButtons[2]:
-                        return self.directions[2][1]
-                    elif self.directions[3] and choice == movementButtons[3]:
-                        return self.directions[3][1]
+                    for way in range(4):
+                        if ( self.directions[way] and 
+                             choice == movementButtons[way] ):
+                            return self.directions[way][1]
+                    #if self.directions[0] and choice == movementButtons[0]:
+                        #return self.directions[0][1]
+                    #elif self.directions[1] and choice == movementButtons[1]:
+                        #return self.directions[1][1]
+                    #elif self.directions[2] and choice == movementButtons[2]:
+                        #return self.directions[2][1]
+                    #elif self.directions[3] and choice == movementButtons[3]:
+                        #return self.directions[3][1]
                     else:
                         choice = anykey(self.prompt)
                 elif choice not in actions:
@@ -558,7 +596,7 @@ to play this predicament, call its play() method
                 try:
                     print(line, end='')
                 except UnicodeEncodeError:
-                    if not os.path.isfile(mapdir + self.predmap + '-ascii.map'):
+                    if not os.path.isfile(mapdir +self.predmap + '-ascii.map'):
                         createAsciiMap(self.predmap)
                     line = createAsciiLine(line)
                     print(line, end='')
@@ -619,6 +657,8 @@ def doIf(fp, name, line):
     # remove the 'if ' from the key
     key = key[3:].strip()
     value = value.strip()
+
+    # why is this happening in here? global vars >:O
     tempIfLevel = readingIfLevel + 1
     # now, try to split key to determine dictionary & real key
     try:
@@ -647,15 +687,12 @@ def doIf(fp, name, line):
             raise BadPredicamentError(27, fp.name, name, line)
     if dictionary not in ('profile', 'quests', 'items'):
         raise BadPredicamentError(28, fp.name, name, line, dictionary)
-    if (dictionary == 'profile' and key not in profile or
-        dictionary == 'quests' and key not in quests or
-        dictionary == 'items' and key not in items):
+    if key not in eval(dictionary):
         raise BadPredicamentError(10, fp.name, name, line, key, dictionary)
-
-    followup = getNonBlankLine(fp).lower() # get 'then', 'and', 'or'
 
     # profile comparison cases
     if dictionary == 'profile':
+        # wtf
         if value.startswith('>') or value.startswith('<'):
             if type(profile[key]) not in (int, float):
                 # the key in profile isn't a comparable type
@@ -702,7 +739,7 @@ def doIf(fp, name, line):
                     if (value in profile and
                         type(profile[value]) in (int, float)):
                             conditionIsTrue = \
-                                         ( profile[key] == int(profile[value]) )
+                                        ( profile[key] == int(profile[value]) )
                     else:
                         raise BadPredicamentError(25, fp.name, name,
                                                   line, key, value)
@@ -713,12 +750,15 @@ def doIf(fp, name, line):
                     conditionIsTrue = ( profile[key] == value )
             if negate:
                 conditionIsTrue = not conditionIsTrue
+        # end of wtf
 
     if dictionary == 'items':
         conditionIsTrue = ( items[key] == value)
 
     if dictionary == 'quests':
         conditionIsTrue = ( quests[key] == value )
+
+    followup = getNonBlankLine(fp).lower() # get 'then', 'and', 'or'
 
     if followup.startswith("then not"):
         # don't use this, it breaks if more than one statement is processed
