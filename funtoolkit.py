@@ -31,7 +31,7 @@ if os.name == 'nt':
                 return False
             try:
                 error = winsound.PlaySound(sounddir + sound + '.wav',
-                        winsound.SND_FILENAME)
+                                           winsound.SND_FILENAME)
             except:
                 return False
             return True
@@ -96,7 +96,7 @@ if os.name == 'nt':
 
     def tcflush():
         # irrelevant in windows! :>
-        return
+        pass
 
 else: # anything but windows
     import termios
@@ -234,11 +234,12 @@ def replaceVariables(text):
 
 def save(defaults=False, filename="save.dat"):
     try:
-        if not defaults:
-            with open(datadir + filename, 'w', encoding='utf-8') as savefile:
+        with open(datadir + filename, 'w', encoding='utf-8') as savefile:
+            if not defaults:
                 print("profile:", file=savefile)
                 for key in profile.keys():
-                    print("%s=%s" % (key, profile[key]), file=savefile)
+                    #print("%s=%s" % (key, profile[key]), file=savefile)
+                    print(key + "=" + str(profile[key]), file=savefile)
                 print("items:", file=savefile)
                 for key in items.keys():
                     if items[key] == True:
@@ -251,9 +252,8 @@ def save(defaults=False, filename="save.dat"):
                 for key in prefs.keys():
                     if prefs[key] == True:
                         print(key, file=savefile)
-        else:
-            with open(datadir + filename, 'w', encoding='utf-8') as savefile:
-                with open(datadir + 'profile.dat', 'r', encoding='utf-8') as fp:
+            else:
+                with open(datadir+'profile.dat', 'r', encoding='utf-8') as fp:
                     for line in fp:
                         print(line, file=savefile, end='')
     except IOError:
@@ -265,28 +265,30 @@ def load(filename="save.dat"):
         with open(datadir + filename, 'r', encoding='utf-8') as savefile:
             # unset any true booleans
             global items, quests, prefs
-##################################################################
-            # i stopped here because my batt was low.
             for dic in (items, quests, prefs):
                 for key in dic:
                     if dic[key] == True:
                         dic[key] = False
-            #for key in items:
-                #if items[key] == True:
-                    #items[key] = False
-            #for key in quests:
-                #if quests[key] == True:
-                    #quests[key] = False
-            #for key in prefs:
-                #if prefs[key] == True:
-                    #prefs[key] = False
             # reset the ones we actually want
             for line in savefile:
                 line = line.strip()
                 if line.endswith(':'):
-                    dictionary = line[:-1]
-                    pass
-                if dictionary == 'profile':
+                    try:
+                        dic = eval(line[:-1])
+                    except ValueError:
+                        print("ValueError reading dictionary:", line)
+                        quit()
+                    except: # just in case i'm wrong
+                        print("exception reading dictionary:", line)
+                        quit()
+                    #pass 
+                    # i think you meant continue...
+                    continue
+                if dic not in (profile, items, quests, prefs):
+                    # this should be unnecessary because of the earlier test
+                    print("error: unknown dictionary...")
+                    quit()
+                if dic == profile:
                     try:
                         key, value = line.split('=')
                     except ValueError:
@@ -298,15 +300,9 @@ def load(filename="save.dat"):
                             continue
                     else:
                         profile[key] = value
-                if dictionary == 'items':
-                    if line in items:
-                        items[line] = True
-                if dictionary == 'quests':
-                    if line in quests:
-                        quests[line] = True
-                if dictionary == 'prefs':
-                    if line in prefs:
-                        prefs[line] = True
+                else:
+                    if line in dic:
+                        dic[line] = True
     except:
         # if save.dat is corrupt, invalid, or nonexistent, recreate it
         save(True)
